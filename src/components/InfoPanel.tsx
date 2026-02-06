@@ -1,52 +1,61 @@
 'use client';
 
-import { AINode, categoryColors } from '@/data/nodes';
+import { AINode, levelColors, levelLabels, Language } from '@/data/nodes';
 
 interface InfoPanelProps {
   node: AINode | null;
+  lang: Language;
   onClose: () => void;
 }
 
-const categoryLabels = {
-  root: 'Корень',
-  branch: 'Ветка',
-  concept: 'Концепция', 
-  technique: 'Техника',
-};
-
-export default function InfoPanel({ node, onClose }: InfoPanelProps) {
+export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
   if (!node) return null;
 
-  const { label, emoji, description, category } = node.data;
-  const color = categoryColors[category];
+  const { emoji, level } = node.data;
+  const content = node.data[lang];
+  const color = levelColors[level];
 
   return (
-    <div className="absolute right-4 top-4 w-80 bg-gray-900 rounded-2xl shadow-2xl overflow-hidden z-50">
+    <div className="absolute right-4 top-4 w-96 bg-gray-900 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[90vh] overflow-y-auto">
       {/* Header */}
       <div 
-        className="p-4 flex items-center gap-3"
+        className="p-4 flex items-center gap-3 sticky top-0"
         style={{ backgroundColor: color }}
       >
         {emoji && <span className="text-3xl">{emoji}</span>}
-        <div>
-          <h2 className="text-white font-bold text-lg">{label}</h2>
+        <div className="flex-1">
+          <h2 className="text-white font-bold text-lg">{content.label}</h2>
           <span className="text-white/70 text-xs uppercase tracking-wide">
-            {categoryLabels[category]}
+            {levelLabels[lang][level]}
           </span>
         </div>
         <button 
           onClick={onClose}
-          className="ml-auto text-white/70 hover:text-white text-xl"
+          className="text-white/70 hover:text-white text-2xl font-light"
         >
           ×
         </button>
       </div>
       
-      {/* Content */}
-      <div className="p-4">
+      {/* Description */}
+      <div className="p-4 border-b border-gray-800">
         <p className="text-gray-300 text-sm leading-relaxed">
-          {description}
+          {content.description}
         </p>
+      </div>
+      
+      {/* Key Points */}
+      <div className="p-4">
+        <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3">
+          {lang === 'ru' ? 'Ключевые моменты' : 'Key Points'}
+        </h3>
+        <ul className="space-y-2">
+          {content.keyPoints.map((point, i) => (
+            <li key={i} className="text-gray-300 text-sm leading-relaxed">
+              {point}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

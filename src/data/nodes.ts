@@ -1,201 +1,468 @@
-import { Node, Edge } from '@xyflow/react';
+import { Edge } from '@xyflow/react';
 
-export interface AINode extends Node {
-  data: {
-    label: string;
-    emoji?: string;
-    description: string;
-    category: 'root' | 'branch' | 'concept' | 'technique';
-  };
+export type AbstractionLevel = 'field' | 'theory' | 'method' | 'algorithm' | 'implementation';
+export type Language = 'ru' | 'en';
+
+export interface NodeContent {
+  label: string;
+  description: string;
+  keyPoints: string[];
 }
 
-// Цвета по категориям
-export const categoryColors = {
-  root: '#6366f1',      // indigo
-  branch: '#8b5cf6',    // violet  
-  concept: '#06b6d4',   // cyan
-  technique: '#10b981', // emerald
+export interface AINodeData {
+  emoji?: string;
+  level: AbstractionLevel;
+  ru: NodeContent;
+  en: NodeContent;
+  [key: string]: unknown; // Index signature for React Flow compatibility
+}
+
+export interface AINode {
+  id: string;
+  position: { x: number; y: number };
+  type: string;
+  data: AINodeData;
+}
+
+// Цвета по уровню абстракции
+export const levelColors: Record<AbstractionLevel, string> = {
+  field: '#6366f1',         // indigo - Область
+  theory: '#8b5cf6',        // violet - Теория
+  method: '#06b6d4',        // cyan - Метод
+  algorithm: '#10b981',     // emerald - Алгоритм
+  implementation: '#f59e0b', // amber - Имплементация
 };
 
-// Позиции узлов (расположение на карте)
+export const levelLabels: Record<Language, Record<AbstractionLevel, string>> = {
+  ru: {
+    field: 'Область',
+    theory: 'Теория',
+    method: 'Метод',
+    algorithm: 'Алгоритм',
+    implementation: 'Имплементация',
+  },
+  en: {
+    field: 'Field',
+    theory: 'Theory',
+    method: 'Method',
+    algorithm: 'Algorithm',
+    implementation: 'Implementation',
+  },
+};
+
 export const initialNodes: AINode[] = [
-  // ROOT
+  // FIELD - Области
   {
     id: 'ai',
     position: { x: 400, y: 0 },
-    data: {
-      label: 'Artificial Intelligence',
-      emoji: '🤖',
-      description: 'Искусственный интеллект — область компьютерных наук, занимающаяся созданием систем, способных выполнять задачи, обычно требующие человеческого интеллекта: обучение, рассуждение, восприятие, понимание языка.',
-      category: 'root',
-    },
     type: 'custom',
+    data: {
+      emoji: '🤖',
+      level: 'field',
+      ru: {
+        label: 'Искусственный Интеллект',
+        description: 'Область компьютерных наук, создающая системы, способные выполнять задачи, требующие человеческого интеллекта.',
+        keyPoints: [
+          '📅 Термин введён в 1956 году (Джон Маккарти)',
+          '🎯 Цель: автоматизация когнитивных задач',
+          '🔀 Включает: ML, робототехнику, NLP, CV',
+          '⚡ Сейчас: эра генеративного AI (2022+)',
+        ],
+      },
+      en: {
+        label: 'Artificial Intelligence',
+        description: 'Field of computer science creating systems capable of performing tasks that require human intelligence.',
+        keyPoints: [
+          '📅 Term coined in 1956 (John McCarthy)',
+          '🎯 Goal: automate cognitive tasks',
+          '🔀 Includes: ML, robotics, NLP, CV',
+          '⚡ Now: generative AI era (2022+)',
+        ],
+      },
+    },
   },
-  
-  // MAIN BRANCHES
+
+  // THEORY - Теории/Парадигмы
   {
     id: 'ml',
     position: { x: 100, y: 150 },
-    data: {
-      label: 'Machine Learning',
-      emoji: '🧠',
-      description: 'Машинное обучение — подраздел AI, где системы учатся на данных без явного программирования. Алгоритмы находят паттерны и делают предсказания.',
-      category: 'branch',
-    },
     type: 'custom',
+    data: {
+      emoji: '🧠',
+      level: 'theory',
+      ru: {
+        label: 'Машинное Обучение',
+        description: 'Парадигма, где системы учатся на данных без явного программирования каждого правила.',
+        keyPoints: [
+          '📊 Данные → Паттерны → Предсказания',
+          '🔄 Обучение через итеративную оптимизацию',
+          '📈 Качество растёт с количеством данных',
+          '🎓 Три типа: supervised, unsupervised, RL',
+        ],
+      },
+      en: {
+        label: 'Machine Learning',
+        description: 'Paradigm where systems learn from data without explicit programming of every rule.',
+        keyPoints: [
+          '📊 Data → Patterns → Predictions',
+          '🔄 Learning through iterative optimization',
+          '📈 Quality improves with more data',
+          '🎓 Three types: supervised, unsupervised, RL',
+        ],
+      },
+    },
   },
   {
     id: 'dl',
     position: { x: 400, y: 150 },
-    data: {
-      label: 'Deep Learning',
-      emoji: '🧬',
-      description: 'Глубокое обучение — подвид ML использующий нейронные сети с множеством слоёв. Автоматически извлекает признаки из сырых данных (изображений, текста, звука).',
-      category: 'branch',
-    },
     type: 'custom',
+    data: {
+      emoji: '🧬',
+      level: 'theory',
+      ru: {
+        label: 'Глубокое Обучение',
+        description: 'Подмножество ML с нейросетями из множества слоёв, автоматически извлекающими признаки.',
+        keyPoints: [
+          '🏗️ Многослойные нейронные сети (3+ слоёв)',
+          '🔍 Автоматическое извлечение признаков',
+          '💪 Требует много данных и GPU',
+          '🚀 Прорыв: ImageNet 2012 (AlexNet)',
+        ],
+      },
+      en: {
+        label: 'Deep Learning',
+        description: 'Subset of ML with multi-layer neural networks that automatically extract features.',
+        keyPoints: [
+          '🏗️ Multi-layer neural networks (3+ layers)',
+          '🔍 Automatic feature extraction',
+          '💪 Requires lots of data and GPUs',
+          '🚀 Breakthrough: ImageNet 2012 (AlexNet)',
+        ],
+      },
+    },
   },
   {
     id: 'nlp',
     position: { x: 700, y: 150 },
-    data: {
-      label: 'NLP',
-      emoji: '💬',
-      description: 'Natural Language Processing — обработка естественного языка. Позволяет компьютерам понимать, интерпретировать и генерировать человеческий язык.',
-      category: 'branch',
-    },
     type: 'custom',
+    data: {
+      emoji: '💬',
+      level: 'theory',
+      ru: {
+        label: 'Обработка Языка',
+        description: 'Теория и методы для понимания, интерпретации и генерации человеческого языка.',
+        keyPoints: [
+          '📝 Текст как последовательность токенов',
+          '🌐 Контекст определяет значение',
+          '🔤 Этапы: токенизация → эмбеддинги → модель',
+          '🗣️ Задачи: перевод, суммаризация, QA',
+        ],
+      },
+      en: {
+        label: 'Natural Language Processing',
+        description: 'Theory and methods for understanding, interpreting, and generating human language.',
+        keyPoints: [
+          '📝 Text as sequence of tokens',
+          '🌐 Context determines meaning',
+          '🔤 Pipeline: tokenization → embeddings → model',
+          '🗣️ Tasks: translation, summarization, QA',
+        ],
+      },
+    },
   },
-  
-  // ML CHILDREN
+
+  // METHOD - Методы
   {
     id: 'supervised',
-    position: { x: -100, y: 300 },
-    data: {
-      label: 'Supervised Learning',
-      emoji: '📊',
-      description: 'Обучение с учителем. Модель учится на размеченных данных (пары вход→выход). Примеры: классификация спама, предсказание цен.',
-      category: 'concept',
-    },
+    position: { x: -50, y: 300 },
     type: 'custom',
+    data: {
+      emoji: '📊',
+      level: 'method',
+      ru: {
+        label: 'Обучение с учителем',
+        description: 'Метод обучения на размеченных данных: модель учится соответствию вход→выход.',
+        keyPoints: [
+          '🏷️ Требует размеченные данные (labels)',
+          '🎯 Цель: минимизировать ошибку предсказания',
+          '📉 Loss function измеряет качество',
+          '🔮 Типы: классификация, регрессия',
+        ],
+      },
+      en: {
+        label: 'Supervised Learning',
+        description: 'Learning method using labeled data: model learns input→output mapping.',
+        keyPoints: [
+          '🏷️ Requires labeled data',
+          '🎯 Goal: minimize prediction error',
+          '📉 Loss function measures quality',
+          '🔮 Types: classification, regression',
+        ],
+      },
+    },
   },
   {
     id: 'unsupervised',
-    position: { x: 100, y: 300 },
-    data: {
-      label: 'Unsupervised Learning',
-      emoji: '🔍',
-      description: 'Обучение без учителя. Модель находит скрытые паттерны в неразмеченных данных. Примеры: кластеризация клиентов, сжатие данных.',
-      category: 'concept',
-    },
+    position: { x: 150, y: 300 },
     type: 'custom',
+    data: {
+      emoji: '🔍',
+      level: 'method',
+      ru: {
+        label: 'Обучение без учителя',
+        description: 'Метод поиска скрытых паттернов в неразмеченных данных.',
+        keyPoints: [
+          '❌ Не требует разметки данных',
+          '🔎 Находит скрытую структуру',
+          '📊 Типы: кластеризация, снижение размерности',
+          '💡 Применение: сегментация, аномалии',
+        ],
+      },
+      en: {
+        label: 'Unsupervised Learning',
+        description: 'Method for finding hidden patterns in unlabeled data.',
+        keyPoints: [
+          '❌ No labeled data required',
+          '🔎 Finds hidden structure',
+          '📊 Types: clustering, dimensionality reduction',
+          '💡 Uses: segmentation, anomaly detection',
+        ],
+      },
+    },
   },
   {
     id: 'rl',
-    position: { x: 300, y: 300 },
-    data: {
-      label: 'Reinforcement Learning',
-      emoji: '🎮',
-      description: 'Обучение с подкреплением. Агент учится через взаимодействие со средой, получая награды/штрафы. Используется в играх, робототехнике.',
-      category: 'concept',
-    },
+    position: { x: 350, y: 300 },
     type: 'custom',
+    data: {
+      emoji: '🎮',
+      level: 'method',
+      ru: {
+        label: 'Обучение с подкреплением',
+        description: 'Метод обучения агента через взаимодействие со средой и получение наград/штрафов.',
+        keyPoints: [
+          '🎯 Агент → Действие → Среда → Награда',
+          '⚖️ Баланс: исследование vs использование',
+          '🏆 Цель: максимизация суммарной награды',
+          '🎲 Применение: игры, робототехника, торговля',
+        ],
+      },
+      en: {
+        label: 'Reinforcement Learning',
+        description: 'Method where agent learns through interaction with environment and rewards/penalties.',
+        keyPoints: [
+          '🎯 Agent → Action → Environment → Reward',
+          '⚖️ Balance: exploration vs exploitation',
+          '🏆 Goal: maximize cumulative reward',
+          '🎲 Uses: games, robotics, trading',
+        ],
+      },
+    },
   },
-  
-  // DL CHILDREN
+
+  // ALGORITHM - Алгоритмы/Архитектуры
   {
     id: 'nn',
-    position: { x: 350, y: 300 },
-    data: {
-      label: 'Neural Networks',
-      emoji: '🔮',
-      description: 'Нейронные сети — вычислительные системы, вдохновлённые биологическим мозгом. Состоят из слоёв искусственных нейронов, передающих сигналы.',
-      category: 'concept',
-    },
+    position: { x: 300, y: 450 },
     type: 'custom',
+    data: {
+      emoji: '🔮',
+      level: 'algorithm',
+      ru: {
+        label: 'Нейронные сети',
+        description: 'Алгоритм из связанных искусственных нейронов, передающих и трансформирующих сигналы.',
+        keyPoints: [
+          '🧠 Вдохновлены биологическим мозгом',
+          '⚡ Нейрон: взвешенная сумма + активация',
+          '🔄 Обучение: backpropagation + gradient descent',
+          '🏗️ Слои: input → hidden → output',
+        ],
+      },
+      en: {
+        label: 'Neural Networks',
+        description: 'Algorithm of connected artificial neurons that transmit and transform signals.',
+        keyPoints: [
+          '🧠 Inspired by biological brain',
+          '⚡ Neuron: weighted sum + activation',
+          '🔄 Training: backpropagation + gradient descent',
+          '🏗️ Layers: input → hidden → output',
+        ],
+      },
+    },
   },
   {
     id: 'cnn',
-    position: { x: 450, y: 300 },
-    data: {
-      label: 'CNN',
-      emoji: '👁️',
-      description: 'Convolutional Neural Networks — свёрточные сети. Специализированы для обработки изображений. Находят паттерны через фильтры.',
-      category: 'technique',
-    },
+    position: { x: 500, y: 450 },
     type: 'custom',
+    data: {
+      emoji: '👁️',
+      level: 'algorithm',
+      ru: {
+        label: 'CNN',
+        description: 'Свёрточные сети — алгоритм для обработки данных с сеточной структурой (изображения).',
+        keyPoints: [
+          '🔲 Свёртка: скользящий фильтр по изображению',
+          '📐 Pooling: уменьшение размерности',
+          '🎨 Иерархия: края → формы → объекты',
+          '📸 Применение: распознавание, детекция',
+        ],
+      },
+      en: {
+        label: 'CNN',
+        description: 'Convolutional networks — algorithm for processing grid-structured data (images).',
+        keyPoints: [
+          '🔲 Convolution: sliding filter over image',
+          '📐 Pooling: dimensionality reduction',
+          '🎨 Hierarchy: edges → shapes → objects',
+          '📸 Uses: recognition, detection',
+        ],
+      },
+    },
   },
   {
     id: 'transformer',
-    position: { x: 550, y: 300 },
-    data: {
-      label: 'Transformer',
-      emoji: '⚡',
-      description: 'Архитектура на механизме внимания (attention). Основа современных LLM: GPT, BERT, Claude. Обрабатывает последовательности параллельно.',
-      category: 'technique',
-    },
+    position: { x: 700, y: 450 },
     type: 'custom',
+    data: {
+      emoji: '⚡',
+      level: 'algorithm',
+      ru: {
+        label: 'Transformer',
+        description: 'Архитектура на механизме внимания, обрабатывающая последовательности параллельно.',
+        keyPoints: [
+          '👀 Self-attention: каждый токен "видит" все другие',
+          '⚡ Параллельная обработка (vs RNN последовательно)',
+          '📍 Positional encoding для порядка',
+          '📄 Статья "Attention Is All You Need" (2017)',
+        ],
+      },
+      en: {
+        label: 'Transformer',
+        description: 'Architecture based on attention mechanism, processing sequences in parallel.',
+        keyPoints: [
+          '👀 Self-attention: each token "sees" all others',
+          '⚡ Parallel processing (vs RNN sequential)',
+          '📍 Positional encoding for order',
+          '📄 Paper "Attention Is All You Need" (2017)',
+        ],
+      },
+    },
   },
-  
-  // NLP CHILDREN
+
+  // IMPLEMENTATION - Конкретные реализации
   {
     id: 'llm',
-    position: { x: 650, y: 300 },
-    data: {
-      label: 'LLM',
-      emoji: '🗣️',
-      description: 'Large Language Models — большие языковые модели (GPT-4, Claude, Gemini). Обучены на огромных текстовых корпусах, генерируют человекоподобный текст.',
-      category: 'technique',
-    },
+    position: { x: 600, y: 600 },
     type: 'custom',
+    data: {
+      emoji: '🗣️',
+      level: 'implementation',
+      ru: {
+        label: 'LLM',
+        description: 'Большие языковые модели — масштабные трансформеры обученные на огромных текстовых корпусах.',
+        keyPoints: [
+          '📏 Размер: миллиарды параметров (GPT-4: ~1.7T)',
+          '📚 Обучение: весь интернет + книги + код',
+          '🎭 Emergent abilities при масштабировании',
+          '🔧 Примеры: GPT-4, Claude, Gemini, LLaMA',
+        ],
+      },
+      en: {
+        label: 'LLM',
+        description: 'Large Language Models — massive transformers trained on huge text corpora.',
+        keyPoints: [
+          '📏 Size: billions of parameters (GPT-4: ~1.7T)',
+          '📚 Training: entire internet + books + code',
+          '🎭 Emergent abilities at scale',
+          '🔧 Examples: GPT-4, Claude, Gemini, LLaMA',
+        ],
+      },
+    },
   },
   {
     id: 'embeddings',
-    position: { x: 750, y: 300 },
-    data: {
-      label: 'Embeddings',
-      emoji: '📐',
-      description: 'Векторные представления слов/текстов в многомерном пространстве. Похожие понятия близки друг к другу. Основа семантического поиска.',
-      category: 'technique',
-    },
+    position: { x: 800, y: 600 },
     type: 'custom',
+    data: {
+      emoji: '📐',
+      level: 'implementation',
+      ru: {
+        label: 'Embeddings',
+        description: 'Векторные представления — слова/тексты как точки в многомерном пространстве.',
+        keyPoints: [
+          '📊 Вектор фиксированной размерности (768, 1536...)',
+          '📏 Похожие понятия = близкие векторы',
+          '➕ Арифметика: king - man + woman ≈ queen',
+          '🔍 Применение: поиск, RAG, кластеризация',
+        ],
+      },
+      en: {
+        label: 'Embeddings',
+        description: 'Vector representations — words/texts as points in multidimensional space.',
+        keyPoints: [
+          '📊 Fixed dimension vector (768, 1536...)',
+          '📏 Similar concepts = nearby vectors',
+          '➕ Arithmetic: king - man + woman ≈ queen',
+          '🔍 Uses: search, RAG, clustering',
+        ],
+      },
+    },
   },
   {
     id: 'tokenization',
-    position: { x: 850, y: 300 },
-    data: {
-      label: 'Tokenization',
-      emoji: '✂️',
-      description: 'Разбиение текста на токены (слова, подслова, символы). Первый шаг обработки текста в NLP моделях.',
-      category: 'technique',
-    },
+    position: { x: 1000, y: 600 },
     type: 'custom',
+    data: {
+      emoji: '✂️',
+      level: 'implementation',
+      ru: {
+        label: 'Токенизация',
+        description: 'Разбиение текста на токены (единицы обработки для модели).',
+        keyPoints: [
+          '✂️ Текст → список токенов (subwords)',
+          '📖 Словарь: 30k-100k токенов',
+          '🔤 BPE, WordPiece, SentencePiece алгоритмы',
+          '💰 Влияет на стоимость API ($/1M tokens)',
+        ],
+      },
+      en: {
+        label: 'Tokenization',
+        description: 'Splitting text into tokens (processing units for the model).',
+        keyPoints: [
+          '✂️ Text → list of tokens (subwords)',
+          '📖 Vocabulary: 30k-100k tokens',
+          '🔤 BPE, WordPiece, SentencePiece algorithms',
+          '💰 Affects API cost ($/1M tokens)',
+        ],
+      },
+    },
   },
 ];
 
 // Связи между узлами
 export const initialEdges: Edge[] = [
-  // AI → Branches
+  // AI → Theories
   { id: 'ai-ml', source: 'ai', target: 'ml', animated: true },
   { id: 'ai-dl', source: 'ai', target: 'dl', animated: true },
   { id: 'ai-nlp', source: 'ai', target: 'nlp', animated: true },
   
-  // ML → Children
+  // ML → Methods
   { id: 'ml-sup', source: 'ml', target: 'supervised' },
   { id: 'ml-unsup', source: 'ml', target: 'unsupervised' },
   { id: 'ml-rl', source: 'ml', target: 'rl' },
   
-  // DL → Children
+  // DL → Algorithms
   { id: 'dl-nn', source: 'dl', target: 'nn' },
   { id: 'dl-cnn', source: 'dl', target: 'cnn' },
   { id: 'dl-trans', source: 'dl', target: 'transformer' },
   
-  // NLP → Children
+  // NLP → Implementations
   { id: 'nlp-llm', source: 'nlp', target: 'llm' },
   { id: 'nlp-emb', source: 'nlp', target: 'embeddings' },
   { id: 'nlp-tok', source: 'nlp', target: 'tokenization' },
   
-  // Cross-connections
+  // Cross-connections (dashed)
   { id: 'trans-llm', source: 'transformer', target: 'llm', style: { strokeDasharray: '5,5' } },
   { id: 'nn-cnn', source: 'nn', target: 'cnn', style: { strokeDasharray: '5,5' } },
+  { id: 'sup-nn', source: 'supervised', target: 'nn', style: { strokeDasharray: '5,5' } },
 ];

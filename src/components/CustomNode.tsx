@@ -2,23 +2,16 @@
 
 import { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
-import { categoryColors } from '@/data/nodes';
-
-interface CustomNodeData {
-  label: string;
-  emoji?: string;
-  description: string;
-  category: 'root' | 'branch' | 'concept' | 'technique';
-}
+import { levelColors, AINodeData, Language } from '@/data/nodes';
 
 interface CustomNodeProps {
-  data: CustomNodeData;
+  data: AINodeData & { lang: Language };
   selected?: boolean;
 }
 
 function CustomNode({ data, selected }: CustomNodeProps) {
-  const nodeData = data;
-  const bgColor = categoryColors[nodeData.category];
+  const bgColor = levelColors[data.level];
+  const content = data[data.lang];
   
   return (
     <div
@@ -29,15 +22,15 @@ function CustomNode({ data, selected }: CustomNodeProps) {
       `}
       style={{ 
         backgroundColor: bgColor,
-        minWidth: nodeData.category === 'root' ? '200px' : '140px',
+        minWidth: data.level === 'field' ? '200px' : '120px',
       }}
     >
       <Handle type="target" position={Position.Top} className="opacity-0" />
       
       <div className="flex items-center gap-2 justify-center">
-        {nodeData.emoji && <span className="text-xl">{nodeData.emoji}</span>}
+        {data.emoji && <span className="text-xl">{data.emoji}</span>}
         <span className="text-white font-semibold text-sm text-center">
-          {nodeData.label}
+          {content.label}
         </span>
       </div>
       
