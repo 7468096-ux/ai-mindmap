@@ -14,7 +14,7 @@ export interface AINodeData {
   level: AbstractionLevel;
   ru: NodeContent;
   en: NodeContent;
-  [key: string]: unknown; // Index signature for React Flow compatibility
+  [key: string]: unknown;
 }
 
 export interface AINode {
@@ -26,11 +26,11 @@ export interface AINode {
 
 // Цвета по уровню абстракции
 export const levelColors: Record<AbstractionLevel, string> = {
-  field: '#6366f1',         // indigo - Область
-  theory: '#8b5cf6',        // violet - Теория
-  method: '#06b6d4',        // cyan - Метод
-  algorithm: '#10b981',     // emerald - Алгоритм
-  implementation: '#f59e0b', // amber - Имплементация
+  field: '#6366f1',         // indigo
+  theory: '#8b5cf6',        // violet
+  method: '#06b6d4',        // cyan
+  algorithm: '#10b981',     // emerald
+  implementation: '#f59e0b', // amber
 };
 
 export const levelLabels: Record<Language, Record<AbstractionLevel, string>> = {
@@ -50,11 +50,13 @@ export const levelLabels: Record<Language, Record<AbstractionLevel, string>> = {
   },
 };
 
+// ==================== NODES ====================
+
 export const initialNodes: AINode[] = [
-  // FIELD - Области
+  // ========== FIELD ==========
   {
     id: 'ai',
-    position: { x: 400, y: 0 },
+    position: { x: 600, y: 0 },
     type: 'custom',
     data: {
       emoji: '🤖',
@@ -82,10 +84,10 @@ export const initialNodes: AINode[] = [
     },
   },
 
-  // THEORY - Теории/Парадигмы
+  // ========== THEORY ==========
   {
     id: 'ml',
-    position: { x: 100, y: 150 },
+    position: { x: 200, y: 120 },
     type: 'custom',
     data: {
       emoji: '🧠',
@@ -114,7 +116,7 @@ export const initialNodes: AINode[] = [
   },
   {
     id: 'dl',
-    position: { x: 400, y: 150 },
+    position: { x: 600, y: 120 },
     type: 'custom',
     data: {
       emoji: '🧬',
@@ -143,7 +145,7 @@ export const initialNodes: AINode[] = [
   },
   {
     id: 'nlp',
-    position: { x: 700, y: 150 },
+    position: { x: 1000, y: 120 },
     type: 'custom',
     data: {
       emoji: '💬',
@@ -171,10 +173,10 @@ export const initialNodes: AINode[] = [
     },
   },
 
-  // METHOD - Методы
+  // ========== METHOD (ML children) ==========
   {
     id: 'supervised',
-    position: { x: -50, y: 300 },
+    position: { x: 0, y: 260 },
     type: 'custom',
     data: {
       emoji: '📊',
@@ -203,7 +205,7 @@ export const initialNodes: AINode[] = [
   },
   {
     id: 'unsupervised',
-    position: { x: 150, y: 300 },
+    position: { x: 200, y: 260 },
     type: 'custom',
     data: {
       emoji: '🔍',
@@ -232,7 +234,7 @@ export const initialNodes: AINode[] = [
   },
   {
     id: 'rl',
-    position: { x: 350, y: 300 },
+    position: { x: 400, y: 260 },
     type: 'custom',
     data: {
       emoji: '🎮',
@@ -260,10 +262,215 @@ export const initialNodes: AINode[] = [
     },
   },
 
-  // ALGORITHM - Алгоритмы/Архитектуры
+  // ========== ALGORITHM (ML algorithms) ==========
+  {
+    id: 'linear-reg',
+    position: { x: -100, y: 400 },
+    type: 'custom',
+    data: {
+      emoji: '📈',
+      level: 'algorithm',
+      ru: {
+        label: 'Линейная регрессия',
+        description: 'Простейший алгоритм для предсказания непрерывных значений через линейную зависимость.',
+        keyPoints: [
+          '📐 Формула: y = wx + b',
+          '🎯 Минимизация MSE (Mean Squared Error)',
+          '⚡ Быстрый, интерпретируемый',
+          '📊 Базовый алгоритм для регрессии',
+        ],
+      },
+      en: {
+        label: 'Linear Regression',
+        description: 'Simplest algorithm for predicting continuous values through linear relationship.',
+        keyPoints: [
+          '📐 Formula: y = wx + b',
+          '🎯 Minimizes MSE (Mean Squared Error)',
+          '⚡ Fast, interpretable',
+          '📊 Baseline algorithm for regression',
+        ],
+      },
+    },
+  },
+  {
+    id: 'decision-tree',
+    position: { x: 80, y: 400 },
+    type: 'custom',
+    data: {
+      emoji: '🌳',
+      level: 'algorithm',
+      ru: {
+        label: 'Дерево решений',
+        description: 'Алгоритм, разбивающий данные через последовательность условий (if-else).',
+        keyPoints: [
+          '🔀 Каждый узел = условие разбиения',
+          '🍃 Листья = итоговое предсказание',
+          '👁️ Легко визуализировать и понять',
+          '⚠️ Склонен к переобучению',
+        ],
+      },
+      en: {
+        label: 'Decision Tree',
+        description: 'Algorithm splitting data through sequence of conditions (if-else).',
+        keyPoints: [
+          '🔀 Each node = split condition',
+          '🍃 Leaves = final prediction',
+          '👁️ Easy to visualize and understand',
+          '⚠️ Prone to overfitting',
+        ],
+      },
+    },
+  },
+  {
+    id: 'random-forest',
+    position: { x: 260, y: 400 },
+    type: 'custom',
+    data: {
+      emoji: '🌲',
+      level: 'algorithm',
+      ru: {
+        label: 'Random Forest',
+        description: 'Ансамбль деревьев решений, голосующих за итоговый результат.',
+        keyPoints: [
+          '🌳 Много деревьев (100-1000)',
+          '🎲 Каждое на случайной выборке',
+          '🗳️ Голосование/усреднение результатов',
+          '💪 Устойчив к переобучению',
+        ],
+      },
+      en: {
+        label: 'Random Forest',
+        description: 'Ensemble of decision trees voting for final result.',
+        keyPoints: [
+          '🌳 Many trees (100-1000)',
+          '🎲 Each on random sample',
+          '🗳️ Voting/averaging results',
+          '💪 Robust to overfitting',
+        ],
+      },
+    },
+  },
+  {
+    id: 'svm',
+    position: { x: -100, y: 520 },
+    type: 'custom',
+    data: {
+      emoji: '⚔️',
+      level: 'algorithm',
+      ru: {
+        label: 'SVM',
+        description: 'Support Vector Machine — находит оптимальную гиперплоскость для разделения классов.',
+        keyPoints: [
+          '📏 Максимизирует отступ между классами',
+          '🔮 Kernel trick для нелинейных границ',
+          '💪 Работает в высоких размерностях',
+          '📊 Хорош для небольших датасетов',
+        ],
+      },
+      en: {
+        label: 'SVM',
+        description: 'Support Vector Machine — finds optimal hyperplane to separate classes.',
+        keyPoints: [
+          '📏 Maximizes margin between classes',
+          '🔮 Kernel trick for nonlinear boundaries',
+          '💪 Works in high dimensions',
+          '📊 Good for small datasets',
+        ],
+      },
+    },
+  },
+  {
+    id: 'kmeans',
+    position: { x: 80, y: 520 },
+    type: 'custom',
+    data: {
+      emoji: '🎯',
+      level: 'algorithm',
+      ru: {
+        label: 'K-Means',
+        description: 'Алгоритм кластеризации, группирующий данные в K кластеров по близости к центроидам.',
+        keyPoints: [
+          '🔢 K — количество кластеров (задаётся)',
+          '🔄 Итеративно: назначить → пересчитать центры',
+          '📏 Минимизирует внутрикластерное расстояние',
+          '⚡ Быстрый, но чувствителен к начальным точкам',
+        ],
+      },
+      en: {
+        label: 'K-Means',
+        description: 'Clustering algorithm grouping data into K clusters by proximity to centroids.',
+        keyPoints: [
+          '🔢 K — number of clusters (specified)',
+          '🔄 Iterative: assign → recalculate centers',
+          '📏 Minimizes within-cluster distance',
+          '⚡ Fast, but sensitive to initial points',
+        ],
+      },
+    },
+  },
+  {
+    id: 'pca',
+    position: { x: 260, y: 520 },
+    type: 'custom',
+    data: {
+      emoji: '📉',
+      level: 'algorithm',
+      ru: {
+        label: 'PCA',
+        description: 'Principal Component Analysis — снижение размерности с сохранением максимума информации.',
+        keyPoints: [
+          '📊 Находит главные направления вариации',
+          '🔽 Проекция на меньшее пространство',
+          '📈 Сохраняет % объяснённой дисперсии',
+          '👁️ Используется для визуализации',
+        ],
+      },
+      en: {
+        label: 'PCA',
+        description: 'Principal Component Analysis — dimensionality reduction preserving maximum information.',
+        keyPoints: [
+          '📊 Finds main directions of variation',
+          '🔽 Projects to lower dimensions',
+          '📈 Preserves % of explained variance',
+          '👁️ Used for visualization',
+        ],
+      },
+    },
+  },
+  {
+    id: 'qlearning',
+    position: { x: 440, y: 400 },
+    type: 'custom',
+    data: {
+      emoji: '🎰',
+      level: 'algorithm',
+      ru: {
+        label: 'Q-Learning',
+        description: 'Алгоритм RL, обучающий функцию ценности действий без модели среды.',
+        keyPoints: [
+          '📊 Q(s,a) = ожидаемая награда',
+          '🔄 Обновление через уравнение Беллмана',
+          '🎲 ε-greedy для исследования',
+          '🚫 Model-free: не знает правил среды',
+        ],
+      },
+      en: {
+        label: 'Q-Learning',
+        description: 'RL algorithm learning action-value function without environment model.',
+        keyPoints: [
+          '📊 Q(s,a) = expected reward',
+          '🔄 Updates via Bellman equation',
+          '🎲 ε-greedy for exploration',
+          '🚫 Model-free: no environment rules',
+        ],
+      },
+    },
+  },
+
+  // ========== ALGORITHM (DL architectures) ==========
   {
     id: 'nn',
-    position: { x: 300, y: 450 },
+    position: { x: 520, y: 260 },
     type: 'custom',
     data: {
       emoji: '🔮',
@@ -292,7 +499,7 @@ export const initialNodes: AINode[] = [
   },
   {
     id: 'cnn',
-    position: { x: 500, y: 450 },
+    position: { x: 680, y: 260 },
     type: 'custom',
     data: {
       emoji: '👁️',
@@ -321,7 +528,7 @@ export const initialNodes: AINode[] = [
   },
   {
     id: 'transformer',
-    position: { x: 700, y: 450 },
+    position: { x: 600, y: 380 },
     type: 'custom',
     data: {
       emoji: '⚡',
@@ -349,10 +556,10 @@ export const initialNodes: AINode[] = [
     },
   },
 
-  // IMPLEMENTATION - Конкретные реализации
+  // ========== IMPLEMENTATION (NLP) ==========
   {
     id: 'llm',
-    position: { x: 600, y: 600 },
+    position: { x: 900, y: 260 },
     type: 'custom',
     data: {
       emoji: '🗣️',
@@ -381,7 +588,7 @@ export const initialNodes: AINode[] = [
   },
   {
     id: 'embeddings',
-    position: { x: 800, y: 600 },
+    position: { x: 1080, y: 260 },
     type: 'custom',
     data: {
       emoji: '📐',
@@ -410,7 +617,7 @@ export const initialNodes: AINode[] = [
   },
   {
     id: 'tokenization',
-    position: { x: 1000, y: 600 },
+    position: { x: 1080, y: 380 },
     type: 'custom',
     data: {
       emoji: '✂️',
@@ -439,7 +646,8 @@ export const initialNodes: AINode[] = [
   },
 ];
 
-// Связи между узлами
+// ==================== EDGES ====================
+
 export const initialEdges: Edge[] = [
   // AI → Theories
   { id: 'ai-ml', source: 'ai', target: 'ml', animated: true },
@@ -451,18 +659,31 @@ export const initialEdges: Edge[] = [
   { id: 'ml-unsup', source: 'ml', target: 'unsupervised' },
   { id: 'ml-rl', source: 'ml', target: 'rl' },
   
-  // DL → Algorithms
+  // Supervised → Algorithms
+  { id: 'sup-linreg', source: 'supervised', target: 'linear-reg' },
+  { id: 'sup-tree', source: 'supervised', target: 'decision-tree' },
+  { id: 'sup-rf', source: 'supervised', target: 'random-forest' },
+  { id: 'sup-svm', source: 'supervised', target: 'svm' },
+  
+  // Unsupervised → Algorithms
+  { id: 'unsup-kmeans', source: 'unsupervised', target: 'kmeans' },
+  { id: 'unsup-pca', source: 'unsupervised', target: 'pca' },
+  
+  // RL → Algorithms
+  { id: 'rl-qlearn', source: 'rl', target: 'qlearning' },
+  
+  // DL → Architectures
   { id: 'dl-nn', source: 'dl', target: 'nn' },
   { id: 'dl-cnn', source: 'dl', target: 'cnn' },
-  { id: 'dl-trans', source: 'dl', target: 'transformer' },
+  { id: 'nn-trans', source: 'nn', target: 'transformer' },
   
   // NLP → Implementations
   { id: 'nlp-llm', source: 'nlp', target: 'llm' },
   { id: 'nlp-emb', source: 'nlp', target: 'embeddings' },
   { id: 'nlp-tok', source: 'nlp', target: 'tokenization' },
   
-  // Cross-connections (dashed)
+  // Cross-connections (dashed = связь между ветками)
   { id: 'trans-llm', source: 'transformer', target: 'llm', style: { strokeDasharray: '5,5' } },
-  { id: 'nn-cnn', source: 'nn', target: 'cnn', style: { strokeDasharray: '5,5' } },
   { id: 'sup-nn', source: 'supervised', target: 'nn', style: { strokeDasharray: '5,5' } },
+  { id: 'tree-rf', source: 'decision-tree', target: 'random-forest', style: { strokeDasharray: '5,5' } },
 ];

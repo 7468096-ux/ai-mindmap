@@ -90,7 +90,7 @@ export default function MindMap() {
         <div className="text-gray-400 mb-2 uppercase tracking-wide">
           {lang === 'ru' ? 'Уровень абстракции' : 'Abstraction Level'}
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mb-3">
           {(Object.keys(levelColors) as Array<keyof typeof levelColors>).map((level) => (
             <span key={level} className="flex items-center gap-1.5 text-gray-300">
               <span 
@@ -100,6 +100,19 @@ export default function MindMap() {
               {levelLabels[lang][level]}
             </span>
           ))}
+        </div>
+        <div className="text-gray-400 mb-2 uppercase tracking-wide border-t border-gray-700 pt-2">
+          {lang === 'ru' ? 'Связи' : 'Connections'}
+        </div>
+        <div className="flex flex-wrap gap-3 text-gray-300">
+          <span className="flex items-center gap-1.5">
+            <span className="w-6 h-0.5 bg-indigo-500" />
+            {lang === 'ru' ? 'Прямая связь' : 'Direct'}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-6 h-0.5 bg-indigo-500" style={{ backgroundImage: 'repeating-linear-gradient(90deg, #6366f1 0, #6366f1 4px, transparent 4px, transparent 8px)' }} />
+            {lang === 'ru' ? 'Кросс-связь' : 'Cross-link'}
+          </span>
         </div>
       </div>
     </div>

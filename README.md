@@ -38,10 +38,12 @@ src/
 ## Roadmap
 
 - [x] v0.1 - Basic structure with core AI concepts
-- [ ] v0.2 - Full ML branch with descriptions
-- [ ] v0.3 - Deep Learning details
-- [ ] v0.4 - NLP & Computer Vision
-- [ ] v1.0 - Complete interactive map
+- [x] v0.2 - Language toggle (RU/EN) + expanded descriptions
+- [x] v0.3 - Full ML branch with algorithms
+- [ ] v0.4 - Deep Learning details (RNN, GAN, Diffusion)
+- [ ] v0.5 - Computer Vision branch
+- [ ] v0.6 - Generative AI branch
+- [ ] v1.0 - Complete interactive map with 50+ terms
 
 ## License
 
