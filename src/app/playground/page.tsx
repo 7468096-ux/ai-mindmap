@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './space.css';
 
 // Тестовые ноды
@@ -12,22 +12,56 @@ const testNodes = [
   { id: 5, name: 'Output', type: 'output', x: 85, y: 35 },
 ];
 
+// Генерируем случайные звёзды для каждого слоя
+function generateStars(count: number, seed: number) {
+  const stars = [];
+  for (let i = 0; i < count; i++) {
+    const rand = (seed * (i + 1) * 9301 + 49297) % 233280;
+    const rand2 = (seed * (i + 2) * 9301 + 49297) % 233280;
+    stars.push({
+      x: (rand / 233280) * 120 - 10, // -10% to 110%
+      y: (rand2 / 233280) * 120 - 10,
+    });
+  }
+  return stars;
+}
+
+const starLayers = [
+  { stars: generateStars(50, 1), size: 1, speed: 40, opacity: 0.4 },
+  { stars: generateStars(40, 2), size: 1.5, speed: 32, opacity: 0.5 },
+  { stars: generateStars(30, 3), size: 2, speed: 24, opacity: 0.6 },
+  { stars: generateStars(25, 4), size: 2.5, speed: 18, opacity: 0.7 },
+  { stars: generateStars(20, 5), size: 3, speed: 12, opacity: 0.8 },
+  { stars: generateStars(10, 6), size: 4, speed: 6, opacity: 1 },
+];
+
 export default function Playground() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [smoothTilt, setSmoothTilt] = useState({ x: 0, y: 0 });
+  const targetTilt = useRef({ x: 0, y: 0 });
+  const animationRef = useRef<number>();
   const [permissionGranted, setPermissionGranted] = useState(false);
 
   useEffect(() => {
+    // Плавное сглаживание (lerp)
+    const smoothing = () => {
+      setSmoothTilt(prev => ({
+        x: prev.x + (targetTilt.current.x - prev.x) * 0.08,
+        y: prev.y + (targetTilt.current.y - prev.y) * 0.08,
+      }));
+      animationRef.current = requestAnimationFrame(smoothing);
+    };
+    animationRef.current = requestAnimationFrame(smoothing);
+
     // Обработчик гироскопа
     const handleOrientation = (event: DeviceOrientationEvent) => {
-      const x = event.gamma || 0; // Наклон влево/вправо (-90 to 90)
-      const y = event.beta || 0;  // Наклон вперёд/назад (-180 to 180)
+      const x = event.gamma || 0;
+      const y = event.beta || 0;
       
-      // Ограничиваем и нормализуем значения
-      const normalizedX = Math.max(-30, Math.min(30, x)) / 30;
-      const normalizedY = Math.max(-30, Math.min(30, y - 45)) / 30; // -45 для естественного угла держания
+      const normalizedX = Math.max(-25, Math.min(25, x)) / 25;
+      const normalizedY = Math.max(-25, Math.min(25, y - 45)) / 25;
       
-      setTilt({ x: normalizedX, y: normalizedY });
+      targetTilt.current = { x: normalizedX, y: normalizedY };
     };
 
     // Для iOS 13+ нужно запросить разрешение
@@ -43,7 +77,6 @@ export default function Playground() {
           console.log('Gyro permission denied');
         }
       } else {
-        // Не iOS или старая версия — просто слушаем
         setPermissionGranted(true);
         window.addEventListener('deviceorientation', handleOrientation);
       }
@@ -53,24 +86,24 @@ export default function Playground() {
     const handleMouseMove = (event: MouseEvent) => {
       const x = (event.clientX / window.innerWidth - 0.5) * 2;
       const y = (event.clientY / window.innerHeight - 0.5) * 2;
-      setTilt({ x, y });
+      targetTilt.current = { x, y };
     };
 
-    // Проверяем поддержку гироскопа
     if (window.DeviceOrientationEvent) {
       requestPermission();
     }
     
-    // Мышь как fallback для десктопа
     window.addEventListener('mousemove', handleMouseMove);
 
     return () => {
       window.removeEventListener('deviceorientation', handleOrientation);
       window.removeEventListener('mousemove', handleMouseMove);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
     };
   }, []);
 
-  // Функция для запроса разрешения по тапу (iOS)
   const requestGyroPermission = async () => {
     if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
       const permission = await (DeviceOrientationEvent as any).requestPermission();
@@ -83,25 +116,30 @@ export default function Playground() {
 
   return (
     <div className="space-container">
-      {/* Звёзды с параллаксом */}
-      <div 
-        className="stars stars-small"
-        style={{
-          transform: `translate(${tilt.x * 30}px, ${tilt.y * 30}px)`
-        }}
-      ></div>
-      <div 
-        className="stars stars-medium"
-        style={{
-          transform: `translate(${tilt.x * 20}px, ${tilt.y * 20}px)`
-        }}
-      ></div>
-      <div 
-        className="stars stars-large"
-        style={{
-          transform: `translate(${tilt.x * 10}px, ${tilt.y * 10}px)`
-        }}
-      ></div>
+      {/* Слои звёзд с параллаксом */}
+      {starLayers.map((layer, layerIndex) => (
+        <div
+          key={layerIndex}
+          className="star-layer"
+          style={{
+            transform: `translate(${smoothTilt.x * layer.speed}px, ${smoothTilt.y * layer.speed}px)`,
+          }}
+        >
+          {layer.stars.map((star, starIndex) => (
+            <div
+              key={starIndex}
+              className="star"
+              style={{
+                left: `${star.x}%`,
+                top: `${star.y}%`,
+                width: `${layer.size}px`,
+                height: `${layer.size}px`,
+                opacity: layer.opacity,
+              }}
+            />
+          ))}
+        </div>
+      ))}
 
       {/* Заголовок */}
       <h1 className="space-title">🌌 Neural Explorer - Space Design</h1>

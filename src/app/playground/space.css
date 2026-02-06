@@ -7,54 +7,51 @@
   font-family: system-ui, -apple-system, sans-serif;
 }
 
-/* === ЗВЁЗДЫ === */
-.stars {
+/* === СЛОИ ЗВЁЗД === */
+.star-layer {
   position: absolute;
-  inset: -50px; /* Расширяем за края для параллакса */
+  inset: -60px;
   pointer-events: none;
-  transition: transform 0.1s ease-out;
   will-change: transform;
 }
 
-.stars-small {
-  background-image: 
-    radial-gradient(1px 1px at 20px 30px, white, transparent),
-    radial-gradient(1px 1px at 40px 70px, rgba(255,255,255,0.8), transparent),
-    radial-gradient(1px 1px at 50px 160px, rgba(255,255,255,0.6), transparent),
-    radial-gradient(1px 1px at 90px 40px, white, transparent),
-    radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.7), transparent),
-    radial-gradient(1px 1px at 160px 120px, white, transparent),
-    radial-gradient(1px 1px at 200px 50px, rgba(255,255,255,0.5), transparent),
-    radial-gradient(1px 1px at 250px 180px, white, transparent),
-    radial-gradient(1px 1px at 300px 90px, rgba(255,255,255,0.8), transparent),
-    radial-gradient(1px 1px at 350px 140px, white, transparent);
-  background-size: 400px 200px;
-  animation: twinkle 4s ease-in-out infinite;
+/* === ОТДЕЛЬНЫЕ ЗВЁЗДЫ === */
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 4px 1px rgba(255, 255, 255, 0.3);
 }
 
-.stars-medium {
-  background-image: 
-    radial-gradient(2px 2px at 100px 50px, #00d4ff, transparent),
-    radial-gradient(2px 2px at 200px 150px, #a855f7, transparent),
-    radial-gradient(2px 2px at 300px 100px, #10b981, transparent),
-    radial-gradient(2px 2px at 400px 200px, #fbbf24, transparent),
-    radial-gradient(2px 2px at 150px 250px, #00d4ff, transparent);
-  background-size: 500px 300px;
-  animation: twinkle 6s ease-in-out infinite reverse;
+/* Мерцание для некоторых звёзд */
+.star-layer:nth-child(1) .star:nth-child(3n) {
+  animation: twinkle 3s ease-in-out infinite;
 }
 
-.stars-large {
-  background-image: 
-    radial-gradient(3px 3px at 250px 100px, white, transparent),
-    radial-gradient(3px 3px at 450px 300px, #a855f7, transparent),
-    radial-gradient(3px 3px at 100px 400px, #00d4ff, transparent);
-  background-size: 600px 500px;
-  animation: twinkle 8s ease-in-out infinite;
+.star-layer:nth-child(2) .star:nth-child(4n) {
+  animation: twinkle 4s ease-in-out infinite 0.5s;
+}
+
+.star-layer:nth-child(3) .star:nth-child(5n) {
+  animation: twinkle 5s ease-in-out infinite 1s;
+}
+
+.star-layer:nth-child(4) .star:nth-child(3n+1) {
+  animation: twinkle 4s ease-in-out infinite 1.5s;
+}
+
+.star-layer:nth-child(5) .star:nth-child(2n) {
+  animation: twinkle 3.5s ease-in-out infinite 0.8s;
+}
+
+.star-layer:nth-child(6) .star {
+  animation: twinkle 6s ease-in-out infinite;
+  box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.5);
 }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%, 100% { opacity: inherit; }
+  50% { opacity: 0.3; }
 }
 
 /* === ЗАГОЛОВКИ === */
@@ -78,6 +75,8 @@
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.9rem;
   z-index: 100;
+  text-align: center;
+  padding: 0 20px;
 }
 
 /* === НОДЫ === */
@@ -225,7 +224,7 @@
   opacity: 0.6;
 }
 
-/* === АНИМАЦИЯ ПУЛЬСА === */
+/* === АНИМАЦИЯ ПУЛЬСА НОД === */
 @keyframes pulse {
   0%, 100% { 
     transform: translate(-50%, -50%) scale(1);
