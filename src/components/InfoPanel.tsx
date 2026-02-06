@@ -47,7 +47,7 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
           <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3">
             🎮 {lang === 'ru' ? 'Интерактивное демо' : 'Interactive Demo'}
           </h3>
-          <DemoComponent />
+          <DemoComponent lang={lang} />
         </div>
       )}
       
