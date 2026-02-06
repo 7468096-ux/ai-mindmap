@@ -8,7 +8,6 @@ import {
   useNodesState,
   useEdgesState,
   BackgroundVariant,
-  Node,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -28,8 +27,8 @@ export default function MindMap() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNode, setSelectedNode] = useState<AINode | null>(null);
 
-  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
-    setSelectedNode(node as AINode);
+  const onNodeClick = useCallback((_: React.MouseEvent, node: AINode) => {
+    setSelectedNode(node);
   }, []);
 
   const onPaneClick = useCallback(() => {

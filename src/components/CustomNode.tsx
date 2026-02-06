@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { Handle, Position, NodeProps } from '@xyflow/react';
+import { Handle, Position } from '@xyflow/react';
 import { categoryColors } from '@/data/nodes';
 
 interface CustomNodeData {
@@ -11,8 +11,13 @@ interface CustomNodeData {
   category: 'root' | 'branch' | 'concept' | 'technique';
 }
 
-function CustomNode({ data, selected }: NodeProps<{ data: CustomNodeData }>) {
-  const nodeData = data as unknown as CustomNodeData;
+interface CustomNodeProps {
+  data: CustomNodeData;
+  selected?: boolean;
+}
+
+function CustomNode({ data, selected }: CustomNodeProps) {
+  const nodeData = data;
   const bgColor = categoryColors[nodeData.category];
   
   return (
