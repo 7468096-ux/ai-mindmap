@@ -12,15 +12,23 @@ const testNodes = [
   { id: 5, name: 'Output', type: 'output', x: 85, y: 35 },
 ];
 
-// Генерируем случайные звёзды для каждого слоя
+// Генерируем случайные звёзды для каждого слоя (улучшенный PRNG)
 function generateStars(count: number, seed: number) {
   const stars = [];
+  let s = seed;
+  
+  const random = () => {
+    s = (s * 1103515245 + 12345) & 0x7fffffff;
+    return s / 0x7fffffff;
+  };
+  
+  // Прогреваем генератор
+  for (let i = 0; i < 10; i++) random();
+  
   for (let i = 0; i < count; i++) {
-    const rand = (seed * (i + 1) * 9301 + 49297) % 233280;
-    const rand2 = (seed * (i + 2) * 9301 + 49297) % 233280;
     stars.push({
-      x: (rand / 233280) * 120 - 10, // -10% to 110%
-      y: (rand2 / 233280) * 120 - 10,
+      x: random() * 120 - 10, // -10% to 110%
+      y: random() * 120 - 10,
     });
   }
   return stars;
