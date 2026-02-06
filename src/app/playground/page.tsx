@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './space.css';
 
 // Тестовые ноды
@@ -14,17 +14,107 @@ const testNodes = [
 
 export default function Playground() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [permissionGranted, setPermissionGranted] = useState(false);
+
+  useEffect(() => {
+    // Обработчик гироскопа
+    const handleOrientation = (event: DeviceOrientationEvent) => {
+      const x = event.gamma || 0; // Наклон влево/вправо (-90 to 90)
+      const y = event.beta || 0;  // Наклон вперёд/назад (-180 to 180)
+      
+      // Ограничиваем и нормализуем значения
+      const normalizedX = Math.max(-30, Math.min(30, x)) / 30;
+      const normalizedY = Math.max(-30, Math.min(30, y - 45)) / 30; // -45 для естественного угла держания
+      
+      setTilt({ x: normalizedX, y: normalizedY });
+    };
+
+    // Для iOS 13+ нужно запросить разрешение
+    const requestPermission = async () => {
+      if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+        try {
+          const permission = await (DeviceOrientationEvent as any).requestPermission();
+          if (permission === 'granted') {
+            setPermissionGranted(true);
+            window.addEventListener('deviceorientation', handleOrientation);
+          }
+        } catch (error) {
+          console.log('Gyro permission denied');
+        }
+      } else {
+        // Не iOS или старая версия — просто слушаем
+        setPermissionGranted(true);
+        window.addEventListener('deviceorientation', handleOrientation);
+      }
+    };
+
+    // Fallback: движение мышью на десктопе
+    const handleMouseMove = (event: MouseEvent) => {
+      const x = (event.clientX / window.innerWidth - 0.5) * 2;
+      const y = (event.clientY / window.innerHeight - 0.5) * 2;
+      setTilt({ x, y });
+    };
+
+    // Проверяем поддержку гироскопа
+    if (window.DeviceOrientationEvent) {
+      requestPermission();
+    }
+    
+    // Мышь как fallback для десктопа
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('deviceorientation', handleOrientation);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
+  // Функция для запроса разрешения по тапу (iOS)
+  const requestGyroPermission = async () => {
+    if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+      const permission = await (DeviceOrientationEvent as any).requestPermission();
+      if (permission === 'granted') {
+        setPermissionGranted(true);
+        window.location.reload();
+      }
+    }
+  };
 
   return (
     <div className="space-container">
-      {/* Звёзды */}
-      <div className="stars stars-small"></div>
-      <div className="stars stars-medium"></div>
-      <div className="stars stars-large"></div>
+      {/* Звёзды с параллаксом */}
+      <div 
+        className="stars stars-small"
+        style={{
+          transform: `translate(${tilt.x * 30}px, ${tilt.y * 30}px)`
+        }}
+      ></div>
+      <div 
+        className="stars stars-medium"
+        style={{
+          transform: `translate(${tilt.x * 20}px, ${tilt.y * 20}px)`
+        }}
+      ></div>
+      <div 
+        className="stars stars-large"
+        style={{
+          transform: `translate(${tilt.x * 10}px, ${tilt.y * 10}px)`
+        }}
+      ></div>
 
       {/* Заголовок */}
       <h1 className="space-title">🌌 Neural Explorer - Space Design</h1>
-      <p className="space-subtitle">Кликни на ноду чтобы увидеть свечение</p>
+      <p className="space-subtitle">
+        Кликни на ноду • Поверни телефон — звёзды двигаются
+      </p>
+      
+      {/* Кнопка разрешения для iOS */}
+      {!permissionGranted && typeof window !== 'undefined' && 'DeviceOrientationEvent' in window && (
+        <button className="gyro-button" onClick={requestGyroPermission}>
+          🎯 Включить гироскоп
+        </button>
+      )}
 
       {/* Ноды */}
       {testNodes.map((node) => (
