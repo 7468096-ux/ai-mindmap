@@ -1,0 +1,245 @@
+/* === КОСМИЧЕСКИЙ ФОН === */
+.space-container {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+  overflow: hidden;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* === ЗВЁЗДЫ === */
+.stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.stars-small {
+  background-image: 
+    radial-gradient(1px 1px at 20px 30px, white, transparent),
+    radial-gradient(1px 1px at 40px 70px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 50px 160px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1px 1px at 90px 40px, white, transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1px 1px at 160px 120px, white, transparent),
+    radial-gradient(1px 1px at 200px 50px, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1px 1px at 250px 180px, white, transparent),
+    radial-gradient(1px 1px at 300px 90px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 350px 140px, white, transparent);
+  background-size: 400px 200px;
+  animation: twinkle 4s ease-in-out infinite;
+}
+
+.stars-medium {
+  background-image: 
+    radial-gradient(2px 2px at 100px 50px, #00d4ff, transparent),
+    radial-gradient(2px 2px at 200px 150px, #a855f7, transparent),
+    radial-gradient(2px 2px at 300px 100px, #10b981, transparent),
+    radial-gradient(2px 2px at 400px 200px, #fbbf24, transparent),
+    radial-gradient(2px 2px at 150px 250px, #00d4ff, transparent);
+  background-size: 500px 300px;
+  animation: twinkle 6s ease-in-out infinite reverse;
+}
+
+.stars-large {
+  background-image: 
+    radial-gradient(3px 3px at 250px 100px, white, transparent),
+    radial-gradient(3px 3px at 450px 300px, #a855f7, transparent),
+    radial-gradient(3px 3px at 100px 400px, #00d4ff, transparent);
+  background-size: 600px 500px;
+  animation: twinkle 8s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === ЗАГОЛОВКИ === */
+.space-title {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+  z-index: 100;
+}
+
+.space-subtitle {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  z-index: 100;
+}
+
+/* === НОДЫ === */
+.space-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.node-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.node-icon {
+  font-size: 1.5rem;
+}
+
+.node-name {
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* === ТИПЫ НОД === */
+.node-input .node-content {
+  border-color: rgba(0, 212, 255, 0.3);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+}
+
+.node-hidden .node-content {
+  border-color: rgba(168, 85, 247, 0.3);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.1);
+}
+
+.node-output .node-content {
+  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+}
+
+/* === HOVER === */
+.space-node:hover .node-content {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
+}
+
+.node-input:hover .node-content {
+  border-color: rgba(0, 212, 255, 0.6);
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+}
+
+.node-hidden:hover .node-content {
+  border-color: rgba(168, 85, 247, 0.6);
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+}
+
+.node-output:hover .node-content {
+  border-color: rgba(16, 185, 129, 0.6);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+}
+
+/* === СВЕЧЕНИЕ (GLOW) === */
+.node-glow {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120%;
+  height: 60px;
+  border-radius: 50%;
+  opacity: 0;
+  filter: blur(20px);
+  transition: all 0.4s ease;
+  pointer-events: none;
+}
+
+.node-input .node-glow {
+  background: radial-gradient(ellipse, rgba(0, 212, 255, 0.6) 0%, transparent 70%);
+}
+
+.node-hidden .node-glow {
+  background: radial-gradient(ellipse, rgba(168, 85, 247, 0.6) 0%, transparent 70%);
+}
+
+.node-output .node-glow {
+  background: radial-gradient(ellipse, rgba(16, 185, 129, 0.6) 0%, transparent 70%);
+}
+
+/* === SELECTED STATE === */
+.space-node.selected .node-glow {
+  opacity: 1;
+  height: 80px;
+  bottom: -30px;
+}
+
+.space-node.selected .node-content {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.1);
+}
+
+.node-input.selected .node-content {
+  border-color: #00d4ff;
+  box-shadow: 
+    0 0 40px rgba(0, 212, 255, 0.4),
+    inset 0 0 20px rgba(0, 212, 255, 0.1);
+}
+
+.node-hidden.selected .node-content {
+  border-color: #a855f7;
+  box-shadow: 
+    0 0 40px rgba(168, 85, 247, 0.4),
+    inset 0 0 20px rgba(168, 85, 247, 0.1);
+}
+
+.node-output.selected .node-content {
+  border-color: #10b981;
+  box-shadow: 
+    0 0 40px rgba(16, 185, 129, 0.4),
+    inset 0 0 20px rgba(16, 185, 129, 0.1);
+}
+
+/* === ЛИНИИ СВЯЗЕЙ === */
+.connections {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.connections line {
+  stroke-linecap: round;
+  opacity: 0.6;
+}
+
+/* === АНИМАЦИЯ ПУЛЬСА === */
+@keyframes pulse {
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.02);
+    opacity: 0.9;
+  }
+}
+
+.space-node {
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.space-node:nth-child(2) { animation-delay: 0.5s; }
+.space-node:nth-child(3) { animation-delay: 1s; }
+.space-node:nth-child(4) { animation-delay: 1.5s; }
+.space-node:nth-child(5) { animation-delay: 2s; }
