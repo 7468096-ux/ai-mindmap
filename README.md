@@ -1,0 +1,48 @@
+# 🧠 AI Mindmap
+
+Interactive visual map of AI/ML terminology. Click on any concept to learn more.
+
+## Features
+
+- 🗺️ Hierarchical visualization of AI concepts
+- 🖱️ Click nodes to see descriptions
+- 🔗 Smooth curved connections between related concepts
+- 📱 Responsive design
+
+## Tech Stack
+
+- **Next.js 14** - React framework
+- **React Flow** - Interactive node-based UI
+- **Tailwind CSS** - Styling
+- **TypeScript** - Type safety
+
+## Getting Started
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000)
+
+## Structure
+
+```
+src/
+├── app/           # Next.js app router
+├── components/    # React components
+├── data/          # AI terms and connections
+└── styles/        # Global styles
+```
+
+## Roadmap
+
+- [x] v0.1 - Basic structure with core AI concepts
+- [ ] v0.2 - Full ML branch with descriptions
+- [ ] v0.3 - Deep Learning details
+- [ ] v0.4 - NLP & Computer Vision
+- [ ] v1.0 - Complete interactive map
+
+## License
+
+MIT
