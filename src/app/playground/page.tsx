@@ -27,20 +27,20 @@ function generateStars(count: number, seed: number) {
   
   for (let i = 0; i < count; i++) {
     stars.push({
-      x: random() * 120 - 10, // -10% to 110%
-      y: random() * 120 - 10,
+      x: random() * 200 - 50, // -50% to 150% (больше поле для движения)
+      y: random() * 200 - 50,
     });
   }
   return stars;
 }
 
 const starLayers = [
-  { stars: generateStars(50, 1), size: 1, speed: 40, opacity: 0.4 },
-  { stars: generateStars(40, 2), size: 1.5, speed: 32, opacity: 0.5 },
-  { stars: generateStars(30, 3), size: 2, speed: 24, opacity: 0.6 },
-  { stars: generateStars(25, 4), size: 2.5, speed: 18, opacity: 0.7 },
-  { stars: generateStars(20, 5), size: 3, speed: 12, opacity: 0.8 },
-  { stars: generateStars(10, 6), size: 4, speed: 6, opacity: 1 },
+  { stars: generateStars(50, 1), size: 1, speed: 120, opacity: 0.4 },
+  { stars: generateStars(40, 2), size: 1.5, speed: 100, opacity: 0.5 },
+  { stars: generateStars(30, 3), size: 2, speed: 80, opacity: 0.6 },
+  { stars: generateStars(25, 4), size: 2.5, speed: 60, opacity: 0.7 },
+  { stars: generateStars(20, 5), size: 3, speed: 40, opacity: 0.8 },
+  { stars: generateStars(10, 6), size: 4, speed: 20, opacity: 1 },
 ];
 
 export default function Playground() {
@@ -61,13 +61,14 @@ export default function Playground() {
     };
     animationRef.current = requestAnimationFrame(smoothing);
 
-    // Обработчик гироскопа
+    // Обработчик гироскопа (расширенный угол)
     const handleOrientation = (event: DeviceOrientationEvent) => {
       const x = event.gamma || 0;
       const y = event.beta || 0;
       
-      const normalizedX = Math.max(-25, Math.min(25, x)) / 25;
-      const normalizedY = Math.max(-25, Math.min(25, y - 45)) / 25;
+      // Расширенный диапазон: ±60 градусов
+      const normalizedX = Math.max(-60, Math.min(60, x)) / 60;
+      const normalizedY = Math.max(-60, Math.min(60, y - 30)) / 60;
       
       targetTilt.current = { x: normalizedX, y: normalizedY };
     };

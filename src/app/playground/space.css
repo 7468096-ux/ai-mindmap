@@ -10,7 +10,7 @@
 /* === СЛОИ ЗВЁЗД === */
 .star-layer {
   position: absolute;
-  inset: -60px;
+  inset: -150px;
   pointer-events: none;
   will-change: transform;
 }
