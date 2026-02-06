@@ -16,10 +16,10 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
   const color = levelColors[level];
 
   return (
-    <div className="absolute right-4 top-4 w-96 bg-gray-900 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[90vh] overflow-y-auto">
+    <div className="absolute right-4 top-4 w-[420px] bg-gray-900 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[90vh] overflow-y-auto">
       {/* Header */}
       <div 
-        className="p-4 flex items-center gap-3 sticky top-0"
+        className="p-4 flex items-center gap-3 sticky top-0 z-10"
         style={{ backgroundColor: color }}
       >
         {emoji && <span className="text-3xl">{emoji}</span>}
@@ -45,9 +45,9 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
       </div>
       
       {/* Key Points */}
-      <div className="p-4">
+      <div className="p-4 border-b border-gray-800">
         <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3">
-          {lang === 'ru' ? 'Ключевые моменты' : 'Key Points'}
+          {lang === 'ru' ? '📌 Ключевые моменты' : '📌 Key Points'}
         </h3>
         <ul className="space-y-2">
           {content.keyPoints.map((point, i) => (
@@ -56,6 +56,16 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
             </li>
           ))}
         </ul>
+      </div>
+      
+      {/* How It Works */}
+      <div className="p-4">
+        <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3">
+          {lang === 'ru' ? '⚙️ Как это работает' : '⚙️ How It Works'}
+        </h3>
+        <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line">
+          {content.howItWorks}
+        </p>
       </div>
     </div>
   );

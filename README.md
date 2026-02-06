@@ -40,9 +40,9 @@ src/
 - [x] v0.1 - Basic structure with core AI concepts
 - [x] v0.2 - Language toggle (RU/EN) + expanded descriptions
 - [x] v0.3 - Full ML branch with algorithms
-- [ ] v0.4 - Deep Learning details (RNN, GAN, Diffusion)
+- [x] v0.4 - Deep Learning details + "How It Works" section
 - [ ] v0.5 - Computer Vision branch
-- [ ] v0.6 - Generative AI branch
+- [ ] v0.6 - More implementations (BERT, GPT, CLIP)
 - [ ] v1.0 - Complete interactive map with 50+ terms
 
 ## License
