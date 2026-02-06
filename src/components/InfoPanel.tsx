@@ -1,6 +1,7 @@
 'use client';
 
 import { AINode, levelColors, levelLabels, Language } from '@/data/nodes';
+import { hasDemo, getDemo } from './demos';
 
 interface InfoPanelProps {
   node: AINode | null;
@@ -14,6 +15,9 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
   const { emoji, level } = node.data;
   const content = node.data[lang];
   const color = levelColors[level];
+  
+  const DemoComponent = getDemo(node.id);
+  const showDemo = hasDemo(node.id);
 
   return (
     <div className="absolute right-4 top-4 w-[420px] bg-gray-900 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[90vh] overflow-y-auto">
@@ -37,6 +41,16 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
         </button>
       </div>
       
+      {/* Interactive Demo */}
+      {showDemo && DemoComponent && (
+        <div className="p-4 border-b border-gray-800">
+          <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3">
+            🎮 {lang === 'ru' ? 'Интерактивное демо' : 'Interactive Demo'}
+          </h3>
+          <DemoComponent />
+        </div>
+      )}
+      
       {/* Description */}
       <div className="p-4 border-b border-gray-800">
         <p className="text-gray-300 text-sm leading-relaxed">
@@ -47,7 +61,7 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
       {/* Key Points */}
       <div className="p-4 border-b border-gray-800">
         <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3">
-          {lang === 'ru' ? '📌 Ключевые моменты' : '📌 Key Points'}
+          📌 {lang === 'ru' ? 'Ключевые моменты' : 'Key Points'}
         </h3>
         <ul className="space-y-2">
           {content.keyPoints.map((point, i) => (
@@ -61,7 +75,7 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
       {/* How It Works */}
       <div className="p-4">
         <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3">
-          {lang === 'ru' ? '⚙️ Как это работает' : '⚙️ How It Works'}
+          ⚙️ {lang === 'ru' ? 'Как это работает' : 'How It Works'}
         </h3>
         <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line">
           {content.howItWorks}
