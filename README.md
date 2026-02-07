@@ -1,50 +1,164 @@
-# 🧠 AI Mindmap
+# 🧠 AI Mindmap v1.0
 
-Interactive visual map of AI/ML terminology. Click on any concept to learn more.
+> Интерактивная визуальная карта AI/ML терминологии для изучения искусственного интеллекта
 
-## Features
+[![Deploy](https://github.com/7468096-ux/ai-mindmap/actions/workflows/nextjs.yml/badge.svg)](https://github.com/7468096-ux/ai-mindmap/actions)
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://7468096-ux.github.io/ai-mindmap/)
 
-- 🗺️ Hierarchical visualization of AI concepts
-- 🖱️ Click nodes to see descriptions
-- 🔗 Smooth curved connections between related concepts
-- 📱 Responsive design
+## 🎯 О проекте
 
-## Tech Stack
+AI Mindmap — это образовательный инструмент для изучения иерархии концепций искусственного интеллекта. Проект визуализирует связи между понятиями от высокоуровневых областей (AI, ML, DL) до конкретных имплементаций (GPT, BERT, YOLO).
 
-- **Next.js 14** - React framework
-- **React Flow** - Interactive node-based UI
-- **Tailwind CSS** - Styling
-- **TypeScript** - Type safety
+**Live Demo:** https://7468096-ux.github.io/ai-mindmap/
 
-## Getting Started
+## ✨ Возможности v1.0
 
-```bash
-npm install
-npm run dev
+### Контент
+- 📚 **112 нод** — полное покрытие AI/ML терминологии
+- 🌍 **Двуязычность** — русский и английский языки
+- 📖 **Подробные описания** — для каждого понятия
+- 🔑 **Key Points** — ключевые факты в каждой ноде
+- 🔧 **How It Works** — объяснение механизмов работы
+
+### Интерактивность
+- 🎮 **25 интерактивных демо** — визуализация алгоритмов в действии
+- 🖱️ **Drag & Drop** — перетаскивание нод
+- 🔍 **Zoom & Pan** — масштабирование и навигация
+- ✨ **Космический UI** — анимированный фон со звёздами
+
+### Демо-визуализации
+| Категория | Демо |
+|-----------|------|
+| **Regression** | Linear Regression, Logistic Regression |
+| **Classification** | Decision Tree, Random Forest, SVM, XGBoost |
+| **Clustering** | K-Means, PCA |
+| **Neural Networks** | NN, CNN, RNN, LSTM, Dropout |
+| **Attention** | Attention, Transformer, ViT |
+| **Generative** | GAN, VAE, Autoencoder, Diffusion |
+| **NLP** | Tokenization, Embeddings, Word2Vec |
+| **RL** | Q-Learning |
+| **Architecture** | ResNet |
+
+## 🏗️ Архитектура
+
+### Иерархия уровней
+```
+Field (Область)
+  └── Theory (Теория)
+        └── Method (Метод)
+              └── Algorithm (Алгоритм)
+                    └── Implementation (Имплементация)
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+### Основные ветки
+```
+AI (Искусственный Интеллект)
+├── ML (Machine Learning)
+│   ├── Supervised Learning
+│   │   ├── Linear Regression, Logistic Regression
+│   │   ├── Decision Tree, Random Forest, XGBoost
+│   │   ├── SVM, Neural Networks
+│   │   └── ...
+│   ├── Unsupervised Learning
+│   │   ├── K-Means, PCA
+│   │   └── ...
+│   └── Reinforcement Learning
+│       └── Q-Learning, ...
+│
+├── Deep Learning
+│   ├── CNN, RNN, LSTM
+│   ├── Transformer, Attention
+│   ├── GAN, VAE, Diffusion
+│   └── ...
+│
+├── NLP (Natural Language Processing)
+│   ├── Tokenization, Embeddings
+│   ├── LLM (GPT, BERT, Claude)
+│   └── RAG, Agents
+│
+└── Computer Vision
+    ├── Classification, Detection, Segmentation
+    ├── ResNet, ViT, YOLO
+    └── CLIP, Stable Diffusion
+```
 
-## Structure
+## 🛠️ Tech Stack
+
+- **Framework:** Next.js 14 (App Router)
+- **UI:** React 18 + TypeScript
+- **Styling:** Tailwind CSS
+- **Deployment:** GitHub Pages
+- **CI/CD:** GitHub Actions
+
+## 📦 Установка
+
+```bash
+# Клонирование
+git clone https://github.com/7468096-ux/ai-mindmap.git
+cd ai-mindmap
+
+# Установка зависимостей
+npm install
+
+# Запуск dev-сервера
+npm run dev
+
+# Сборка
+npm run build
+```
+
+## 📁 Структура проекта
 
 ```
 src/
-├── app/           # Next.js app router
-├── components/    # React components
-├── data/          # AI terms and connections
-└── styles/        # Global styles
+├── app/                    # Next.js app router
+│   ├── page.tsx           # Главная страница (mindmap)
+│   ├── playground/        # Демо-страница
+│   └── globals.css        # Глобальные стили
+├── components/
+│   ├── SpaceMindMap.tsx   # Основной компонент карты
+│   └── demos/             # 25 интерактивных демо
+│       ├── index.tsx      # Реестр демо
+│       ├── LinearRegressionDemo.tsx
+│       ├── CNNDemo.tsx
+│       └── ...
+└── data/
+    └── nodes.ts           # 112 нод с контентом
 ```
 
-## Roadmap
+## 📋 История версий
 
-- [x] v0.1 - Basic structure with core AI concepts
-- [x] v0.2 - Language toggle (RU/EN) + expanded descriptions
-- [x] v0.3 - Full ML branch with algorithms
-- [x] v0.4 - Deep Learning details + "How It Works" section
-- [ ] v0.5 - Computer Vision branch
-- [ ] v0.6 - More implementations (BERT, GPT, CLIP)
-- [ ] v1.0 - Complete interactive map with 50+ terms
+| Версия | Дата | Изменения |
+|--------|------|-----------|
+| v0.1 | 2024-01 | Базовая структура, core AI concepts |
+| v0.2 | 2024-01 | Переключатель языков RU/EN |
+| v0.3 | 2024-01 | Полная ветка ML с алгоритмами |
+| v0.4 | 2024-02 | Deep Learning + "How It Works" |
+| v0.5 | 2024-02 | Computer Vision branch |
+| v0.6 | 2024-02 | Implementations (BERT, GPT, CLIP) |
+| **v1.0** | **2024-02-07** | **112 нод, 25 демо, полное покрытие** |
 
-## License
+## 🚀 Roadmap v2.0
 
-MIT
+См. [ROADMAP.md](./ROADMAP.md) для детального плана развития.
+
+**Планируется:**
+- 📖 Learning Path (рекомендуемый порядок изучения)
+- 🧪 Режимы изучения (обзор / глубокое погружение / практика)
+- 📝 Примеры кода для каждого алгоритма
+- 🔗 Явные связи "Это нужно для..."
+- ✅ Прогресс изучения
+- 📊 Сравнительные таблицы алгоритмов
+
+## 🤝 Участие
+
+Issues и Pull Requests приветствуются!
+
+## 📄 Лицензия
+
+MIT License — свободное использование в любых целях.
+
+---
+
+**Автор:** [Aleksandr Lukashkin](https://github.com/7468096-ux)  
+**AI Assistant:** Alice 🐰 (Clawdbot)

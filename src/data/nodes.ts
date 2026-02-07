@@ -789,7 +789,7 @@ export const initialNodes: AINode[] = [
         label: 'LLM',
         description: 'Большие языковые модели — масштабные трансформеры обученные на огромных текстовых корпусах.',
         keyPoints: [
-          '📏 Размер: миллиарды параметров (GPT-4: ~1.7T)',
+          '📏 Размер: миллиарды параметров (GPT-4: сотни млрд+)',
           '📚 Обучение: весь интернет + книги + код',
           '🎭 Emergent abilities при масштабировании',
           '🔧 Примеры: GPT-4, Claude, Gemini, LLaMA',
@@ -800,7 +800,7 @@ export const initialNodes: AINode[] = [
         label: 'LLM',
         description: 'Large Language Models — massive transformers trained on huge text corpora.',
         keyPoints: [
-          '📏 Size: billions of parameters (GPT-4: ~1.7T)',
+          '📏 Size: billions of parameters (GPT-4: сотни млрд+)',
           '📚 Training: entire internet + books + code',
           '🎭 Emergent abilities at scale',
           '🔧 Examples: GPT-4, Claude, Gemini, LLaMA',
@@ -1072,10 +1072,10 @@ export const initialNodes: AINode[] = [
         keyPoints: [
           '📝 Decoder-only трансформер',
           '🎯 Обучение: предсказание следующего токена',
-          '📈 GPT-1 (117M) → GPT-4 (~1.7T параметров)',
+          '📈 GPT-1 (117M) → GPT-4 (сотни млрд+ параметров (точное число не раскрыто))',
           '💡 Emergent abilities: in-context learning, reasoning',
         ],
-        howItWorks: 'Архитектура: стек decoder блоков с masked self-attention (видит только прошлые токены). Pre-training: на триллионах токенов текста предсказывает следующий токен. Fine-tuning: RLHF (обучение на человеческих предпочтениях) для следования инструкциям. Inference: авторегрессивная генерация — предсказываем токен, добавляем к контексту, повторяем. Temperature контролирует "креативность". GPT-4: multimodal (текст + изображения), ~1.7T параметров, MoE архитектура.',
+        howItWorks: 'Архитектура: стек decoder блоков с masked self-attention (видит только прошлые токены). Pre-training: на триллионах токенов текста предсказывает следующий токен. Fine-tuning: RLHF (обучение на человеческих предпочтениях) для следования инструкциям. Inference: авторегрессивная генерация — предсказываем токен, добавляем к контексту, повторяем. Temperature контролирует "креативность". GPT-4: multimodal (текст + изображения), сотни млрд+ параметров (точное число не раскрыто), MoE архитектура.',
       },
       en: {
         label: 'GPT',
@@ -1083,10 +1083,10 @@ export const initialNodes: AINode[] = [
         keyPoints: [
           '📝 Decoder-only transformer',
           '🎯 Training: next token prediction',
-          '📈 GPT-1 (117M) → GPT-4 (~1.7T parameters)',
+          '📈 GPT-1 (117M) → GPT-4 (hundreds of billions+ (exact not disclosed))',
           '💡 Emergent abilities: in-context learning, reasoning',
         ],
-        howItWorks: 'Architecture: stack of decoder blocks with masked self-attention (sees only past tokens). Pre-training: on trillions of text tokens predicts next token. Fine-tuning: RLHF (learning from human preferences) for instruction following. Inference: autoregressive generation — predict token, add to context, repeat. Temperature controls "creativity". GPT-4: multimodal (text + images), ~1.7T parameters, MoE architecture.',
+        howItWorks: 'Architecture: stack of decoder blocks with masked self-attention (sees only past tokens). Pre-training: on trillions of text tokens predicts next token. Fine-tuning: RLHF (learning from human preferences) for instruction following. Inference: autoregressive generation — predict token, add to context, repeat. Temperature controls "creativity". GPT-4: multimodal (text + images), hundreds of billions+ (exact not disclosed), MoE architecture.',
       },
     },
   },
