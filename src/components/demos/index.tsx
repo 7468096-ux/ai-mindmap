@@ -28,6 +28,7 @@ const RNNDemo = dynamic(() => import('./RNNDemo'), { ssr: false });
 const RandomForestDemo = dynamic(() => import('./RandomForestDemo'), { ssr: false });
 const TransformerDemo = dynamic(() => import('./TransformerDemo'), { ssr: false });
 const VAEDemo = dynamic(() => import('./VAEDemo'), { ssr: false });
+const ResNetDemo = dynamic(() => import('./ResNetDemo'), { ssr: false });
 
 type DemoComponent = React.ComponentType<{ lang?: Language }>;
 
@@ -58,6 +59,7 @@ export const demos: Record<string, DemoComponent> = {
   'random-forest': RandomForestDemo,
   'transformer': TransformerDemo,
   'vae': VAEDemo,
+  'resnet': ResNetDemo,
 };
 
 export function hasDemo(nodeId: string): boolean {
