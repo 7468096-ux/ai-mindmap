@@ -24,6 +24,7 @@ const GANDemo = dynamic(() => import('./GANDemo'), { ssr: false });
 const QLearningDemo = dynamic(() => import('./QLearningDemo'), { ssr: false });
 const SVMDemo = dynamic(() => import('./SVMDemo'), { ssr: false });
 const LSTMDemo = dynamic(() => import('./LSTMDemo'), { ssr: false });
+const RNNDemo = dynamic(() => import('./RNNDemo'), { ssr: false });
 
 type DemoComponent = React.ComponentType<{ lang?: Language }>;
 
@@ -50,6 +51,7 @@ export const demos: Record<string, DemoComponent> = {
   'qlearning': QLearningDemo,
   'svm': SVMDemo,
   'lstm': LSTMDemo,
+  'rnn': RNNDemo,
 };
 
 export function hasDemo(nodeId: string): boolean {
