@@ -270,6 +270,32 @@ export default function Playground() {
 
   const getNodeById = (id: string) => nodes.find(n => n.id === id);
   const getNodeSize = (id: string) => nodeSizes.get(id) || { width: 100, height: 50 };
+  
+  // Найти путь от выбранной ноды к корню (AI)
+  const getPathToRoot = useCallback((nodeId: string | null): string[] => {
+    if (!nodeId) return [];
+    const path: string[] = [nodeId];
+    let current = nodeId;
+    
+    while (current !== 'ai') {
+      // Найти родительскую связь (connection где to === current)
+      const parentConn = connections.find(c => c.to === current);
+      if (!parentConn) break;
+      path.push(parentConn.from);
+      current = parentConn.from;
+    }
+    return path;
+  }, []);
+  
+  // Проверить, является ли связь частью пути к выбранной ноде
+  const isConnectionActive = useCallback((conn: { from: string; to: string }) => {
+    if (!selectedId) return false;
+    const pathToRoot = getPathToRoot(selectedId);
+    // Связь активна если both from и to в пути
+    const fromIndex = pathToRoot.indexOf(conn.from);
+    const toIndex = pathToRoot.indexOf(conn.to);
+    return fromIndex !== -1 && toIndex !== -1 && Math.abs(fromIndex - toIndex) === 1;
+  }, [selectedId, getPathToRoot]);
 
   return (
     <div ref={containerRef} className={`space-container ${isPanning ? 'panning' : ''}`}>
@@ -349,17 +375,42 @@ export default function Playground() {
             
             const dx = Math.abs(endX - startX);
             const tension = Math.max(dx * 0.4, 50);
+            const pathD = `M ${startX} ${startY} C ${startX + tension} ${startY}, ${endX - tension} ${endY}, ${endX} ${endY}`;
+            const pathId = `path-${i}`;
+            const isActive = isConnectionActive(conn);
             
             return (
-              <path
-                key={i}
-                d={`M ${startX} ${startY} C ${startX + tension} ${startY}, ${endX - tension} ${endY}, ${endX} ${endY}`}
-                stroke="url(#lineGradient)"
-                strokeWidth="2"
-                fill="none"
-                filter="url(#glow)"
-                className="connection-line"
-              />
+              <g key={i}>
+                <path
+                  id={pathId}
+                  d={pathD}
+                  stroke={isActive ? '#a855f7' : 'url(#lineGradient)'}
+                  strokeWidth={isActive ? 2.5 : 2}
+                  fill="none"
+                  filter="url(#glow)"
+                  className={`connection-line ${isActive ? 'active' : ''}`}
+                />
+                {/* Импульсы-точки на активных линиях (движутся к AI = от to к from) */}
+                {isActive && (
+                  <>
+                    <circle r="4" fill="#a855f7" filter="url(#glow)">
+                      <animateMotion dur="1.5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
+                        <mpath href={`#${pathId}`} />
+                      </animateMotion>
+                    </circle>
+                    <circle r="4" fill="#a855f7" filter="url(#glow)">
+                      <animateMotion dur="1.5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear" begin="0.5s">
+                        <mpath href={`#${pathId}`} />
+                      </animateMotion>
+                    </circle>
+                    <circle r="4" fill="#a855f7" filter="url(#glow)">
+                      <animateMotion dur="1.5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear" begin="1s">
+                        <mpath href={`#${pathId}`} />
+                      </animateMotion>
+                    </circle>
+                  </>
+                )}
+              </g>
             );
           })}
         </svg>
