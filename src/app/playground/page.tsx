@@ -3,6 +3,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import './space.css';
 
+// Размеры ноды (должны совпадать с CSS)
+const NODE_WIDTH = 130;  // примерная ширина ноды
+const NODE_HEIGHT = 54;  // примерная высота ноды
+
 // Тестовые ноды (теперь в пикселях для точного позиционирования)
 const testNodes = [
   { id: 1, name: 'Input Layer', type: 'input', x: 150, y: 300 },
@@ -295,21 +299,50 @@ export default function Playground() {
                 <feMergeNode in="SourceGraphic"/>
               </feMerge>
             </filter>
+            {/* Градиент для точек соединения */}
+            <radialGradient id="dotGradient">
+              <stop offset="0%" stopColor="#a855f7" stopOpacity="1" />
+              <stop offset="100%" stopColor="#6366f1" stopOpacity="0.6" />
+            </radialGradient>
           </defs>
+          
+          {/* Точки соединения на нодах */}
+          {testNodes.map((node) => (
+            <g key={`dots-${node.id}`}>
+              {/* Правая точка (выход) */}
+              <circle
+                cx={node.x + NODE_WIDTH}
+                cy={node.y + NODE_HEIGHT / 2}
+                r="4"
+                fill="url(#dotGradient)"
+                filter="url(#glow)"
+                className="connection-dot"
+              />
+              {/* Левая точка (вход) */}
+              <circle
+                cx={node.x}
+                cy={node.y + NODE_HEIGHT / 2}
+                r="4"
+                fill="url(#dotGradient)"
+                filter="url(#glow)"
+                className="connection-dot"
+              />
+            </g>
+          ))}
           {connections.map((conn, i) => {
             const from = getNodeById(conn.from);
             const to = getNodeById(conn.to);
             if (!from || !to) return null;
             
             // Точки выхода/входа (центр правой/левой стороны ноды)
-            const startX = from.x + 120; // правый край ноды
-            const startY = from.y + 25;  // середина по высоте
-            const endX = to.x;           // левый край ноды
-            const endY = to.y + 25;
+            const startX = from.x + NODE_WIDTH;      // правый край ноды
+            const startY = from.y + NODE_HEIGHT / 2; // середина по высоте
+            const endX = to.x;                        // левый край ноды  
+            const endY = to.y + NODE_HEIGHT / 2;     // середина по высоте
             
             // Расстояние для контрольных точек (чем дальше ноды - тем плавнее изгиб)
             const dx = Math.abs(endX - startX);
-            const tension = Math.max(dx * 0.5, 80); // минимум 80px для плавности
+            const tension = Math.max(dx * 0.4, 60); // 40% расстояния, минимум 60px
             
             // Cubic Bezier: горизонтальный выход, плавный вход
             const c1x = startX + tension;
@@ -322,7 +355,7 @@ export default function Playground() {
                 key={i}
                 d={`M ${startX} ${startY} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${endX} ${endY}`}
                 stroke="url(#lineGradient)"
-                strokeWidth="2.5"
+                strokeWidth="2"
                 fill="none"
                 filter="url(#glow)"
                 className="connection-line"
