@@ -66,62 +66,78 @@ const spaceColors: Record<AbstractionLevel, string> = {
 function getManualPositions(): Map<string, { x: number; y: number }> {
   const positions = new Map<string, { x: number; y: number }>();
   
-  // Константы для расстояний - УВЕЛИЧЕННЫЕ для воздуха
-  const COL1 = 50;     // AI
-  const COL2 = 320;    // ML, DL, NLP
-  const COL3 = 620;    // Methods / Architectures
-  const COL4 = 940;    // Algorithms level 1
-  const COL5 = 1260;   // Algorithms level 2 / Implementations
+  // Константы для расстояний - УВЕЛИЧЕННЫЕ ×3
+  const COL1 = 50;      // AI
+  const COL2 = 450;     // ML, DL, NLP
+  const COL3 = 900;     // Methods / Architectures
+  const COL4 = 1400;    // Algorithms level 1
+  const COL5 = 1900;    // Algorithms level 2 / Implementations
+  const COL6 = 2400;    // Far implementations
+  
+  const VGAP = 280;     // Вертикальный промежуток ×3
   
   // === ROOT ===
-  positions.set('ai', { x: COL1, y: 550 });
+  positions.set('ai', { x: COL1, y: 900 });
   
-  // === THEORY LEVEL (3 главные ветки) - больше разнесены ===
-  positions.set('ml', { x: COL2, y: 150 });     // Machine Learning - верх
-  positions.set('dl', { x: COL2, y: 580 });     // Deep Learning - центр  
-  positions.set('nlp', { x: COL2, y: 1100 });   // NLP - низ (больше отступ)
+  // === THEORY LEVEL (3 главные ветки) ===
+  positions.set('ml', { x: COL2, y: 200 });      // Machine Learning - верх
+  positions.set('dl', { x: COL2, y: 1000 });     // Deep Learning - центр  
+  positions.set('nlp', { x: COL2, y: 2000 });    // NLP - низ
   
   // === ML BRANCH ===
-  // Methods под ML
-  positions.set('supervised', { x: COL3, y: 50 });
-  positions.set('unsupervised', { x: COL3, y: 200 });
-  positions.set('rl', { x: COL3, y: 350 });
+  positions.set('supervised', { x: COL3, y: 0 });
+  positions.set('unsupervised', { x: COL3, y: 350 });
+  positions.set('rl', { x: COL3, y: 700 });
   
   // Algorithms под Supervised
-  positions.set('linear-reg', { x: COL4, y: -30 });
-  positions.set('decision-tree', { x: COL4, y: 60 });
-  positions.set('svm', { x: COL4, y: 150 });
-  positions.set('random-forest', { x: COL5, y: 60 });
+  positions.set('linear-reg', { x: COL4, y: -150 });
+  positions.set('decision-tree', { x: COL4, y: 50 });
+  positions.set('svm', { x: COL4, y: 250 });
+  positions.set('random-forest', { x: COL5, y: 50 });
   
   // Algorithms под Unsupervised
-  positions.set('kmeans', { x: COL4, y: 240 });
-  positions.set('pca', { x: COL4, y: 330 });
+  positions.set('kmeans', { x: COL4, y: 450 });
+  positions.set('pca', { x: COL4, y: 650 });
   
   // Algorithms под RL
-  positions.set('qlearning', { x: COL4, y: 420 });
+  positions.set('qlearning', { x: COL4, y: 850 });
   
-  // === DL BRANCH === (больше пространства)
-  // Neural architectures
-  positions.set('nn', { x: COL3, y: 520 });
-  positions.set('cnn', { x: COL3, y: 620 });
-  positions.set('rnn', { x: COL3, y: 720 });
-  positions.set('transformer', { x: COL3, y: 820 });
+  // === DL BRANCH ===
+  positions.set('nn', { x: COL3, y: 900 });
+  positions.set('cnn', { x: COL3, y: 1150 });
+  positions.set('rnn', { x: COL3, y: 1400 });
+  positions.set('transformer', { x: COL3, y: 1650 });
   
-  // Под RNN
-  positions.set('lstm', { x: COL4, y: 720 });
+  // Под архитектурами
+  positions.set('lstm', { x: COL4, y: 1400 });
+  positions.set('attention', { x: COL4, y: 1650 });
   
-  // Под Transformer
-  positions.set('attention', { x: COL4, y: 820 });
+  // Generative models
+  positions.set('gan', { x: COL4, y: 1000 });
+  positions.set('vae', { x: COL4, y: 1900 });
+  positions.set('diffusion', { x: COL4, y: 2150 });
   
-  // Generative models - справа
-  positions.set('gan', { x: COL4, y: 540 });
-  positions.set('vae', { x: COL4, y: 920 });
-  positions.set('diffusion', { x: COL4, y: 1020 });
+  // === NLP BRANCH ===
+  positions.set('llm', { x: COL3, y: 2100 });
+  positions.set('embeddings', { x: COL3, y: 2400 });
+  positions.set('tokenization', { x: COL3, y: 2700 });
   
-  // === NLP BRANCH === (больше отступ от DL)
-  positions.set('llm', { x: COL3, y: 1100 });
-  positions.set('embeddings', { x: COL3, y: 1200 });
-  positions.set('tokenization', { x: COL3, y: 1300 });
+  // LLM implementations
+  positions.set('gpt', { x: COL4, y: 2100 });
+  positions.set('bert', { x: COL4, y: 2400 });
+  
+  // === COMPUTER VISION BRANCH ===
+  positions.set('cv', { x: COL2, y: 3100 });
+  positions.set('obj-detection', { x: COL3, y: 2950 });
+  positions.set('img-classification', { x: COL3, y: 3200 });
+  positions.set('segmentation', { x: COL3, y: 3450 });
+  
+  // CV implementations
+  positions.set('yolo', { x: COL4, y: 2950 });
+  positions.set('resnet', { x: COL4, y: 3200 });
+  
+  // CLIP - мультимодальная (между CV и NLP)
+  positions.set('clip', { x: COL4, y: 2700 });
   
   return positions;
 }

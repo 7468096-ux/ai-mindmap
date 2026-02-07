@@ -19,8 +19,19 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
   const DemoComponent = getDemo(node.id);
   const showDemo = hasDemo(node.id);
 
+  // Останавливаем propagation событий мыши чтобы не двигался фон
+  const stopPropagation = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation();
+  };
+
   return (
-    <div className="absolute right-4 top-4 w-[420px] bg-gray-900 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[90vh] overflow-y-auto">
+    <div 
+      className="absolute right-4 top-4 w-[420px] bg-gray-900 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[90vh] overflow-y-auto"
+      onMouseDown={stopPropagation}
+      onMouseMove={stopPropagation}
+      onTouchStart={stopPropagation}
+      onTouchMove={stopPropagation}
+    >
       {/* Header */}
       <div 
         className="p-4 flex items-center gap-3 sticky top-0 z-10"

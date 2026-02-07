@@ -871,6 +871,287 @@ export const initialNodes: AINode[] = [
       },
     },
   },
+
+  // ========== COMPUTER VISION BRANCH ==========
+  {
+    id: 'cv',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '👁️',
+      level: 'theory',
+      ru: {
+        label: 'Компьютерное Зрение',
+        description: 'Область AI, позволяющая компьютерам извлекать информацию из изображений и видео.',
+        keyPoints: [
+          '📷 Вход: изображения, видео, 3D-сканы',
+          '🎯 Задачи: классификация, детекция, сегментация',
+          '🧠 Основа: CNN и трансформеры (ViT)',
+          '🚗 Применение: автопилот, медицина, AR/VR',
+        ],
+        howItWorks: 'CV системы преобразуют пиксели в понимание сцены. Пайплайн: 1) Препроцессинг — нормализация, аугментация 2) Извлечение признаков — CNN слои находят паттерны (края → формы → объекты) 3) Решение задачи — классификация (что на картинке?), детекция (где объекты?), сегментация (какой пиксель чему принадлежит?). Современные модели: ViT (Vision Transformer) применяет attention к патчам изображения. Transfer learning: предобученные модели (ImageNet) дообучаются на специфичных задачах.',
+      },
+      en: {
+        label: 'Computer Vision',
+        description: 'AI field enabling computers to extract information from images and video.',
+        keyPoints: [
+          '📷 Input: images, video, 3D scans',
+          '🎯 Tasks: classification, detection, segmentation',
+          '🧠 Foundation: CNN and transformers (ViT)',
+          '🚗 Applications: self-driving, medicine, AR/VR',
+        ],
+        howItWorks: 'CV systems transform pixels into scene understanding. Pipeline: 1) Preprocessing — normalization, augmentation 2) Feature extraction — CNN layers find patterns (edges → shapes → objects) 3) Task solving — classification (what\'s in image?), detection (where are objects?), segmentation (which pixel belongs to what?). Modern models: ViT (Vision Transformer) applies attention to image patches. Transfer learning: pretrained models (ImageNet) fine-tuned on specific tasks.',
+      },
+    },
+  },
+  {
+    id: 'obj-detection',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🎯',
+      level: 'method',
+      ru: {
+        label: 'Детекция Объектов',
+        description: 'Метод нахождения и локализации объектов на изображении с помощью bounding boxes.',
+        keyPoints: [
+          '📦 Выход: координаты bbox + класс + confidence',
+          '🔄 Two-stage (R-CNN) vs One-stage (YOLO)',
+          '📊 Метрики: mAP, IoU',
+          '⚡ Real-time: YOLO, SSD',
+        ],
+        howItWorks: 'Two-stage детекторы (Faster R-CNN): 1) Region Proposal Network предлагает ~2000 регионов 2) CNN классифицирует каждый регион. Медленно но точно. One-stage детекторы (YOLO): делят изображение на сетку, каждая ячейка предсказывает bbox + класс за один проход. Быстро, подходит для real-time. Anchor boxes: предопределённые формы bbox разных размеров. Non-Maximum Suppression: убирает дублирующие детекции одного объекта.',
+      },
+      en: {
+        label: 'Object Detection',
+        description: 'Method of finding and localizing objects in images using bounding boxes.',
+        keyPoints: [
+          '📦 Output: bbox coordinates + class + confidence',
+          '🔄 Two-stage (R-CNN) vs One-stage (YOLO)',
+          '📊 Metrics: mAP, IoU',
+          '⚡ Real-time: YOLO, SSD',
+        ],
+        howItWorks: 'Two-stage detectors (Faster R-CNN): 1) Region Proposal Network suggests ~2000 regions 2) CNN classifies each region. Slow but accurate. One-stage detectors (YOLO): divide image into grid, each cell predicts bbox + class in single pass. Fast, suitable for real-time. Anchor boxes: predefined bbox shapes of different sizes. Non-Maximum Suppression: removes duplicate detections of same object.',
+      },
+    },
+  },
+  {
+    id: 'img-classification',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🏷️',
+      level: 'method',
+      ru: {
+        label: 'Классификация Изображений',
+        description: 'Метод присвоения изображению одной или нескольких меток классов.',
+        keyPoints: [
+          '🎯 Single-label vs Multi-label',
+          '📊 Softmax для вероятностей классов',
+          '🏆 ImageNet: 1000 классов, 1.2M изображений',
+          '🔄 Fine-tuning предобученных моделей',
+        ],
+        howItWorks: 'Архитектура: CNN backbone извлекает признаки → Global Average Pooling → Fully Connected → Softmax. Процесс: изображение проходит через свёрточные слои, каждый слой извлекает всё более абстрактные признаки. Финальный вектор признаков классифицируется в один из классов. Cross-entropy loss сравнивает предсказание с ground truth. Data augmentation (повороты, отражения, кроп) увеличивает эффективный размер датасета.',
+      },
+      en: {
+        label: 'Image Classification',
+        description: 'Method of assigning one or more class labels to an image.',
+        keyPoints: [
+          '🎯 Single-label vs Multi-label',
+          '📊 Softmax for class probabilities',
+          '🏆 ImageNet: 1000 classes, 1.2M images',
+          '🔄 Fine-tuning pretrained models',
+        ],
+        howItWorks: 'Architecture: CNN backbone extracts features → Global Average Pooling → Fully Connected → Softmax. Process: image passes through convolutional layers, each layer extracts increasingly abstract features. Final feature vector classified into one of classes. Cross-entropy loss compares prediction with ground truth. Data augmentation (rotations, flips, crops) increases effective dataset size.',
+      },
+    },
+  },
+  {
+    id: 'segmentation',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🧩',
+      level: 'method',
+      ru: {
+        label: 'Сегментация',
+        description: 'Метод классификации каждого пикселя изображения по принадлежности к объекту/классу.',
+        keyPoints: [
+          '🎨 Semantic: классы без различия экземпляров',
+          '🔢 Instance: каждый объект отдельно',
+          '🏗️ Архитектуры: U-Net, Mask R-CNN, SAM',
+          '🏥 Применение: медицина, автопилот, фото-редакторы',
+        ],
+        howItWorks: 'Semantic segmentation: каждому пикселю присваивается класс (небо, дорога, машина). U-Net архитектура: encoder сжимает → decoder восстанавливает разрешение, skip connections сохраняют детали. Instance segmentation: различает отдельные объекты одного класса (машина_1, машина_2). Mask R-CNN: детекция bbox + бинарная маска для каждого объекта. Panoptic: объединяет semantic и instance. SAM (Segment Anything): универсальная модель, работает с любыми объектами.',
+      },
+      en: {
+        label: 'Segmentation',
+        description: 'Method of classifying each pixel in an image by object/class membership.',
+        keyPoints: [
+          '🎨 Semantic: classes without instance distinction',
+          '🔢 Instance: each object separately',
+          '🏗️ Architectures: U-Net, Mask R-CNN, SAM',
+          '🏥 Applications: medicine, self-driving, photo editors',
+        ],
+        howItWorks: 'Semantic segmentation: each pixel assigned a class (sky, road, car). U-Net architecture: encoder compresses → decoder restores resolution, skip connections preserve details. Instance segmentation: distinguishes individual objects of same class (car_1, car_2). Mask R-CNN: bbox detection + binary mask for each object. Panoptic: combines semantic and instance. SAM (Segment Anything): universal model, works with any objects.',
+      },
+    },
+  },
+  {
+    id: 'yolo',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '⚡',
+      level: 'implementation',
+      ru: {
+        label: 'YOLO',
+        description: 'You Only Look Once — быстрый детектор объектов реального времени.',
+        keyPoints: [
+          '🚀 Один проход = детекция всех объектов',
+          '⏱️ Real-time: 30-150+ FPS',
+          '📈 Версии: v1 (2016) → v8 (2023) → v11',
+          '🎯 Баланс скорости и точности',
+        ],
+        howItWorks: 'YOLO делит изображение на сетку SxS. Каждая ячейка предсказывает: B bounding boxes (x, y, w, h, confidence) + C вероятностей классов. Всё за один forward pass! Loss функция объединяет: координаты bbox + confidence + классификацию. Anchor boxes: предопределённые формы bbox (высокие, широкие, квадратные). NMS убирает дубликаты. YOLOv8: улучшенный backbone (CSPDarknet), anchor-free детекция, decoupled head для классификации и регрессии отдельно.',
+      },
+      en: {
+        label: 'YOLO',
+        description: 'You Only Look Once — fast real-time object detector.',
+        keyPoints: [
+          '🚀 Single pass = detect all objects',
+          '⏱️ Real-time: 30-150+ FPS',
+          '📈 Versions: v1 (2016) → v8 (2023) → v11',
+          '🎯 Speed-accuracy tradeoff',
+        ],
+        howItWorks: 'YOLO divides image into SxS grid. Each cell predicts: B bounding boxes (x, y, w, h, confidence) + C class probabilities. All in single forward pass! Loss function combines: bbox coordinates + confidence + classification. Anchor boxes: predefined bbox shapes (tall, wide, square). NMS removes duplicates. YOLOv8: improved backbone (CSPDarknet), anchor-free detection, decoupled head for classification and regression separately.',
+      },
+    },
+  },
+  {
+    id: 'resnet',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🏗️',
+      level: 'algorithm',
+      ru: {
+        label: 'ResNet',
+        description: 'Residual Network — архитектура с skip connections, позволяющая обучать очень глубокие сети.',
+        keyPoints: [
+          '🔗 Skip connections: x + F(x)',
+          '📏 Глубина: 18, 34, 50, 101, 152 слоя',
+          '🏆 Победитель ImageNet 2015',
+          '🧱 Базовый backbone для многих моделей',
+        ],
+        howItWorks: 'Проблема: очень глубокие сети плохо обучаются (vanishing gradient, degradation). Решение: residual блок учит не F(x), а F(x) + x (остаток). Если оптимальное преобразование близко к identity, легче выучить F(x) ≈ 0. Skip connection позволяет градиенту течь напрямую через блоки. Bottleneck блок: 1x1 conv (уменьшить каналы) → 3x3 conv → 1x1 conv (увеличить обратно). ResNet-50 = 50 слоёв с bottleneck блоками. Используется как backbone для детекции, сегментации, и др.',
+      },
+      en: {
+        label: 'ResNet',
+        description: 'Residual Network — architecture with skip connections enabling very deep networks.',
+        keyPoints: [
+          '🔗 Skip connections: x + F(x)',
+          '📏 Depth: 18, 34, 50, 101, 152 layers',
+          '🏆 ImageNet 2015 winner',
+          '🧱 Base backbone for many models',
+        ],
+        howItWorks: 'Problem: very deep networks train poorly (vanishing gradient, degradation). Solution: residual block learns not F(x), but F(x) + x (residual). If optimal transform is close to identity, easier to learn F(x) ≈ 0. Skip connection allows gradient to flow directly through blocks. Bottleneck block: 1x1 conv (reduce channels) → 3x3 conv → 1x1 conv (increase back). ResNet-50 = 50 layers with bottleneck blocks. Used as backbone for detection, segmentation, etc.',
+      },
+    },
+  },
+  {
+    id: 'gpt',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '💬',
+      level: 'implementation',
+      ru: {
+        label: 'GPT',
+        description: 'Generative Pre-trained Transformer — авторегрессивная языковая модель от OpenAI.',
+        keyPoints: [
+          '📝 Decoder-only трансформер',
+          '🎯 Обучение: предсказание следующего токена',
+          '📈 GPT-1 (117M) → GPT-4 (~1.7T параметров)',
+          '💡 Emergent abilities: in-context learning, reasoning',
+        ],
+        howItWorks: 'Архитектура: стек decoder блоков с masked self-attention (видит только прошлые токены). Pre-training: на триллионах токенов текста предсказывает следующий токен. Fine-tuning: RLHF (обучение на человеческих предпочтениях) для следования инструкциям. Inference: авторегрессивная генерация — предсказываем токен, добавляем к контексту, повторяем. Temperature контролирует "креативность". GPT-4: multimodal (текст + изображения), ~1.7T параметров, MoE архитектура.',
+      },
+      en: {
+        label: 'GPT',
+        description: 'Generative Pre-trained Transformer — autoregressive language model from OpenAI.',
+        keyPoints: [
+          '📝 Decoder-only transformer',
+          '🎯 Training: next token prediction',
+          '📈 GPT-1 (117M) → GPT-4 (~1.7T parameters)',
+          '💡 Emergent abilities: in-context learning, reasoning',
+        ],
+        howItWorks: 'Architecture: stack of decoder blocks with masked self-attention (sees only past tokens). Pre-training: on trillions of text tokens predicts next token. Fine-tuning: RLHF (learning from human preferences) for instruction following. Inference: autoregressive generation — predict token, add to context, repeat. Temperature controls "creativity". GPT-4: multimodal (text + images), ~1.7T parameters, MoE architecture.',
+      },
+    },
+  },
+  {
+    id: 'bert',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🔤',
+      level: 'implementation',
+      ru: {
+        label: 'BERT',
+        description: 'Bidirectional Encoder Representations from Transformers — модель для понимания текста.',
+        keyPoints: [
+          '📖 Encoder-only трансформер',
+          '🔄 Bidirectional: видит контекст с обеих сторон',
+          '🎭 Pre-training: MLM + NSP',
+          '🏆 SOTA на многих NLU бенчмарках',
+        ],
+        howItWorks: 'В отличие от GPT, BERT использует encoder (bidirectional attention). Pre-training задачи: 1) MLM (Masked Language Model): маскируем 15% токенов, модель их предсказывает. 2) NSP (Next Sentence Prediction): предсказывает, следует ли предложение B за A. Fine-tuning: добавляем classification head для конкретной задачи (sentiment, NER, QA). [CLS] токен агрегирует информацию всего текста. BERT-base: 12 слоёв, 110M параметров. RoBERTa, ALBERT, DeBERTa — улучшенные варианты.',
+      },
+      en: {
+        label: 'BERT',
+        description: 'Bidirectional Encoder Representations from Transformers — text understanding model.',
+        keyPoints: [
+          '📖 Encoder-only transformer',
+          '🔄 Bidirectional: sees context from both sides',
+          '🎭 Pre-training: MLM + NSP',
+          '🏆 SOTA on many NLU benchmarks',
+        ],
+        howItWorks: 'Unlike GPT, BERT uses encoder (bidirectional attention). Pre-training tasks: 1) MLM (Masked Language Model): mask 15% of tokens, model predicts them. 2) NSP (Next Sentence Prediction): predicts if sentence B follows A. Fine-tuning: add classification head for specific task (sentiment, NER, QA). [CLS] token aggregates information from entire text. BERT-base: 12 layers, 110M parameters. RoBERTa, ALBERT, DeBERTa — improved variants.',
+      },
+    },
+  },
+  {
+    id: 'clip',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🔗',
+      level: 'implementation',
+      ru: {
+        label: 'CLIP',
+        description: 'Contrastive Language-Image Pre-training — связывает изображения и текст в общем пространстве.',
+        keyPoints: [
+          '🖼️ + 📝 Мультимодальная модель',
+          '📊 Contrastive learning на 400M пар',
+          '🎯 Zero-shot классификация изображений',
+          '🎨 Основа для Stable Diffusion, DALL-E',
+        ],
+        howItWorks: 'Два энкодера: Image Encoder (ViT или ResNet) и Text Encoder (Transformer). Обучение: на парах (изображение, текстовое описание) из интернета. Contrastive loss: максимизирует сходство правильных пар, минимизирует для неправильных. В batch из N пар создаётся NxN матрица сходства. После обучения: можно сравнить изображение с любым текстом! Zero-shot: "фото кота" vs "фото собаки" — выбираем класс с максимальным сходством. CLIP используется в text-to-image моделях для направления генерации по текстовому промпту.',
+      },
+      en: {
+        label: 'CLIP',
+        description: 'Contrastive Language-Image Pre-training — connects images and text in shared space.',
+        keyPoints: [
+          '🖼️ + 📝 Multimodal model',
+          '📊 Contrastive learning on 400M pairs',
+          '🎯 Zero-shot image classification',
+          '🎨 Foundation for Stable Diffusion, DALL-E',
+        ],
+        howItWorks: 'Two encoders: Image Encoder (ViT or ResNet) and Text Encoder (Transformer). Training: on (image, text description) pairs from internet. Contrastive loss: maximizes similarity of correct pairs, minimizes for incorrect. In batch of N pairs creates NxN similarity matrix. After training: can compare image with any text! Zero-shot: "photo of cat" vs "photo of dog" — choose class with max similarity. CLIP used in text-to-image models to guide generation by text prompt.',
+      },
+    },
+  },
 ];
 
 // ==================== EDGES ====================
@@ -915,9 +1196,27 @@ export const initialEdges: Edge[] = [
   { id: 'nlp-emb', source: 'nlp', target: 'embeddings' },
   { id: 'nlp-tok', source: 'nlp', target: 'tokenization' },
   
+  // Computer Vision branch
+  { id: 'ai-cv', source: 'ai', target: 'cv', animated: true },
+  { id: 'cv-detection', source: 'cv', target: 'obj-detection' },
+  { id: 'cv-classification', source: 'cv', target: 'img-classification' },
+  { id: 'cv-segmentation', source: 'cv', target: 'segmentation' },
+  { id: 'detection-yolo', source: 'obj-detection', target: 'yolo' },
+  { id: 'classification-resnet', source: 'img-classification', target: 'resnet' },
+  
+  // LLM implementations
+  { id: 'llm-gpt', source: 'llm', target: 'gpt' },
+  { id: 'trans-bert', source: 'transformer', target: 'bert' },
+  
+  // CLIP - connects CV and NLP
+  { id: 'cv-clip', source: 'cv', target: 'clip', style: { strokeDasharray: '5,5' } },
+  { id: 'nlp-clip', source: 'nlp', target: 'clip', style: { strokeDasharray: '5,5' } },
+  
   // Cross-connections (dashed = связь между ветками)
   { id: 'trans-llm', source: 'transformer', target: 'llm', style: { strokeDasharray: '5,5' } },
   { id: 'sup-nn', source: 'supervised', target: 'nn', style: { strokeDasharray: '5,5' } },
   { id: 'tree-rf', source: 'decision-tree', target: 'random-forest', style: { strokeDasharray: '5,5' } },
   { id: 'attn-llm', source: 'attention', target: 'llm', style: { strokeDasharray: '5,5' } },
+  { id: 'cnn-cv', source: 'cnn', target: 'cv', style: { strokeDasharray: '5,5' } },
+  { id: 'cnn-resnet', source: 'cnn', target: 'resnet', style: { strokeDasharray: '5,5' } },
 ];
