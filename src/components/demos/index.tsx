@@ -22,6 +22,7 @@ const Word2VecDemo = dynamic(() => import('./Word2VecDemo'), { ssr: false });
 const DiffusionDemo = dynamic(() => import('./DiffusionDemo'), { ssr: false });
 const GANDemo = dynamic(() => import('./GANDemo'), { ssr: false });
 const QLearningDemo = dynamic(() => import('./QLearningDemo'), { ssr: false });
+const SVMDemo = dynamic(() => import('./SVMDemo'), { ssr: false });
 
 type DemoComponent = React.ComponentType<{ lang?: Language }>;
 
@@ -46,6 +47,7 @@ export const demos: Record<string, DemoComponent> = {
   'diffusion': DiffusionDemo,
   'gan': GANDemo,
   'qlearning': QLearningDemo,
+  'svm': SVMDemo,
 };
 
 export function hasDemo(nodeId: string): boolean {
