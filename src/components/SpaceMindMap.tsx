@@ -62,83 +62,76 @@ const spaceColors: Record<AbstractionLevel, string> = {
   implementation: '#f59e0b',
 };
 
-// Автоматический расчёт позиций для горизонтального дерева
-function calculateTreeLayout(
-  edges: Connection[],
-  nodeIds: string[]
-): Map<string, { x: number; y: number }> {
+// Ручная расстановка позиций для красивого дерева
+function getManualPositions(): Map<string, { x: number; y: number }> {
   const positions = new Map<string, { x: number; y: number }>();
   
-  // Построим дерево
-  const children = new Map<string, string[]>();
-  const parents = new Map<string, string>();
+  // Константы для расстояний
+  const COL1 = 50;    // AI
+  const COL2 = 280;   // ML, DL, NLP
+  const COL3 = 520;   // Methods (Supervised, Unsupervised, RL) / Architectures
+  const COL4 = 780;   // Algorithms level 1
+  const COL5 = 1040;  // Algorithms level 2 / Implementations
+  const COL6 = 1300;  // Far right implementations
   
-  edges.forEach(edge => {
-    if (!edge.dashed) { // Только основные связи для layout
-      if (!children.has(edge.from)) children.set(edge.from, []);
-      children.get(edge.from)!.push(edge.to);
-      parents.set(edge.to, edge.from);
-    }
-  });
+  const VGAP = 90;    // Вертикальный промежуток между нодами
   
-  // Найти корень (ai)
-  const root = 'ai';
+  // === ROOT ===
+  positions.set('ai', { x: COL1, y: 450 });
   
-  // BFS для определения уровней (columns)
-  const levels = new Map<string, number>();
-  const queue: string[] = [root];
-  levels.set(root, 0);
+  // === THEORY LEVEL (3 главные ветки) ===
+  positions.set('ml', { x: COL2, y: 180 });    // Machine Learning - верх
+  positions.set('dl', { x: COL2, y: 480 });    // Deep Learning - центр  
+  positions.set('nlp', { x: COL2, y: 820 });   // NLP - низ
   
-  while (queue.length > 0) {
-    const node = queue.shift()!;
-    const level = levels.get(node)!;
-    const nodeChildren = children.get(node) || [];
-    nodeChildren.forEach(child => {
-      if (!levels.has(child)) {
-        levels.set(child, level + 1);
-        queue.push(child);
-      }
-    });
-  }
+  // === ML BRANCH ===
+  // Methods под ML
+  positions.set('supervised', { x: COL3, y: 80 });
+  positions.set('unsupervised', { x: COL3, y: 220 });
+  positions.set('rl', { x: COL3, y: 340 });
   
-  // Добавить ноды без связей
-  nodeIds.forEach(id => {
-    if (!levels.has(id)) {
-      levels.set(id, 5); // Ставим справа
-    }
-  });
+  // Algorithms под Supervised
+  positions.set('linear-reg', { x: COL4, y: 20 });
+  positions.set('decision-tree', { x: COL4, y: 100 });
+  positions.set('svm', { x: COL4, y: 180 });
+  positions.set('random-forest', { x: COL5, y: 60 });
   
-  // Группируем по уровням
-  const nodesByLevel = new Map<number, string[]>();
-  levels.forEach((level, nodeId) => {
-    if (!nodesByLevel.has(level)) nodesByLevel.set(level, []);
-    nodesByLevel.get(level)!.push(nodeId);
-  });
+  // Algorithms под Unsupervised
+  positions.set('kmeans', { x: COL4, y: 260 });
+  positions.set('pca', { x: COL4, y: 340 });
   
-  // Расстановка
-  const LEVEL_WIDTH = 250; // Расстояние между колонками
-  const NODE_HEIGHT = 100; // Расстояние между нодами в колонке
-  const START_X = 100;
-  const CENTER_Y = 400;
+  // Algorithms под RL
+  positions.set('qlearning', { x: COL4, y: 420 });
   
-  nodesByLevel.forEach((nodes, level) => {
-    const x = START_X + level * LEVEL_WIDTH;
-    const totalHeight = (nodes.length - 1) * NODE_HEIGHT;
-    const startY = CENTER_Y - totalHeight / 2;
-    
-    nodes.forEach((nodeId, index) => {
-      positions.set(nodeId, {
-        x,
-        y: startY + index * NODE_HEIGHT,
-      });
-    });
-  });
+  // === DL BRANCH ===
+  // Neural architectures под DL
+  positions.set('nn', { x: COL3, y: 460 });
+  positions.set('cnn', { x: COL3, y: 540 });
+  positions.set('rnn', { x: COL3, y: 620 });
+  positions.set('transformer', { x: COL3 + 50, y: 700 });
+  
+  // Под RNN
+  positions.set('lstm', { x: COL4, y: 620 });
+  
+  // Под Transformer и вокруг
+  positions.set('attention', { x: COL4, y: 700 });
+  
+  // Generative models
+  positions.set('gan', { x: COL4, y: 500 });
+  positions.set('vae', { x: COL4, y: 780 });
+  positions.set('diffusion', { x: COL4, y: 860 });
+  
+  // === NLP BRANCH ===
+  positions.set('llm', { x: COL3, y: 880 });
+  positions.set('embeddings', { x: COL3, y: 960 });
+  positions.set('tokenization', { x: COL3, y: 1040 });
   
   return positions;
 }
 
 export default function SpaceMindMap() {
-  const [lang, setLang] = useState<Language>('ru');
+  // English по умолчанию
+  const [lang, setLang] = useState<Language>('en');
   const [selectedNode, setSelectedNode] = useState<AINode | null>(null);
   const [smoothTilt, setSmoothTilt] = useState({ x: 0, y: 0 });
   const targetTilt = useRef({ x: 0, y: 0 });
@@ -153,11 +146,8 @@ export default function SpaceMindMap() {
     []
   );
   
-  // Рассчитываем начальные позиции
-  const initialPositions = useMemo(() => {
-    const nodeIds = dataNodes.map(n => n.id);
-    return calculateTreeLayout(connections, nodeIds);
-  }, [connections]);
+  // Ручные позиции для красивого дерева
+  const initialPositions = useMemo(() => getManualPositions(), []);
   
   // Состояние позиций нод (для drag)
   const [nodePositions, setNodePositions] = useState<Map<string, { x: number; y: number }>>(initialPositions);
@@ -190,7 +180,7 @@ export default function SpaceMindMap() {
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Zoom state
-  const [zoom, setZoom] = useState(0.7);
+  const [zoom, setZoom] = useState(0.65);
   const MIN_ZOOM = 0.2;
   const MAX_ZOOM = 2;
   
@@ -427,7 +417,7 @@ export default function SpaceMindMap() {
   }, [selectedNode, getPathToRoot]);
 
   const handleNodeClick = (node: SpaceNode, wasDragging: boolean) => {
-    if (wasDragging) return; // Не открывать панель после drag
+    if (wasDragging) return;
     const aiNode: AINode = {
       id: node.id,
       position: { x: node.x, y: node.y },
@@ -595,7 +585,6 @@ export default function SpaceMindMap() {
               }}
               onClick={(e) => { 
                 e.stopPropagation(); 
-                // Проверяем был ли drag (если мышь сдвинулась больше 5px)
                 const wasDragging = Math.abs(e.clientX - dragStart.current.x) > 5 || 
                                    Math.abs(e.clientY - dragStart.current.y) > 5;
                 handleNodeClick(node, wasDragging); 
