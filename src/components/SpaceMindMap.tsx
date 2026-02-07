@@ -37,12 +37,18 @@ function generateStars(count: number, seed: number) {
 }
 
 const starLayers = [
-  { stars: generateStars(50, 1), size: 1, speed: 120, opacity: 0.4 },
-  { stars: generateStars(40, 2), size: 1.5, speed: 100, opacity: 0.5 },
-  { stars: generateStars(30, 3), size: 2, speed: 80, opacity: 0.6 },
-  { stars: generateStars(25, 4), size: 2.5, speed: 60, opacity: 0.7 },
-  { stars: generateStars(20, 5), size: 3, speed: 40, opacity: 0.8 },
-  { stars: generateStars(10, 6), size: 4, speed: 20, opacity: 1 },
+  // Дальний план - мелкие тусклые
+  { stars: generateStars(60, 1), size: 0.8, speed: 140, opacity: 0.3 },
+  { stars: generateStars(50, 2), size: 1, speed: 120, opacity: 0.4 },
+  { stars: generateStars(45, 3), size: 1.3, speed: 100, opacity: 0.5 },
+  // Средний план
+  { stars: generateStars(35, 4), size: 1.8, speed: 80, opacity: 0.6 },
+  { stars: generateStars(30, 5), size: 2.2, speed: 60, opacity: 0.7 },
+  { stars: generateStars(25, 6), size: 2.8, speed: 40, opacity: 0.8 },
+  // Передний план - крупные яркие
+  { stars: generateStars(15, 7), size: 3.5, speed: 25, opacity: 0.9 },
+  { stars: generateStars(10, 8), size: 4.5, speed: 15, opacity: 1 },
+  { stars: generateStars(5, 9), size: 6, speed: 8, opacity: 1 },
 ];
 
 interface ShootingStar {
@@ -498,6 +504,10 @@ export default function SpaceMindMap() {
 
   return (
     <div ref={containerRef} className={`space-container ${isPanning ? 'panning' : ''}`}>
+      {/* Свечение галактики в правом верхнем углу */}
+      <div className="galaxy-glow" />
+      <div className="galaxy-core" />
+      
       {/* Звёзды - реагируют на zoom */}
       {starLayers.map((layer, i) => {
         // Дальние слои (маленькие звёзды) меньше реагируют на zoom
