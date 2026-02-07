@@ -504,10 +504,6 @@ export default function SpaceMindMap() {
 
   return (
     <div ref={containerRef} className={`space-container ${isPanning ? 'panning' : ''}`}>
-      {/* Свечение галактики в правом верхнем углу */}
-      <div className="galaxy-glow" />
-      <div className="galaxy-core" />
-      
       {/* Звёзды - реагируют на zoom */}
       {starLayers.map((layer, i) => {
         // Дальние слои (маленькие звёзды) меньше реагируют на zoom
