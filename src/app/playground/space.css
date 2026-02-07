@@ -41,61 +41,73 @@
 /* === ПАДАЮЩИЕ ЗВЁЗДЫ === */
 .shooting-star {
   position: absolute;
-  width: 6px;
-  height: 6px;
-  background: radial-gradient(circle, white 0%, rgba(255,255,255,0.8) 50%, transparent 100%);
-  border-radius: 50%;
-  animation: shoot var(--speed, 1.5s) ease-out forwards;
-  transform-origin: center center;
-  z-index: 50;
   pointer-events: none;
-  box-shadow: 0 0 10px 2px rgba(255,255,255,0.6);
+  z-index: 50;
 }
 
 .shooting-star::before {
   content: '';
   position: absolute;
-  right: 100%;
-  top: 50%;
-  transform: translateY(-50%);
   width: var(--length, 150px);
-  height: 1px;
-  /* Шире в начале (у звезды), уже в конце (хвост) */
+  height: 3px;
+  /* Хвост: толще у головы (слева), тоньше к концу (справа) */
   background: linear-gradient(90deg, 
-    transparent 0%,
-    rgba(255,255,255,0.1) 20%,
-    rgba(255,255,255,0.4) 60%,
-    rgba(255,255,255,0.9) 100%
+    rgba(255,255,255,0.95) 0%,
+    rgba(200,220,255,0.7) 30%,
+    rgba(150,180,255,0.3) 70%,
+    transparent 100%
   );
-  clip-path: polygon(0 30%, 100% 45%, 100% 55%, 0 70%);
+  border-radius: 3px 0 0 3px;
+  clip-path: polygon(0 0, 100% 35%, 100% 65%, 0 100%);
+  transform-origin: left center;
+  animation: shootTrail var(--speed, 1.5s) ease-out forwards;
 }
 
+/* Яркая голова звезды */
 .shooting-star::after {
   content: '';
   position: absolute;
-  right: 100%;
+  left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: calc(var(--length, 150px) * 0.4);
-  height: 4px;
-  background: linear-gradient(90deg, transparent, rgba(200,220,255,0.3));
-  filter: blur(2px);
-  border-radius: 2px;
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 12px 4px rgba(255,255,255,0.8), 0 0 30px 8px rgba(200,220,255,0.4);
+  animation: shootHead var(--speed, 1.5s) ease-out forwards;
 }
 
-@keyframes shoot {
+@keyframes shootTrail {
   0% {
-    transform: rotate(var(--angle, 45deg)) translate(0, 0);
+    transform: rotate(var(--angle, 45deg)) translateX(0);
     opacity: 0;
   }
-  5% {
+  10% {
     opacity: 1;
   }
-  80% {
+  85% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: rotate(var(--angle, 45deg)) translateX(calc(-120vw));
+    opacity: 0;
+  }
+}
+
+@keyframes shootHead {
+  0% {
+    transform: translateY(-50%) rotate(var(--angle, 45deg)) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  85% {
     opacity: 1;
   }
   100% {
-    transform: rotate(var(--angle, 45deg)) translate(calc(-100vw - 200px), calc(100vh + 200px));
+    transform: translateY(-50%) rotate(var(--angle, 45deg)) translateX(calc(-120vw));
     opacity: 0;
   }
 }
@@ -157,171 +169,112 @@
 }
 
 .space-node.dragging .node-content {
-  transform: scale(1.08);
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+  transform: scale(1.04);
+  border-color: var(--level-color, #6366f1);
+  background: rgba(35, 35, 55, 0.95);
+}
+
+.space-node.dragging .node-glow {
+  opacity: 0.3;
 }
 
 .node-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 16px 24px;
-  min-width: 110px; /* Минимальная ширина как у Unsupervised */
+  gap: 10px;
+  padding: 18px 26px;
+  min-width: 110px;
   
-  /* iOS Liquid Glass Effect */
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    rgba(255, 255, 255, 0.08) 100%
-  );
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  /* Clean minimal background */
+  background: rgba(20, 20, 35, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   
-  /* Внутреннее свечение как у стекла */
-  box-shadow: 
-    inset 0 1px 1px rgba(255, 255, 255, 0.25),
-    inset 0 -1px 1px rgba(255, 255, 255, 0.1),
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.05);
-  
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s ease;
   white-space: nowrap;
   position: relative;
-  overflow: hidden;
 }
 
-/* Блик на стекле */
+/* Тонкая линия акцента сверху */
 .node-content::before {
   content: '';
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.15) 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    transparent 100%
-  );
-  border-radius: 20px 20px 100% 100%;
-  pointer-events: none;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: var(--level-color, #6366f1);
+  border-radius: 0 0 2px 2px;
+  opacity: 0.8;
 }
 
 .node-icon {
-  font-size: 1.6rem;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  font-size: 1.5rem;
 }
 
 .node-name {
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 0.82rem;
-  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.8rem;
+  font-weight: 500;
   text-align: center;
-  letter-spacing: 0.02em;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  letter-spacing: 0.01em;
 }
 
-/* === УРОВНИ НОД (цвета) - liquid tint === */
-.level-0 .node-content {
-  border-color: rgba(99, 102, 241, 0.4);
-  background: linear-gradient(135deg,
-    rgba(99, 102, 241, 0.15) 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    rgba(99, 102, 241, 0.1) 100%
-  );
-}
+/* === УРОВНИ НОД (цвета) - minimal accent === */
+.level-0 .node-content::before { background: #6366f1; }
+.level-1 .node-content::before { background: #8b5cf6; }
+.level-2 .node-content::before { background: #06b6d4; }
+.level-3 .node-content::before { background: #10b981; }
 
-.level-1 .node-content {
-  border-color: rgba(139, 92, 246, 0.4);
-  background: linear-gradient(135deg,
-    rgba(139, 92, 246, 0.15) 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    rgba(139, 92, 246, 0.1) 100%
-  );
-}
-
-.level-2 .node-content {
-  border-color: rgba(6, 182, 212, 0.4);
-  background: linear-gradient(135deg,
-    rgba(6, 182, 212, 0.15) 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    rgba(6, 182, 212, 0.1) 100%
-  );
-}
-
-.level-3 .node-content {
-  border-color: rgba(16, 185, 129, 0.4);
-  background: linear-gradient(135deg,
-    rgba(16, 185, 129, 0.15) 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    rgba(16, 185, 129, 0.1) 100%
-  );
-}
-
-/* === HOVER - liquid glass ripple === */
+/* === HOVER - subtle lift === */
 .space-node:hover .node-content {
-  transform: scale(1.06) translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: 
-    inset 0 1px 2px rgba(255, 255, 255, 0.3),
-    inset 0 -1px 1px rgba(255, 255, 255, 0.15),
-    0 12px 40px rgba(0, 0, 0, 0.4),
-    0 0 60px color-mix(in srgb, var(--level-color) 30%, transparent);
+  background: rgba(30, 30, 50, 0.9);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.space-node:hover .node-content::before {
+  left: 10%;
+  right: 10%;
+  opacity: 1;
 }
 
 /* === СВЕЧЕНИЕ === */
 .node-glow {
   position: absolute;
-  bottom: -20px;
+  bottom: -15px;
   left: 50%;
   transform: translateX(-50%);
-  width: 120%;
-  height: 60px;
+  width: 80%;
+  height: 40px;
   border-radius: 50%;
-  background: radial-gradient(ellipse, var(--level-color) 0%, transparent 70%);
+  background: var(--level-color, #6366f1);
   opacity: 0;
-  filter: blur(20px);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: blur(25px);
+  transition: all 0.3s ease;
   pointer-events: none;
 }
 
-/* === SELECTED STATE - liquid glass active === */
+/* === SELECTED STATE - clean active === */
 .space-node.selected .node-glow {
-  opacity: 0.7;
-  height: 80px;
-  bottom: -30px;
-  width: 140%;
+  opacity: 0.4;
 }
 
 .space-node.selected .node-content {
-  transform: scale(1.1) translateY(-4px);
-  border-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 
-    inset 0 2px 4px rgba(255, 255, 255, 0.4),
-    inset 0 -2px 2px rgba(255, 255, 255, 0.2),
-    0 20px 60px rgba(0, 0, 0, 0.5),
-    0 0 80px color-mix(in srgb, var(--level-color) 50%, transparent),
-    0 0 0 2px color-mix(in srgb, var(--level-color) 40%, transparent);
+  background: rgba(35, 35, 55, 0.95);
+  border-color: var(--level-color, #6366f1);
+  transform: translateY(-3px);
 }
 
-.space-node.selected .node-content::after {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 22px;
-  background: linear-gradient(135deg, 
-    rgba(255,255,255,0.3) 0%, 
-    transparent 50%, 
-    rgba(255,255,255,0.1) 100%
-  );
-  opacity: 0.5;
-  pointer-events: none;
+.space-node.selected .node-content::before {
+  left: 0;
+  right: 0;
+  height: 3px;
+  opacity: 1;
 }
 
 /* === ЛИНИИ СВЯЗЕЙ === */
@@ -350,24 +303,24 @@
   animation: lineGlow 3s ease-in-out infinite;
 }
 
-/* === ПУЛЬС НОД === */
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
+/* === ПУЛЬС АКЦЕНТНОЙ ЛИНИИ === */
+@keyframes accentPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
-.space-node {
-  animation: pulse 4s ease-in-out infinite;
+.space-node .node-content::before {
+  animation: accentPulse 3s ease-in-out infinite;
 }
 
-.space-node:nth-child(2) { animation-delay: 0.3s; }
-.space-node:nth-child(3) { animation-delay: 0.6s; }
-.space-node:nth-child(4) { animation-delay: 0.9s; }
-.space-node:nth-child(5) { animation-delay: 1.2s; }
-.space-node:nth-child(6) { animation-delay: 1.5s; }
-.space-node:nth-child(7) { animation-delay: 1.8s; }
-.space-node:nth-child(8) { animation-delay: 2.1s; }
-.space-node:nth-child(9) { animation-delay: 2.4s; }
+.space-node:nth-child(2) .node-content::before { animation-delay: 0.3s; }
+.space-node:nth-child(3) .node-content::before { animation-delay: 0.6s; }
+.space-node:nth-child(4) .node-content::before { animation-delay: 0.9s; }
+.space-node:nth-child(5) .node-content::before { animation-delay: 1.2s; }
+.space-node:nth-child(6) .node-content::before { animation-delay: 1.5s; }
+.space-node:nth-child(7) .node-content::before { animation-delay: 1.8s; }
+.space-node:nth-child(8) .node-content::before { animation-delay: 2.1s; }
+.space-node:nth-child(9) .node-content::before { animation-delay: 2.4s; }
 
 /* === PAN INDICATOR === */
 .pan-indicator {
