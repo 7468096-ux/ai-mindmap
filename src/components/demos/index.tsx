@@ -27,6 +27,7 @@ const LSTMDemo = dynamic(() => import('./LSTMDemo'), { ssr: false });
 const RNNDemo = dynamic(() => import('./RNNDemo'), { ssr: false });
 const RandomForestDemo = dynamic(() => import('./RandomForestDemo'), { ssr: false });
 const TransformerDemo = dynamic(() => import('./TransformerDemo'), { ssr: false });
+const VAEDemo = dynamic(() => import('./VAEDemo'), { ssr: false });
 
 type DemoComponent = React.ComponentType<{ lang?: Language }>;
 
@@ -56,6 +57,7 @@ export const demos: Record<string, DemoComponent> = {
   'rnn': RNNDemo,
   'random-forest': RandomForestDemo,
   'transformer': TransformerDemo,
+  'vae': VAEDemo,
 };
 
 export function hasDemo(nodeId: string): boolean {
