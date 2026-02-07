@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import InfoPanel from './InfoPanel';
 import LanguageToggle from './LanguageToggle';
 import LearningPathsPanel from './LearningPathsPanel';
+import Breadcrumbs from './Breadcrumbs';
 import { initialNodes as dataNodes, initialEdges, AINode, Language, levelColors, levelLabels, AbstractionLevel } from '@/data/nodes';
 import { getPathById } from '@/data/learningPaths';
 
@@ -725,6 +726,17 @@ export default function SpaceMindMap() {
       <div className="pan-indicator">
         📍 {Math.round(pan.x)}, {Math.round(pan.y)} | 🔍 {Math.round(zoom * 100)}%
       </div>
+
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        selectedNode={selectedNode}
+        activePath={activePath}
+        lang={lang}
+        onNodeClick={(nodeId) => {
+          const node = dataNodes.find(n => n.id === nodeId);
+          if (node) setSelectedNode(node);
+        }}
+      />
 
       <InfoPanel node={selectedNode} lang={lang} onClose={() => setSelectedNode(null)} />
     </div>
