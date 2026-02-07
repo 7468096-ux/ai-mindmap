@@ -104,7 +104,7 @@ function getManualPositions(): Map<string, { x: number; y: number }> {
   positions.set('pca', { x: COL3, y: ML_Y + 400 + ROW });
   
   // RL algorithms
-  positions.set('qlearning', { x: COL3, y: ML_Y + 700 });
+  positions.set('qlearning', { x: COL3, y: ML_Y + 720 });
   
   // === DL BRANCH (центр-верх) ===
   positions.set('dl', { x: COL1, y: DL_Y + 400 });
@@ -155,10 +155,24 @@ function getManualPositions(): Map<string, { x: number; y: number }> {
   positions.set('finetuning', { x: COL4, y: NLP_Y + ROW * 5 });
   positions.set('agents', { x: COL5, y: NLP_Y + ROW * 4 });
   
-  // DL training techniques
-  positions.set('dropout', { x: COL3, y: DL_Y - ROW * 2 });
-  positions.set('batchnorm', { x: COL3, y: DL_Y - ROW });
-  positions.set('adam', { x: COL3, y: DL_Y + ROW * 4 });
+  // DL training techniques - справа от архитектур, не накладываются
+  positions.set('dropout', { x: COL4, y: DL_Y + 30 });
+  positions.set('batchnorm', { x: COL4, y: DL_Y + ROW + 50 });
+  positions.set('adam', { x: COL4, y: DL_Y + ROW * 2 + 70 });
+  positions.set('autoencoder', { x: COL2, y: DL_Y + ROW * 8 });
+  positions.set('moe', { x: COL3, y: DL_Y + ROW * 5 });
+  
+  // More ML algorithms
+  positions.set('logreg', { x: COL4, y: ML_Y + 240 });
+  positions.set('xgboost', { x: COL5, y: ML_Y + 180 });
+  
+  // CV implementations
+  positions.set('unet', { x: COL4, y: CV_Y + ROW * 2 + 30 });
+  positions.set('stable-diffusion', { x: COL4, y: DL_Y + ROW * 8 });
+  
+  // NLP/LLM techniques
+  positions.set('prompt-eng', { x: COL3, y: NLP_Y + ROW * 5 + 30 });
+  positions.set('cot', { x: COL4, y: NLP_Y + ROW * 6 });
   
   return positions;
 }
@@ -242,19 +256,22 @@ export default function SpaceMindMap() {
     return () => clearTimeout(timer);
   }, [nodes, zoom]);
 
-  // Создание падающих звёзд
+  // Создание падающих звёзд - по всему пространству
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
     
     const createShootingStar = () => {
-      const fromTop = Math.random() > 0.5;
+      // Случайная позиция по всему экрану
+      const startX = -20 + Math.random() * 140; // От -20% до 120%
+      const startY = -20 + Math.random() * 100; // От -20% до 80%
+      
       const star: ShootingStar = {
         id: shootingStarId.current++,
-        startX: fromTop ? (20 + Math.random() * 80) : (90 + Math.random() * 15),
-        startY: fromTop ? (-5 + Math.random() * 10) : (Math.random() * 60),
-        angle: 35 + Math.random() * 20,
-        length: 200 + Math.random() * 150,
-        speed: 1.8 + Math.random() * 1.2,
+        startX,
+        startY,
+        angle: 30 + Math.random() * 30, // 30-60 градусов
+        length: 150 + Math.random() * 200,
+        speed: 2 + Math.random() * 1.5,
       };
       setShootingStars(prev => [...prev, star]);
       
@@ -262,11 +279,12 @@ export default function SpaceMindMap() {
         setShootingStars(prev => prev.filter(s => s.id !== star.id));
       }, star.speed * 1000 + 500);
       
-      const nextDelay = 20000 + Math.random() * 40000;
+      // Чаще - каждые 10-30 сек
+      const nextDelay = 10000 + Math.random() * 20000;
       timeoutId = setTimeout(createShootingStar, nextDelay);
     };
 
-    const firstDelay = 3000 + Math.random() * 5000;
+    const firstDelay = 2000 + Math.random() * 3000;
     timeoutId = setTimeout(createShootingStar, firstDelay);
 
     return () => clearTimeout(timeoutId);
@@ -368,14 +386,14 @@ export default function SpaceMindMap() {
     };
   }, []);
   
-  // Плавная анимация zoom
+  // Супер-плавная анимация zoom
   useEffect(() => {
     let animationId: number;
     const animateZoom = () => {
       setZoom(prev => {
         const diff = targetZoom.current - prev;
-        if (Math.abs(diff) < 0.001) return targetZoom.current;
-        return prev + diff * 0.15; // Плавность
+        if (Math.abs(diff) < 0.0005) return targetZoom.current;
+        return prev + diff * 0.06; // Супер-плавность
       });
       animationId = requestAnimationFrame(animateZoom);
     };

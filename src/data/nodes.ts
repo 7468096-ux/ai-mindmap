@@ -1402,6 +1402,256 @@ export const initialNodes: AINode[] = [
       },
     },
   },
+
+  // ========== MORE ML ALGORITHMS ==========
+  {
+    id: 'logreg',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '📈',
+      level: 'algorithm',
+      ru: {
+        label: 'Logistic Regression',
+        description: 'Алгоритм бинарной классификации через сигмоиду.',
+        keyPoints: [
+          '🎯 Вероятность класса: 0-1',
+          '📊 Sigmoid: σ(z) = 1/(1+e^(-z))',
+          '📉 Loss: Binary Cross-Entropy',
+          '⚡ Быстрый, интерпретируемый',
+        ],
+        howItWorks: 'Линейная комбинация признаков z = wx + b пропускается через сигмоиду: P(y=1|x) = σ(z). Сигмоида сжимает любое число в диапазон (0,1) — интерпретируем как вероятность. Порог обычно 0.5: если P > 0.5 → класс 1. Обучение: минимизация BCE loss = -[y·log(p) + (1-y)·log(1-p)]. Для многоклассовой: Softmax Regression (softmax вместо sigmoid).',
+      },
+      en: {
+        label: 'Logistic Regression',
+        description: 'Binary classification algorithm using sigmoid function.',
+        keyPoints: [
+          '🎯 Class probability: 0-1',
+          '📊 Sigmoid: σ(z) = 1/(1+e^(-z))',
+          '📉 Loss: Binary Cross-Entropy',
+          '⚡ Fast, interpretable',
+        ],
+        howItWorks: 'Linear combination z = wx + b passed through sigmoid: P(y=1|x) = σ(z). Sigmoid squashes any number to (0,1) range — interpret as probability. Threshold usually 0.5: if P > 0.5 → class 1. Training: minimize BCE loss = -[y·log(p) + (1-y)·log(1-p)]. For multiclass: Softmax Regression (softmax instead of sigmoid).',
+      },
+    },
+  },
+  {
+    id: 'xgboost',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🚀',
+      level: 'algorithm',
+      ru: {
+        label: 'XGBoost',
+        description: 'Extreme Gradient Boosting — мощный ансамблевый алгоритм на деревьях.',
+        keyPoints: [
+          '🌳 Gradient Boosting на деревьях',
+          '🏆 Топ алгоритм для табличных данных',
+          '⚡ Регуляризация + параллелизация',
+          '📊 Kaggle killer',
+        ],
+        howItWorks: 'Gradient Boosting: последовательно строим деревья, каждое исправляет ошибки предыдущих. XGBoost добавляет: 1) L1/L2 регуляризацию для контроля сложности 2) Оптимизированный алгоритм поиска split 3) Обработку пропусков 4) Параллельное построение деревьев. Loss оптимизируется с помощью градиентного спуска по функционалу. Гиперпараметры: n_estimators, max_depth, learning_rate, subsample. Альтернативы: LightGBM (быстрее), CatBoost (категориальные фичи).',
+      },
+      en: {
+        label: 'XGBoost',
+        description: 'Extreme Gradient Boosting — powerful tree-based ensemble algorithm.',
+        keyPoints: [
+          '🌳 Gradient Boosting on trees',
+          '🏆 Top algorithm for tabular data',
+          '⚡ Regularization + parallelization',
+          '📊 Kaggle killer',
+        ],
+        howItWorks: 'Gradient Boosting: sequentially build trees, each corrects errors of previous. XGBoost adds: 1) L1/L2 regularization for complexity control 2) Optimized split finding algorithm 3) Missing value handling 4) Parallel tree building. Loss optimized via gradient descent on functional. Hyperparameters: n_estimators, max_depth, learning_rate, subsample. Alternatives: LightGBM (faster), CatBoost (categorical features).',
+      },
+    },
+  },
+  {
+    id: 'autoencoder',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🔄',
+      level: 'algorithm',
+      ru: {
+        label: 'Autoencoder',
+        description: 'Нейросеть, обучающаяся сжимать и восстанавливать данные.',
+        keyPoints: [
+          '📦 Encoder: данные → latent space',
+          '📤 Decoder: latent → реконструкция',
+          '🎯 Loss: reconstruction error',
+          '🔍 Применение: сжатие, denoising, anomaly detection',
+        ],
+        howItWorks: 'Архитектура песочных часов: input → encoder (сжатие) → bottleneck (latent) → decoder (восстановление) → output. Цель: output ≈ input. Bottleneck заставляет сеть учить важные признаки. Denoising AE: добавляем шум ко входу, учимся восстанавливать чистый. Sparse AE: регуляризация на активации. Contractive AE: штраф на чувствительность к входу. Variational AE (VAE): latent как распределение.',
+      },
+      en: {
+        label: 'Autoencoder',
+        description: 'Neural network learning to compress and reconstruct data.',
+        keyPoints: [
+          '📦 Encoder: data → latent space',
+          '📤 Decoder: latent → reconstruction',
+          '🎯 Loss: reconstruction error',
+          '🔍 Uses: compression, denoising, anomaly detection',
+        ],
+        howItWorks: 'Hourglass architecture: input → encoder (compress) → bottleneck (latent) → decoder (reconstruct) → output. Goal: output ≈ input. Bottleneck forces network to learn important features. Denoising AE: add noise to input, learn to reconstruct clean. Sparse AE: regularization on activations. Contractive AE: penalty on input sensitivity. Variational AE (VAE): latent as distribution.',
+      },
+    },
+  },
+  {
+    id: 'unet',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🏥',
+      level: 'implementation',
+      ru: {
+        label: 'U-Net',
+        description: 'Архитектура для сегментации с encoder-decoder и skip connections.',
+        keyPoints: [
+          '🏗️ U-образная структура',
+          '🔗 Skip connections сохраняют детали',
+          '🏥 Изначально для медицинских изображений',
+          '✂️ Pixel-level predictions',
+        ],
+        howItWorks: 'Encoder (левая часть U): свёртки + pooling, сжимаем пространственно, увеличиваем каналы. Decoder (правая часть): upsampling + свёртки, восстанавливаем разрешение. Skip connections: копируем feature maps с encoder на decoder того же уровня. Это сохраняет мелкие детали которые теряются при сжатии. Финальный слой: 1x1 conv для карты классов. Модификации: U-Net++, Attention U-Net, ResUNet.',
+      },
+      en: {
+        label: 'U-Net',
+        description: 'Segmentation architecture with encoder-decoder and skip connections.',
+        keyPoints: [
+          '🏗️ U-shaped structure',
+          '🔗 Skip connections preserve details',
+          '🏥 Originally for medical images',
+          '✂️ Pixel-level predictions',
+        ],
+        howItWorks: 'Encoder (left part of U): convolutions + pooling, compress spatially, increase channels. Decoder (right part): upsampling + convolutions, restore resolution. Skip connections: copy feature maps from encoder to decoder at same level. This preserves fine details lost during compression. Final layer: 1x1 conv for class map. Variants: U-Net++, Attention U-Net, ResUNet.',
+      },
+    },
+  },
+  {
+    id: 'stable-diffusion',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🎨',
+      level: 'implementation',
+      ru: {
+        label: 'Stable Diffusion',
+        description: 'Открытая модель text-to-image на основе latent diffusion.',
+        keyPoints: [
+          '🖼️ Text → Image генерация',
+          '📦 Работает в latent space (быстрее)',
+          '🔓 Open source, можно запустить локально',
+          '🎛️ ControlNet, LoRA для кастомизации',
+        ],
+        howItWorks: 'Latent Diffusion: вместо работы с пикселями работаем с latent vectors (VAE encoder сжимает, decoder восстанавливает). Текстовый prompt → CLIP text encoder → conditioning. U-Net предсказывает шум на каждом шаге. Classifier-free guidance: усиливает соответствие промпту. Sampling: начинаем с шума, итеративно убираем. SDXL: улучшенная версия с двумя text encoders. ControlNet: дополнительный контроль через позы, edges, depth maps.',
+      },
+      en: {
+        label: 'Stable Diffusion',
+        description: 'Open-source text-to-image model based on latent diffusion.',
+        keyPoints: [
+          '🖼️ Text → Image generation',
+          '📦 Works in latent space (faster)',
+          '🔓 Open source, can run locally',
+          '🎛️ ControlNet, LoRA for customization',
+        ],
+        howItWorks: 'Latent Diffusion: instead of working with pixels, work with latent vectors (VAE encoder compresses, decoder reconstructs). Text prompt → CLIP text encoder → conditioning. U-Net predicts noise at each step. Classifier-free guidance: strengthens prompt adherence. Sampling: start from noise, iteratively remove. SDXL: improved version with two text encoders. ControlNet: additional control via poses, edges, depth maps.',
+      },
+    },
+  },
+  {
+    id: 'prompt-eng',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '✍️',
+      level: 'method',
+      ru: {
+        label: 'Prompt Engineering',
+        description: 'Искусство создания эффективных промптов для LLM.',
+        keyPoints: [
+          '📝 Структура: роль, контекст, задача, формат',
+          '🎯 Few-shot: примеры в промпте',
+          '🔄 Итеративное улучшение',
+          '⚠️ Важно для качества output',
+        ],
+        howItWorks: 'Техники: 1) Zero-shot: просто описываем задачу 2) Few-shot: даём примеры input→output 3) Chain of Thought: просим думать шаг за шагом 4) Role prompting: "Ты эксперт в..." 5) Format specification: "Ответь в формате JSON". System prompt задаёт поведение. Temperature влияет на креативность. Negative prompting: что НЕ делать. Для стабильности: структурированный output (JSON, XML).',
+      },
+      en: {
+        label: 'Prompt Engineering',
+        description: 'Art of crafting effective prompts for LLMs.',
+        keyPoints: [
+          '📝 Structure: role, context, task, format',
+          '🎯 Few-shot: examples in prompt',
+          '🔄 Iterative improvement',
+          '⚠️ Critical for output quality',
+        ],
+        howItWorks: 'Techniques: 1) Zero-shot: just describe task 2) Few-shot: give input→output examples 3) Chain of Thought: ask to think step by step 4) Role prompting: "You are an expert in..." 5) Format specification: "Reply in JSON format". System prompt sets behavior. Temperature affects creativity. Negative prompting: what NOT to do. For stability: structured output (JSON, XML).',
+      },
+    },
+  },
+  {
+    id: 'cot',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🔗',
+      level: 'method',
+      ru: {
+        label: 'Chain of Thought',
+        description: 'Техника промптинга для пошагового рассуждения LLM.',
+        keyPoints: [
+          '🧠 "Думай шаг за шагом"',
+          '📈 Улучшает reasoning на сложных задачах',
+          '🔢 Особенно для математики и логики',
+          '💡 Zero-shot CoT: просто добавь фразу',
+        ],
+        howItWorks: 'Стандартный промпт: "Реши задачу: ..." → модель сразу даёт ответ (часто неверный для сложных задач). CoT промпт: "Реши задачу, думая шаг за шагом: ..." → модель показывает рассуждения → точнее на многошаговых задачах. Few-shot CoT: даём примеры с рассуждениями. Self-consistency: генерируем несколько CoT, выбираем majority answer. Tree of Thought: исследуем разные пути рассуждений. Работает благодаря тому что модель "видит" промежуточные шаги.',
+      },
+      en: {
+        label: 'Chain of Thought',
+        description: 'Prompting technique for step-by-step LLM reasoning.',
+        keyPoints: [
+          '🧠 "Think step by step"',
+          '📈 Improves reasoning on complex tasks',
+          '🔢 Especially for math and logic',
+          '💡 Zero-shot CoT: just add the phrase',
+        ],
+        howItWorks: 'Standard prompt: "Solve: ..." → model gives answer directly (often wrong for complex tasks). CoT prompt: "Solve, thinking step by step: ..." → model shows reasoning → more accurate on multi-step tasks. Few-shot CoT: give examples with reasoning. Self-consistency: generate multiple CoTs, pick majority answer. Tree of Thought: explore different reasoning paths. Works because model "sees" intermediate steps.',
+      },
+    },
+  },
+  {
+    id: 'moe',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🎛️',
+      level: 'algorithm',
+      ru: {
+        label: 'Mixture of Experts',
+        description: 'Архитектура с множеством специализированных подсетей и роутером.',
+        keyPoints: [
+          '🧠 N экспертов, активируются K',
+          '🚦 Router выбирает экспертов',
+          '⚡ Sparse: меньше compute при inference',
+          '📈 GPT-4, Mixtral используют MoE',
+        ],
+        howItWorks: 'Вместо одного большого FFN — N маленьких "экспертов". Router (обучаемый) для каждого токена выбирает top-K экспертов. Только выбранные эксперты активируются → sparse computation. Например: 8 экспертов, активируем 2 → используем 25% параметров. Load balancing loss: чтобы эксперты использовались равномерно. Преимущества: можем масштабировать параметры без пропорционального роста compute. Mixtral 8x7B: 8 экспертов по 7B, активно 2, качество как у 70B модели.',
+      },
+      en: {
+        label: 'Mixture of Experts',
+        description: 'Architecture with multiple specialized subnetworks and a router.',
+        keyPoints: [
+          '🧠 N experts, K activated',
+          '🚦 Router selects experts',
+          '⚡ Sparse: less compute at inference',
+          '📈 GPT-4, Mixtral use MoE',
+        ],
+        howItWorks: 'Instead of one large FFN — N small "experts". Router (learnable) for each token selects top-K experts. Only selected experts activate → sparse computation. Example: 8 experts, activate 2 → use 25% parameters. Load balancing loss: so experts are used evenly. Benefits: can scale parameters without proportional compute growth. Mixtral 8x7B: 8 experts of 7B each, 2 active, quality like 70B model.',
+      },
+    },
+  },
 ];
 
 // ==================== EDGES ====================
@@ -1472,6 +1722,20 @@ export const initialEdges: Edge[] = [
   { id: 'nn-adam', source: 'nn', target: 'adam' },
   { id: 'llm-agents', source: 'llm', target: 'agents' },
   
+  // New ML algorithms
+  { id: 'sup-logreg', source: 'supervised', target: 'logreg' },
+  { id: 'sup-xgboost', source: 'supervised', target: 'xgboost' },
+  
+  // New DL
+  { id: 'dl-autoencoder', source: 'dl', target: 'autoencoder' },
+  { id: 'seg-unet', source: 'segmentation', target: 'unet' },
+  { id: 'diff-sd', source: 'diffusion', target: 'stable-diffusion' },
+  { id: 'dl-moe', source: 'dl', target: 'moe' },
+  
+  // NLP/LLM techniques
+  { id: 'llm-prompt', source: 'llm', target: 'prompt-eng' },
+  { id: 'prompt-cot', source: 'prompt-eng', target: 'cot' },
+  
   // Cross-connections (dashed = связь между ветками)
   { id: 'trans-llm', source: 'transformer', target: 'llm', style: { strokeDasharray: '5,5' } },
   { id: 'sup-nn', source: 'supervised', target: 'nn', style: { strokeDasharray: '5,5' } },
@@ -1481,4 +1745,6 @@ export const initialEdges: Edge[] = [
   { id: 'cnn-resnet', source: 'cnn', target: 'resnet', style: { strokeDasharray: '5,5' } },
   { id: 'trans-vit', source: 'transformer', target: 'vit', style: { strokeDasharray: '5,5' } },
   { id: 'rag-agents', source: 'rag', target: 'agents', style: { strokeDasharray: '5,5' } },
+  { id: 'moe-gpt', source: 'moe', target: 'gpt', style: { strokeDasharray: '5,5' } },
+  { id: 'vae-autoenc', source: 'vae', target: 'autoencoder', style: { strokeDasharray: '5,5' } },
 ];
