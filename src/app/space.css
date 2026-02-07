@@ -326,10 +326,6 @@
   pointer-events: none;
 }
 
-  0%, 100% { opacity: 0.7; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.1); }
-}
-
 /* Дополнительные яркие звёзды переднего плана */
 .bright-star {
   position: absolute;
