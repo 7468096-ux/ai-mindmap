@@ -1,0 +1,361 @@
+/* === КОСМИЧЕСКИЙ ФОН === */
+.space-container {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+  overflow: hidden;
+  font-family: system-ui, -apple-system, sans-serif;
+  cursor: grab;
+}
+
+.space-container.panning {
+  cursor: grabbing;
+}
+
+/* === СЛОИ ЗВЁЗД === */
+.star-layer {
+  position: absolute;
+  inset: -150px;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 4px 1px rgba(255, 255, 255, 0.3);
+}
+
+/* Мерцание */
+.star-layer:nth-child(1) .star:nth-child(3n) { animation: twinkle 3s ease-in-out infinite; }
+.star-layer:nth-child(2) .star:nth-child(4n) { animation: twinkle 4s ease-in-out infinite 0.5s; }
+.star-layer:nth-child(3) .star:nth-child(5n) { animation: twinkle 5s ease-in-out infinite 1s; }
+.star-layer:nth-child(6) .star { animation: twinkle 6s ease-in-out infinite; box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.5); }
+
+@keyframes twinkle {
+  0%, 100% { opacity: inherit; }
+  50% { opacity: 0.3; }
+}
+
+/* === ПАДАЮЩИЕ ЗВЁЗДЫ === */
+.shooting-star {
+  position: absolute;
+  pointer-events: none;
+  z-index: 50;
+  animation: shootStar var(--speed, 2s) linear forwards;
+}
+
+/* Яркая голова */
+.shooting-star::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 
+    0 0 6px 2px rgba(255,255,255,0.9), 
+    0 0 15px 4px rgba(200,220,255,0.5);
+}
+
+/* Хвост - повёрнут под углом движения */
+.shooting-star::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  width: var(--length, 180px);
+  height: 1.5px;
+  background: linear-gradient(90deg, 
+    rgba(255,255,255,0.8) 0%,
+    rgba(200,220,255,0.5) 25%,
+    rgba(150,180,255,0.2) 60%,
+    transparent 100%
+  );
+  transform-origin: left center;
+  /* Хвост направлен назад-вверх (противоположно движению) */
+  transform: rotate(calc(-1 * var(--angle, 40deg)));
+}
+
+/* Анимация движения по экранным координатам (влево-вниз) */
+@keyframes shootStar {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    /* Движение: влево и вниз по экрану */
+    transform: translate(-150vw, 100vh);
+    opacity: 0;
+  }
+}
+
+/* === ЗАГОЛОВКИ === */
+.space-title {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+  z-index: 100;
+  pointer-events: none;
+}
+
+.space-subtitle {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  z-index: 100;
+  text-align: center;
+  padding: 0 20px;
+  pointer-events: none;
+}
+
+/* === PAN LAYER === */
+.pan-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  transition: transform 0.05s ease-out;
+}
+
+.space-container.panning .pan-layer {
+  transition: none;
+}
+
+/* === НОДЫ === */
+.space-node {
+  position: absolute;
+  cursor: grab;
+  z-index: 10;
+  transition: transform 0.2s ease, z-index 0s;
+}
+
+.space-node:active,
+.space-node.dragging {
+  cursor: grabbing;
+  z-index: 100;
+}
+
+.space-node.dragging .node-content {
+  transform: scale(1.04);
+  border-color: var(--level-color, #6366f1);
+  background: rgba(35, 35, 55, 0.95);
+}
+
+.space-node.dragging .node-glow {
+  opacity: 0.3;
+}
+
+.node-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 26px;
+  min-width: 110px;
+  
+  /* Clean minimal background */
+  background: rgba(20, 20, 35, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  position: relative;
+}
+
+/* Тонкая линия акцента сверху */
+.node-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: var(--level-color, #6366f1);
+  border-radius: 0 0 2px 2px;
+  opacity: 0.8;
+}
+
+.node-icon {
+  font-size: 1.5rem;
+}
+
+.node-name {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+/* === УРОВНИ НОД (цвета) - minimal accent === */
+.level-0 .node-content::before { background: #6366f1; }
+.level-1 .node-content::before { background: #8b5cf6; }
+.level-2 .node-content::before { background: #06b6d4; }
+.level-3 .node-content::before { background: #10b981; }
+
+/* === HOVER - subtle lift === */
+.space-node:hover .node-content {
+  background: rgba(30, 30, 50, 0.9);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.space-node:hover .node-content::before {
+  left: 10%;
+  right: 10%;
+  opacity: 1;
+}
+
+/* === СВЕЧЕНИЕ === */
+.node-glow {
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--level-color, #6366f1);
+  opacity: 0;
+  filter: blur(25px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+/* === SELECTED STATE - clean active === */
+.space-node.selected .node-glow {
+  opacity: 0.4;
+}
+
+.space-node.selected .node-content {
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.25) 0%,
+    rgba(139, 92, 246, 0.2) 50%,
+    rgba(168, 85, 247, 0.25) 100%
+  );
+  border-color: #a855f7;
+  transform: translateY(-3px);
+}
+
+.space-node.selected .node-content::before {
+  left: 15%;
+  right: 15%;
+  height: 3px;
+  opacity: 1;
+  background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
+}
+
+/* === ЛИНИИ СВЯЗЕЙ === */
+.connections {
+  pointer-events: none;
+  z-index: 5;
+}
+
+.connection-line {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@keyframes lineGlow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 3px rgba(168, 85, 247, 0.3));
+    opacity: 0.7;
+  }
+  50% { 
+    filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.5));
+    opacity: 0.9;
+  }
+}
+
+.connection-line {
+  animation: lineGlow 3s ease-in-out infinite;
+  transition: stroke 0.3s ease, stroke-width 0.3s ease;
+}
+
+.connection-line.active {
+  animation: none;
+  stroke: #a855f7 !important;
+}
+
+/* === ПУЛЬС АКЦЕНТНОЙ ЛИНИИ === */
+@keyframes accentPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.space-node .node-content::before {
+  animation: accentPulse 3s ease-in-out infinite;
+}
+
+.space-node:nth-child(2) .node-content::before { animation-delay: 0.3s; }
+.space-node:nth-child(3) .node-content::before { animation-delay: 0.6s; }
+.space-node:nth-child(4) .node-content::before { animation-delay: 0.9s; }
+.space-node:nth-child(5) .node-content::before { animation-delay: 1.2s; }
+.space-node:nth-child(6) .node-content::before { animation-delay: 1.5s; }
+.space-node:nth-child(7) .node-content::before { animation-delay: 1.8s; }
+.space-node:nth-child(8) .node-content::before { animation-delay: 2.1s; }
+.space-node:nth-child(9) .node-content::before { animation-delay: 2.4s; }
+
+/* === PAN INDICATOR === */
+.pan-indicator {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 8px 14px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+  font-family: monospace;
+  z-index: 100;
+  pointer-events: none;
+}
+
+/* === GYRO BUTTON === */
+.gyro-button {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  background: rgba(168, 85, 247, 0.3);
+  border: 1px solid rgba(168, 85, 247, 0.6);
+  border-radius: 25px;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.gyro-button:hover {
+  background: rgba(168, 85, 247, 0.5);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+}
