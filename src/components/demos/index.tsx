@@ -23,6 +23,7 @@ const DiffusionDemo = dynamic(() => import('./DiffusionDemo'), { ssr: false });
 const GANDemo = dynamic(() => import('./GANDemo'), { ssr: false });
 const QLearningDemo = dynamic(() => import('./QLearningDemo'), { ssr: false });
 const SVMDemo = dynamic(() => import('./SVMDemo'), { ssr: false });
+const LSTMDemo = dynamic(() => import('./LSTMDemo'), { ssr: false });
 
 type DemoComponent = React.ComponentType<{ lang?: Language }>;
 
@@ -48,6 +49,7 @@ export const demos: Record<string, DemoComponent> = {
   'gan': GANDemo,
   'qlearning': QLearningDemo,
   'svm': SVMDemo,
+  'lstm': LSTMDemo,
 };
 
 export function hasDemo(nodeId: string): boolean {
