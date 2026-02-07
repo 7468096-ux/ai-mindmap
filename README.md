@@ -1,34 +1,34 @@
 # 🧠 AI Mindmap v1.0
 
-> Интерактивная визуальная карта AI/ML терминологии для изучения искусственного интеллекта
+> Interactive visual map of AI/ML terminology for learning artificial intelligence
 
 [![Deploy](https://github.com/7468096-ux/ai-mindmap/actions/workflows/nextjs.yml/badge.svg)](https://github.com/7468096-ux/ai-mindmap/actions)
 [![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://7468096-ux.github.io/ai-mindmap/)
 
-## 🎯 О проекте
+## 🎯 About
 
-AI Mindmap — это образовательный инструмент для изучения иерархии концепций искусственного интеллекта. Проект визуализирует связи между понятиями от высокоуровневых областей (AI, ML, DL) до конкретных имплементаций (GPT, BERT, YOLO).
+AI Mindmap is an educational tool for learning the hierarchy of artificial intelligence concepts. The project visualizes connections between concepts from high-level fields (AI, ML, DL) to specific implementations (GPT, BERT, YOLO).
 
 **Live Demo:** https://7468096-ux.github.io/ai-mindmap/
 
-## ✨ Возможности v1.0
+## ✨ Features v1.0
 
-### Контент
-- 📚 **112 нод** — полное покрытие AI/ML терминологии
-- 🌍 **Двуязычность** — русский и английский языки
-- 📖 **Подробные описания** — для каждого понятия
-- 🔑 **Key Points** — ключевые факты в каждой ноде
-- 🔧 **How It Works** — объяснение механизмов работы
+### Content
+- 📚 **112 nodes** — complete AI/ML terminology coverage
+- 🌍 **Bilingual** — Russian and English languages
+- 📖 **Detailed descriptions** — for every concept
+- 🔑 **Key Points** — essential facts in each node
+- 🔧 **How It Works** — mechanism explanations
 
-### Интерактивность
-- 🎮 **25 интерактивных демо** — визуализация алгоритмов в действии
-- 🖱️ **Drag & Drop** — перетаскивание нод
-- 🔍 **Zoom & Pan** — масштабирование и навигация
-- ✨ **Космический UI** — анимированный фон со звёздами
+### Interactivity
+- 🎮 **25 interactive demos** — algorithm visualizations in action
+- 🖱️ **Drag & Drop** — movable nodes
+- 🔍 **Zoom & Pan** — scaling and navigation
+- ✨ **Space UI** — animated starry background
 
-### Демо-визуализации
-| Категория | Демо |
-|-----------|------|
+### Demo Visualizations
+| Category | Demos |
+|----------|-------|
 | **Regression** | Linear Regression, Logistic Regression |
 | **Classification** | Decision Tree, Random Forest, SVM, XGBoost |
 | **Clustering** | K-Means, PCA |
@@ -39,20 +39,20 @@ AI Mindmap — это образовательный инструмент для
 | **RL** | Q-Learning |
 | **Architecture** | ResNet |
 
-## 🏗️ Архитектура
+## 🏗️ Architecture
 
-### Иерархия уровней
+### Level Hierarchy
 ```
-Field (Область)
-  └── Theory (Теория)
-        └── Method (Метод)
-              └── Algorithm (Алгоритм)
-                    └── Implementation (Имплементация)
+Field
+  └── Theory
+        └── Method
+              └── Algorithm
+                    └── Implementation
 ```
 
-### Основные ветки
+### Main Branches
 ```
-AI (Искусственный Интеллект)
+AI (Artificial Intelligence)
 ├── ML (Machine Learning)
 │   ├── Supervised Learning
 │   │   ├── Linear Regression, Logistic Regression
@@ -90,75 +90,75 @@ AI (Искусственный Интеллект)
 - **Deployment:** GitHub Pages
 - **CI/CD:** GitHub Actions
 
-## 📦 Установка
+## 📦 Installation
 
 ```bash
-# Клонирование
+# Clone
 git clone https://github.com/7468096-ux/ai-mindmap.git
 cd ai-mindmap
 
-# Установка зависимостей
+# Install dependencies
 npm install
 
-# Запуск dev-сервера
+# Run dev server
 npm run dev
 
-# Сборка
+# Build
 npm run build
 ```
 
-## 📁 Структура проекта
+## 📁 Project Structure
 
 ```
 src/
 ├── app/                    # Next.js app router
-│   ├── page.tsx           # Главная страница (mindmap)
-│   ├── playground/        # Демо-страница
-│   └── globals.css        # Глобальные стили
+│   ├── page.tsx           # Main page (mindmap)
+│   ├── playground/        # Demo page
+│   └── globals.css        # Global styles
 ├── components/
-│   ├── SpaceMindMap.tsx   # Основной компонент карты
-│   └── demos/             # 25 интерактивных демо
-│       ├── index.tsx      # Реестр демо
+│   ├── SpaceMindMap.tsx   # Main map component
+│   └── demos/             # 25 interactive demos
+│       ├── index.tsx      # Demo registry
 │       ├── LinearRegressionDemo.tsx
 │       ├── CNNDemo.tsx
 │       └── ...
 └── data/
-    └── nodes.ts           # 112 нод с контентом
+    └── nodes.ts           # 112 nodes with content
 ```
 
-## 📋 История версий
+## 📋 Version History
 
-| Версия | Дата | Изменения |
-|--------|------|-----------|
-| v0.1 | 2024-01 | Базовая структура, core AI concepts |
-| v0.2 | 2024-01 | Переключатель языков RU/EN |
-| v0.3 | 2024-01 | Полная ветка ML с алгоритмами |
+| Version | Date | Changes |
+|---------|------|---------|
+| v0.1 | 2024-01 | Basic structure, core AI concepts |
+| v0.2 | 2024-01 | Language toggle RU/EN |
+| v0.3 | 2024-01 | Full ML branch with algorithms |
 | v0.4 | 2024-02 | Deep Learning + "How It Works" |
 | v0.5 | 2024-02 | Computer Vision branch |
 | v0.6 | 2024-02 | Implementations (BERT, GPT, CLIP) |
-| **v1.0** | **2024-02-07** | **112 нод, 25 демо, полное покрытие** |
+| **v1.0** | **2024-02-07** | **112 nodes, 25 demos, full coverage** |
 
 ## 🚀 Roadmap v2.0
 
-См. [ROADMAP.md](./ROADMAP.md) для детального плана развития.
+See [ROADMAP.md](./ROADMAP.md) for detailed development plan.
 
-**Планируется:**
-- 📖 Learning Path (рекомендуемый порядок изучения)
-- 🧪 Режимы изучения (обзор / глубокое погружение / практика)
-- 📝 Примеры кода для каждого алгоритма
-- 🔗 Явные связи "Это нужно для..."
-- ✅ Прогресс изучения
-- 📊 Сравнительные таблицы алгоритмов
+**Planned:**
+- 📖 Learning Path (recommended study order)
+- 🧪 Study modes (overview / deep dive / practice)
+- 📝 Code examples for each algorithm
+- 🔗 Explicit "Required for..." connections
+- ✅ Learning progress tracking
+- 📊 Algorithm comparison tables
 
-## 🤝 Участие
+## 🤝 Contributing
 
-Issues и Pull Requests приветствуются!
+Issues and Pull Requests are welcome!
 
-## 📄 Лицензия
+## 📄 License
 
-MIT License — свободное использование в любых целях.
+MIT License — free to use for any purpose.
 
 ---
 
-**Автор:** [Aleksandr Lukashkin](https://github.com/7468096-ux)  
+**Author:** [Aleksandr Lukashkin](https://github.com/7468096-ux)  
 **AI Assistant:** Alice 🐰 (Clawdbot)

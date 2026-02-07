@@ -1,118 +1,118 @@
 # 🗺️ AI Mindmap — Roadmap v2.0
 
-> План развития проекта: от интерактивной карты к полноценной образовательной платформе
+> Development plan: from interactive map to full-fledged educational platform
 
-## 📊 Текущий статус (v1.0)
+## 📊 Current Status (v1.0)
 
-✅ **Достигнуто:**
-- 112 нод с полным контентом (RU/EN)
-- 25 интерактивных демо
-- Космический UI с анимациями
+✅ **Achieved:**
+- 112 nodes with full content (RU/EN)
+- 25 interactive demos
+- Space UI with animations
 - Drag & drop, zoom, pan
-- GitHub Pages деплой
+- GitHub Pages deployment
 
 ---
 
-## 🎯 Фазы развития
+## 🎯 Development Phases
 
-### Phase 1: Качество контента (v1.1)
-**Срок: 1-2 недели**
+### Phase 1: Content Quality (v1.1)
+**Timeline: 1-2 weeks**
 
-#### 1.1 Корректировка неточностей
-- [ ] GPT-4 параметры: изменить "~1.7T" на "сотни миллиардов — триллион+ (не подтверждено)"
-- [ ] DALL-E: уточнить что v1 был dVAE, v2/v3 — diffusion
-- [ ] Проверить все даты и факты
+#### 1.1 Fix Inaccuracies
+- [ ] GPT-4 parameters: change to "hundreds of billions+ (exact not disclosed)"
+- [ ] DALL-E: clarify that v1 was dVAE, v2/v3 — diffusion
+- [ ] Verify all dates and facts
 
-#### 1.2 Добавить практический контекст
-- [ ] **"Где используется"** — реальные примеры для каждой ноды
-  - Linear Regression → предсказание цен, тренды
-  - CNN → распознавание лиц, медицинские снимки
-  - Transformer → ChatGPT, переводчики
-- [ ] **"Когда использовать"** — критерии выбора алгоритма
-  - Мало данных → SVM, Decision Tree
-  - Много данных → Neural Networks
-  - Изображения → CNN
-  - Последовательности → RNN/Transformer
+#### 1.2 Add Practical Context
+- [ ] **"Where it's used"** — real-world examples for each node
+  - Linear Regression → price prediction, trends
+  - CNN → face recognition, medical imaging
+  - Transformer → ChatGPT, translators
+- [ ] **"When to use"** — algorithm selection criteria
+  - Small data → SVM, Decision Tree
+  - Large data → Neural Networks
+  - Images → CNN
+  - Sequences → RNN/Transformer
 
-#### 1.3 Улучшить демо
-- [ ] Добавить пошаговые объяснения в каждое демо
-- [ ] Кнопка "Что здесь происходит?" с подробным описанием
-- [ ] Режим "Медленно" для пошагового просмотра
+#### 1.3 Improve Demos
+- [ ] Add step-by-step explanations to each demo
+- [ ] "What's happening here?" button with detailed description
+- [ ] "Slow mode" for step-by-step viewing
 
 ---
 
 ### Phase 2: Learning Experience (v1.2)
-**Срок: 2-3 недели**
+**Timeline: 2-3 weeks**
 
-#### 2.1 Learning Path
-Рекомендуемые пути изучения:
+#### 2.1 Learning Paths
+Recommended study paths:
 
-**Путь 1: Основы ML (для начинающих)**
+**Path 1: ML Basics (for beginners)**
 ```
 AI → ML → Supervised → Linear Regression → Logistic Regression 
-→ Decision Tree → Random Forest → Оценка моделей
+→ Decision Tree → Random Forest → Model Evaluation
 ```
 
-**Путь 2: Deep Learning**
+**Path 2: Deep Learning**
 ```
 Neural Networks → Backpropagation → CNN → RNN → LSTM 
 → Attention → Transformer
 ```
 
-**Путь 3: Современный AI**
+**Path 3: Modern AI**
 ```
 Transformer → LLM → GPT → BERT → Prompting → RAG → Agents
 ```
 
-**Путь 4: Computer Vision**
+**Path 4: Computer Vision**
 ```
 CNN → Classification → Detection (YOLO) → Segmentation 
 → ResNet → ViT → CLIP
 ```
 
-#### 2.2 Режимы изучения
-- [ ] **📖 Обзор** — быстрый просмотр всего дерева за 10 минут
-- [ ] **🎯 Глубокое погружение** — одна ветка детально с демо
-- [ ] **🧪 Практика** — демо + интерактивные задания
+#### 2.2 Study Modes
+- [ ] **📖 Overview** — quick view of entire tree in 10 minutes
+- [ ] **🎯 Deep Dive** — one branch in detail with demos
+- [ ] **🧪 Practice** — demos + interactive tasks
 
-#### 2.3 UI улучшения
-- [ ] Highlight активного пути на карте
-- [ ] Мини-карта для навигации
+#### 2.3 UI Improvements
+- [ ] Highlight active path on map
+- [ ] Mini-map for navigation
 - [ ] Breadcrumbs: AI > ML > Supervised > Linear Regression
 
 ---
 
-### Phase 3: Интерактивность (v1.3)
-**Срок: 2-3 недели**
+### Phase 3: Interactivity (v1.3)
+**Timeline: 2-3 weeks**
 
-#### 3.1 Связи между нодами
-- [ ] Явные стрелки с подписями
-  - "Является основой для"
-  - "Улучшает"  
-  - "Решает проблему"
-- [ ] При клике на ноду — подсветить все связанные
-- [ ] Режим "Показать dependencies"
+#### 3.1 Node Connections
+- [ ] Explicit arrows with labels
+  - "Is foundation for"
+  - "Improves"  
+  - "Solves problem of"
+- [ ] On node click — highlight all related nodes
+- [ ] "Show dependencies" mode
 
-#### 3.2 Сравнительные таблицы
+#### 3.2 Comparison Tables
 - [ ] SVM vs Logistic Regression vs Decision Tree
 - [ ] CNN vs ViT
 - [ ] RNN vs LSTM vs Transformer
 - [ ] GAN vs VAE vs Diffusion
 
-Формат таблицы:
-| Критерий | Алгоритм A | Алгоритм B |
-|----------|------------|------------|
-| Сложность | O(n²) | O(n) |
-| Данные | Мало | Много |
-| Интерпретируемость | Высокая | Низкая |
+Table format:
+| Criteria | Algorithm A | Algorithm B |
+|----------|-------------|-------------|
+| Complexity | O(n²) | O(n) |
+| Data needed | Small | Large |
+| Interpretability | High | Low |
 
-#### 3.3 Примеры кода
-- [ ] Python сниппеты для каждого алгоритма
-- [ ] Минимальный рабочий пример (10-20 строк)
-- [ ] Копирование в буфер
+#### 3.3 Code Examples
+- [ ] Python snippets for each algorithm
+- [ ] Minimal working example (10-20 lines)
+- [ ] Copy to clipboard
 
 ```python
-# Пример: Linear Regression
+# Example: Linear Regression
 from sklearn.linear_model import LinearRegression
 model = LinearRegression()
 model.fit(X_train, y_train)
@@ -121,47 +121,47 @@ predictions = model.predict(X_test)
 
 ---
 
-### Phase 4: Прогресс и персонализация (v1.4)
-**Срок: 3-4 недели**
+### Phase 4: Progress & Personalization (v1.4)
+**Timeline: 3-4 weeks**
 
-#### 4.1 Прогресс изучения
-- [ ] LocalStorage для сохранения прогресса
-- [ ] Отметка "Изучено" на нодах
-- [ ] Прогресс-бар по веткам
-- [ ] Статистика: изучено X из Y нод
+#### 4.1 Learning Progress
+- [ ] LocalStorage for saving progress
+- [ ] "Completed" mark on nodes
+- [ ] Progress bar by branch
+- [ ] Statistics: learned X of Y nodes
 
 #### 4.2 Flashcards
-- [ ] Быстрые карточки для повторения
-- [ ] Вопрос → ответ формат
-- [ ] Spaced repetition (интервальное повторение)
+- [ ] Quick cards for review
+- [ ] Question → answer format
+- [ ] Spaced repetition
 
-Примеры:
-- Q: "Что делает ReLU?" → A: "Заменяет отрицательные значения на 0"
-- Q: "Чем LSTM лучше RNN?" → A: "Решает vanishing gradient через gates"
+Examples:
+- Q: "What does ReLU do?" → A: "Replaces negative values with 0"
+- Q: "How is LSTM better than RNN?" → A: "Solves vanishing gradient via gates"
 
-#### 4.3 Мини-квизы
-- [ ] После каждой ноды — 2-3 вопроса
-- [ ] Множественный выбор
-- [ ] Объяснение правильного ответа
+#### 4.3 Mini-Quizzes
+- [ ] After each node — 2-3 questions
+- [ ] Multiple choice
+- [ ] Explanation of correct answer
 
 ---
 
 ### Phase 5: Advanced Features (v2.0)
-**Срок: 4-6 недель**
+**Timeline: 4-6 weeks**
 
-#### 5.1 Поиск
-- [ ] Поиск по названиям нод
-- [ ] Поиск по содержимому
-- [ ] Фильтры по уровню/ветке
+#### 5.1 Search
+- [ ] Search by node names
+- [ ] Search by content
+- [ ] Filters by level/branch
 
-#### 5.2 Экспорт
-- [ ] Экспорт карты в PDF
-- [ ] Экспорт прогресса
-- [ ] Шеринг конкретных нод
+#### 5.2 Export
+- [ ] Export map to PDF
+- [ ] Export progress
+- [ ] Share specific nodes
 
-#### 5.3 Мобильная версия
-- [ ] Адаптивный дизайн для мобильных
-- [ ] Touch-friendly навигация
+#### 5.3 Mobile Version
+- [ ] Responsive design for mobile
+- [ ] Touch-friendly navigation
 - [ ] PWA (Progressive Web App)
 
 ---
@@ -169,65 +169,65 @@ predictions = model.predict(X_test)
 ## 📅 Timeline
 
 ```
-Февраль 2024
-├── Week 1-2: Phase 1 (Качество контента)
-│   ├── Корректировка фактов
-│   ├── "Где используется"
-│   └── Улучшение демо
+February 2024
+├── Week 1-2: Phase 1 (Content Quality)
+│   ├── Fix facts
+│   ├── "Where it's used"
+│   └── Improve demos
 │
 ├── Week 3-4: Phase 2 (Learning Experience)
 │   ├── Learning Paths
-│   ├── Режимы изучения
-│   └── UI навигация
+│   ├── Study modes
+│   └── UI navigation
 
-Март 2024
-├── Week 1-2: Phase 3 (Интерактивность)
-│   ├── Связи между нодами
-│   ├── Сравнительные таблицы
-│   └── Примеры кода
+March 2024
+├── Week 1-2: Phase 3 (Interactivity)
+│   ├── Node connections
+│   ├── Comparison tables
+│   └── Code examples
 │
-├── Week 3-4: Phase 4 (Прогресс)
-│   ├── Прогресс изучения
+├── Week 3-4: Phase 4 (Progress)
+│   ├── Learning progress
 │   ├── Flashcards
-│   └── Квизы
+│   └── Quizzes
 
-Апрель 2024
+April 2024
 └── Phase 5 (Advanced)
-    ├── Поиск
-    ├── Экспорт
-    └── Мобильная версия
+    ├── Search
+    ├── Export
+    └── Mobile version
 ```
 
 ---
 
-## 🎯 KPI успеха
+## 🎯 Success KPIs
 
-| Метрика | Текущее | Цель v2.0 |
-|---------|---------|-----------|
-| Ноды | 112 | 150+ |
-| Демо | 25 | 40+ |
-| Среднее время сессии | ? | 10+ мин |
-| Возврат пользователей | ? | 30%+ |
-
----
-
-## 💡 Идеи на будущее (v3.0+)
-
-- 🤖 AI-ассистент для вопросов по контенту
-- 👥 Совместное изучение (multiplayer mode)
-- 📊 Персональные рекомендации
-- 🎓 Сертификаты прохождения
-- 🔌 API для интеграции
+| Metric | Current | Goal v2.0 |
+|--------|---------|-----------|
+| Nodes | 112 | 150+ |
+| Demos | 25 | 40+ |
+| Avg session time | ? | 10+ min |
+| Return users | ? | 30%+ |
 
 ---
 
-## 📝 Как контрибьютить
+## 💡 Future Ideas (v3.0+)
 
-1. Выбрать задачу из roadmap
-2. Создать issue с описанием
+- 🤖 AI assistant for content questions
+- 👥 Collaborative learning (multiplayer mode)
+- 📊 Personal recommendations
+- 🎓 Completion certificates
+- 🔌 API for integration
+
+---
+
+## 📝 How to Contribute
+
+1. Pick a task from roadmap
+2. Create issue with description
 3. Fork → Branch → PR
 4. Code review → Merge
 
 ---
 
-*Последнее обновление: 2024-02-07*
+*Last updated: 2024-02-07*
