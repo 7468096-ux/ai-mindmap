@@ -93,6 +93,11 @@ export default function Playground() {
   const panOffset = useRef({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   
+  // Zoom state
+  const [zoom, setZoom] = useState(1);
+  const MIN_ZOOM = 0.3;
+  const MAX_ZOOM = 2;
+  
   // Node drag state
   const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null);
   const dragStart = useRef({ x: 0, y: 0 });
@@ -217,6 +222,23 @@ export default function Playground() {
     };
   }, [isPanning, draggingNodeId, handlePanStart, handlePanMove, handlePanEnd, handleNodeDragMove, handleNodeDragEnd]);
 
+  // Zoom with mouse wheel
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      setZoom(prev => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, prev + delta)));
+    };
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('wheel', handleWheel, { passive: false });
+    }
+    return () => {
+      container?.removeEventListener('wheel', handleWheel);
+    };
+  }, []);
+
   // Touch events
   useEffect(() => {
     const handleTouchStart = (e: TouchEvent) => {
@@ -336,7 +358,7 @@ export default function Playground() {
       <p className="space-subtitle">Перетаскивай ноды • Двигай поле • Смотри на звёзды</p>
 
       {/* Pan layer */}
-      <div className="pan-layer" style={{ transform: `translate(${pan.x}px, ${pan.y}px)` }}>
+      <div className="pan-layer" style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`, transformOrigin: 'center center' }}>
         {/* SVG для связей - большой размер */}
         <svg className="connections" style={{
           position: 'absolute',
@@ -445,7 +467,7 @@ export default function Playground() {
         ))}
       </div>
 
-      <div className="pan-indicator">📍 {Math.round(pan.x)}, {Math.round(pan.y)}</div>
+      <div className="pan-indicator">📍 {Math.round(pan.x)}, {Math.round(pan.y)} | 🔍 {Math.round(zoom * 100)}%</div>
     </div>
   );
 }
