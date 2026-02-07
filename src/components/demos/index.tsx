@@ -14,10 +14,20 @@ const DecisionTreeDemo = dynamic(() => import('./DecisionTreeDemo'), { ssr: fals
 const PCADemo = dynamic(() => import('./PCADemo'), { ssr: false });
 const NeuralNetworkDemo = dynamic(() => import('./NeuralNetworkDemo'), { ssr: false });
 
+// NEW DEMOS
+const LogisticRegressionDemo = dynamic(() => import('./LogisticRegressionDemo'), { ssr: false });
+const DropoutDemo = dynamic(() => import('./DropoutDemo'), { ssr: false });
+const AutoencoderDemo = dynamic(() => import('./AutoencoderDemo'), { ssr: false });
+const Word2VecDemo = dynamic(() => import('./Word2VecDemo'), { ssr: false });
+const DiffusionDemo = dynamic(() => import('./DiffusionDemo'), { ssr: false });
+const GANDemo = dynamic(() => import('./GANDemo'), { ssr: false });
+const QLearningDemo = dynamic(() => import('./QLearningDemo'), { ssr: false });
+
 type DemoComponent = React.ComponentType<{ lang?: Language }>;
 
 // Map node IDs to their demos
 export const demos: Record<string, DemoComponent> = {
+  // Original demos
   'linear-reg': LinearRegressionDemo,
   'kmeans': KMeansDemo,
   'attention': AttentionDemo,
@@ -27,6 +37,15 @@ export const demos: Record<string, DemoComponent> = {
   'decision-tree': DecisionTreeDemo,
   'pca': PCADemo,
   'nn': NeuralNetworkDemo,
+  
+  // New demos
+  'logreg': LogisticRegressionDemo,
+  'dropout': DropoutDemo,
+  'autoencoder': AutoencoderDemo,
+  'word2vec': Word2VecDemo,
+  'diffusion': DiffusionDemo,
+  'gan': GANDemo,
+  'qlearning': QLearningDemo,
 };
 
 export function hasDemo(nodeId: string): boolean {
