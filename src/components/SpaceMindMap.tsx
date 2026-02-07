@@ -186,13 +186,70 @@ function getManualPositions(): Map<string, { x: number; y: number }> {
   return positions;
 }
 
+// localStorage key for learning progress
+const LEARNING_PROGRESS_KEY = 'ai-mindmap-learning-progress';
+
+// Types for localStorage data
+interface LearningProgress {
+  activePath: string | null;
+  completedNodes: string[];
+}
+
+// Load learning progress from localStorage
+function loadLearningProgress(): LearningProgress {
+  if (typeof window === 'undefined') {
+    return { activePath: null, completedNodes: [] };
+  }
+  
+  try {
+    const stored = localStorage.getItem(LEARNING_PROGRESS_KEY);
+    if (!stored) {
+      return { activePath: null, completedNodes: [] };
+    }
+    
+    const parsed = JSON.parse(stored) as LearningProgress;
+    
+    // Validate the data structure
+    if (typeof parsed === 'object' && parsed !== null) {
+      return {
+        activePath: typeof parsed.activePath === 'string' ? parsed.activePath : null,
+        completedNodes: Array.isArray(parsed.completedNodes) ? parsed.completedNodes : [],
+      };
+    }
+    
+    return { activePath: null, completedNodes: [] };
+  } catch (error) {
+    console.warn('Failed to load learning progress from localStorage:', error);
+    return { activePath: null, completedNodes: [] };
+  }
+}
+
+// Save learning progress to localStorage
+function saveLearningProgress(progress: LearningProgress) {
+  if (typeof window === 'undefined') return;
+  
+  try {
+    localStorage.setItem(LEARNING_PROGRESS_KEY, JSON.stringify(progress));
+  } catch (error) {
+    console.warn('Failed to save learning progress to localStorage:', error);
+  }
+}
+
 export default function SpaceMindMap() {
   // English по умолчанию
   const [lang, setLang] = useState<Language>('en');
   const [selectedNode, setSelectedNode] = useState<AINode | null>(null);
-  const [activePath, setActivePath] = useState<string | null>(null);
-  const [completedNodes, setCompletedNodes] = useState<string[]>([]);
+  
+  // Load initial state from localStorage
+  const initialProgress = loadLearningProgress();
+  const [activePath, setActivePath] = useState<string | null>(initialProgress.activePath);
+  const [completedNodes, setCompletedNodes] = useState<string[]>(initialProgress.completedNodes);
   const [smoothTilt, setSmoothTilt] = useState({ x: 0, y: 0 });
+  
+  // Save learning progress to localStorage whenever it changes
+  useEffect(() => {
+    saveLearningProgress({ activePath, completedNodes });
+  }, [activePath, completedNodes]);
   const targetTilt = useRef({ x: 0, y: 0 });
   const animationRef = useRef<number>();
   
