@@ -2,6 +2,8 @@
 
 import { AINode, levelColors, levelLabels, Language } from '@/data/nodes';
 import { hasDemo, getDemo } from './demos';
+import { getComparisonsForNode } from '@/data/comparisons';
+import ComparisonTable from './ComparisonTable';
 
 interface InfoPanelProps {
   node: AINode | null;
@@ -133,7 +135,7 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
       
       {/* Code Example - only show if available */}
       {content.codeExample && (
-        <div className="p-4">
+        <div className="p-4 border-b border-gray-800">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-gray-400 text-xs uppercase tracking-wide">
               💻 {lang === 'ru' ? 'Пример кода' : 'Code Example'}
@@ -152,6 +154,20 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
           </pre>
         </div>
       )}
+      
+      {/* Comparison Tables - only show if available */}
+      {getComparisonsForNode(node.id).map(comparison => (
+        <div key={comparison.id} className="p-4 border-b border-gray-800">
+          <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3">
+            📊 {comparison.title[lang]}
+          </h3>
+          <ComparisonTable 
+            comparison={comparison} 
+            currentNodeId={node.id} 
+            lang={lang} 
+          />
+        </div>
+      ))}
     </div>
     </>
   );
