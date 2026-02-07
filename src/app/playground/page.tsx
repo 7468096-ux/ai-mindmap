@@ -114,40 +114,37 @@ export default function Playground() {
     setNodeSizes(sizes);
   }, [nodes]);
 
-  // Создание падающих звёзд периодически
+  // Создание падающих звёзд с рандомным интервалом 20-60 сек
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
     const createShootingStar = () => {
       const star: ShootingStar = {
         id: shootingStarId.current++,
-        startX: Math.random() * 100,
-        startY: Math.random() * 30,
-        angle: 30 + Math.random() * 30, // 30-60 градусов
-        length: 100 + Math.random() * 150,
-        speed: 0.8 + Math.random() * 0.5,
+        startX: 70 + Math.random() * 30, // правая часть экрана (70-100%)
+        startY: Math.random() * 20,       // верхняя часть (0-20%)
+        angle: 35 + Math.random() * 20,   // угол 35-55° (вниз-влево)
+        length: 120 + Math.random() * 180,
+        speed: 1.2 + Math.random() * 0.8,
         delay: 0,
       };
       setShootingStars(prev => [...prev, star]);
       
-      // Удаляем через 2 секунды
+      // Удаляем через время анимации
       setTimeout(() => {
         setShootingStars(prev => prev.filter(s => s.id !== star.id));
-      }, 2000);
+      }, star.speed * 1000 + 500);
+      
+      // Следующая звезда через 20-60 секунд
+      const nextDelay = 20000 + Math.random() * 40000;
+      timeoutId = setTimeout(createShootingStar, nextDelay);
     };
 
-    // Первая звезда через 3 секунды
-    const firstTimeout = setTimeout(createShootingStar, 3000);
-    
-    // Потом каждые 5-15 секунд
-    const interval = setInterval(() => {
-      if (Math.random() > 0.3) { // 70% шанс
-        createShootingStar();
-      }
-    }, 8000);
+    // Первая звезда через 5-15 секунд
+    const firstDelay = 5000 + Math.random() * 10000;
+    timeoutId = setTimeout(createShootingStar, firstDelay);
 
-    return () => {
-      clearTimeout(firstTimeout);
-      clearInterval(interval);
-    };
+    return () => clearTimeout(timeoutId);
   }, []);
   
   // Node drag handlers
@@ -276,10 +273,10 @@ export default function Playground() {
 
   return (
     <div ref={containerRef} className={`space-container ${isPanning ? 'panning' : ''}`}>
-      {/* Звёзды */}
+      {/* Звёзды - двигаются с параллаксом И с паном */}
       {starLayers.map((layer, i) => (
         <div key={i} className="star-layer" style={{
-          transform: `translate(${smoothTilt.x * layer.speed}px, ${smoothTilt.y * layer.speed}px)`,
+          transform: `translate(${smoothTilt.x * layer.speed + pan.x * (0.1 + i * 0.05)}px, ${smoothTilt.y * layer.speed + pan.y * (0.1 + i * 0.05)}px)`,
         }}>
           {layer.stars.map((star, j) => (
             <div key={j} className="star" style={{
