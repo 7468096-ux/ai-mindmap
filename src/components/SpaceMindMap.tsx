@@ -62,82 +62,103 @@ const spaceColors: Record<AbstractionLevel, string> = {
   implementation: '#f59e0b',
 };
 
-// Ручная расстановка позиций для красивого дерева
+// Ручная расстановка позиций - СЕТКА с подгруппами
 function getManualPositions(): Map<string, { x: number; y: number }> {
   const positions = new Map<string, { x: number; y: number }>();
   
-  // Константы для расстояний - УВЕЛИЧЕННЫЕ ×3
-  const COL1 = 50;      // AI
-  const COL2 = 450;     // ML, DL, NLP
-  const COL3 = 900;     // Methods / Architectures
-  const COL4 = 1400;    // Algorithms level 1
-  const COL5 = 1900;    // Algorithms level 2 / Implementations
-  const COL6 = 2400;    // Far implementations
+  // Сетка - колонки
+  const COL0 = 0;       // AI (корень)
+  const COL1 = 350;     // Theory (ML, DL, NLP, CV)
+  const COL2 = 700;     // Methods
+  const COL3 = 1050;    // Algorithms
+  const COL4 = 1400;    // Implementations
+  const COL5 = 1750;    // Far implementations
   
-  const VGAP = 280;     // Вертикальный промежуток ×3
+  // Вертикальные секции для подгрупп
+  const ML_Y = 0;           // ML branch top
+  const DL_Y = 900;         // DL branch 
+  const NLP_Y = 2100;       // NLP branch
+  const CV_Y = 2900;        // CV branch
+  
+  const ROW = 120;          // Шаг между нодами в группе
   
   // === ROOT ===
-  positions.set('ai', { x: COL1, y: 900 });
+  positions.set('ai', { x: COL0, y: 1400 });
   
-  // === THEORY LEVEL (3 главные ветки) ===
-  positions.set('ml', { x: COL2, y: 200 });      // Machine Learning - верх
-  positions.set('dl', { x: COL2, y: 1000 });     // Deep Learning - центр  
-  positions.set('nlp', { x: COL2, y: 2000 });    // NLP - низ
+  // === ML BRANCH (верх) ===
+  positions.set('ml', { x: COL1, y: ML_Y + 300 });
   
-  // === ML BRANCH ===
-  positions.set('supervised', { x: COL3, y: 0 });
-  positions.set('unsupervised', { x: COL3, y: 350 });
-  positions.set('rl', { x: COL3, y: 700 });
+  // ML Methods - вертикальный столбец
+  positions.set('supervised', { x: COL2, y: ML_Y + 100 });
+  positions.set('unsupervised', { x: COL2, y: ML_Y + 400 });
+  positions.set('rl', { x: COL2, y: ML_Y + 700 });
   
-  // Algorithms под Supervised
-  positions.set('linear-reg', { x: COL4, y: -150 });
-  positions.set('decision-tree', { x: COL4, y: 50 });
-  positions.set('svm', { x: COL4, y: 250 });
-  positions.set('random-forest', { x: COL5, y: 50 });
+  // Supervised algorithms - столбец
+  positions.set('linear-reg', { x: COL3, y: ML_Y });
+  positions.set('decision-tree', { x: COL3, y: ML_Y + ROW });
+  positions.set('svm', { x: COL3, y: ML_Y + ROW * 2 });
+  positions.set('random-forest', { x: COL4, y: ML_Y + ROW });
   
-  // Algorithms под Unsupervised
-  positions.set('kmeans', { x: COL4, y: 450 });
-  positions.set('pca', { x: COL4, y: 650 });
+  // Unsupervised algorithms
+  positions.set('kmeans', { x: COL3, y: ML_Y + 400 });
+  positions.set('pca', { x: COL3, y: ML_Y + 400 + ROW });
   
-  // Algorithms под RL
-  positions.set('qlearning', { x: COL4, y: 850 });
+  // RL algorithms
+  positions.set('qlearning', { x: COL3, y: ML_Y + 700 });
   
-  // === DL BRANCH ===
-  positions.set('nn', { x: COL3, y: 900 });
-  positions.set('cnn', { x: COL3, y: 1150 });
-  positions.set('rnn', { x: COL3, y: 1400 });
-  positions.set('transformer', { x: COL3, y: 1650 });
+  // === DL BRANCH (центр-верх) ===
+  positions.set('dl', { x: COL1, y: DL_Y + 400 });
   
-  // Под архитектурами
-  positions.set('lstm', { x: COL4, y: 1400 });
-  positions.set('attention', { x: COL4, y: 1650 });
+  // DL Architectures - столбец
+  positions.set('nn', { x: COL2, y: DL_Y });
+  positions.set('cnn', { x: COL2, y: DL_Y + ROW });
+  positions.set('rnn', { x: COL2, y: DL_Y + ROW * 2 });
+  positions.set('transformer', { x: COL2, y: DL_Y + ROW * 3 });
+  positions.set('gan', { x: COL2, y: DL_Y + ROW * 5 });
+  positions.set('vae', { x: COL2, y: DL_Y + ROW * 6 });
+  positions.set('diffusion', { x: COL2, y: DL_Y + ROW * 7 });
   
-  // Generative models
-  positions.set('gan', { x: COL4, y: 1000 });
-  positions.set('vae', { x: COL4, y: 1900 });
-  positions.set('diffusion', { x: COL4, y: 2150 });
+  // DL sub-architectures
+  positions.set('lstm', { x: COL3, y: DL_Y + ROW * 2 });
+  positions.set('attention', { x: COL3, y: DL_Y + ROW * 3 });
   
-  // === NLP BRANCH ===
-  positions.set('llm', { x: COL3, y: 2100 });
-  positions.set('embeddings', { x: COL3, y: 2400 });
-  positions.set('tokenization', { x: COL3, y: 2700 });
+  // === NLP BRANCH (центр-низ) ===
+  positions.set('nlp', { x: COL1, y: NLP_Y + 200 });
   
-  // LLM implementations
-  positions.set('gpt', { x: COL4, y: 2100 });
-  positions.set('bert', { x: COL4, y: 2400 });
+  // NLP components - столбец
+  positions.set('embeddings', { x: COL2, y: NLP_Y });
+  positions.set('tokenization', { x: COL2, y: NLP_Y + ROW });
+  positions.set('llm', { x: COL2, y: NLP_Y + ROW * 3 });
   
-  // === COMPUTER VISION BRANCH ===
-  positions.set('cv', { x: COL2, y: 3100 });
-  positions.set('obj-detection', { x: COL3, y: 2950 });
-  positions.set('img-classification', { x: COL3, y: 3200 });
-  positions.set('segmentation', { x: COL3, y: 3450 });
+  // NLP implementations
+  positions.set('gpt', { x: COL3, y: NLP_Y + ROW * 3 });
+  positions.set('bert', { x: COL3, y: NLP_Y + ROW * 4 });
+  positions.set('clip', { x: COL4, y: NLP_Y + ROW * 5 });
+  
+  // === CV BRANCH (низ) ===
+  positions.set('cv', { x: COL1, y: CV_Y + 200 });
+  
+  // CV methods - столбец
+  positions.set('img-classification', { x: COL2, y: CV_Y });
+  positions.set('obj-detection', { x: COL2, y: CV_Y + ROW });
+  positions.set('segmentation', { x: COL2, y: CV_Y + ROW * 2 });
   
   // CV implementations
-  positions.set('yolo', { x: COL4, y: 2950 });
-  positions.set('resnet', { x: COL4, y: 3200 });
+  positions.set('resnet', { x: COL3, y: CV_Y });
+  positions.set('yolo', { x: COL3, y: CV_Y + ROW });
+  positions.set('vit', { x: COL3, y: CV_Y + ROW * 3 });
   
-  // CLIP - мультимодальная (между CV и NLP)
-  positions.set('clip', { x: COL4, y: 2700 });
+  // === NEW NODES ===
+  // NLP additions
+  positions.set('word2vec', { x: COL3, y: NLP_Y });
+  positions.set('rag', { x: COL4, y: NLP_Y + ROW * 3 });
+  positions.set('finetuning', { x: COL4, y: NLP_Y + ROW * 5 });
+  positions.set('agents', { x: COL5, y: NLP_Y + ROW * 4 });
+  
+  // DL training techniques
+  positions.set('dropout', { x: COL3, y: DL_Y - ROW * 2 });
+  positions.set('batchnorm', { x: COL3, y: DL_Y - ROW });
+  positions.set('adam', { x: COL3, y: DL_Y + ROW * 4 });
   
   return positions;
 }
@@ -328,12 +349,14 @@ export default function SpaceMindMap() {
     };
   }, [isPanning, draggingNodeId, handlePanStart, handlePanMove, handlePanEnd, handleNodeDragMove, handleNodeDragEnd]);
 
-  // Zoom with mouse wheel
+  // Zoom with mouse wheel - плавный
+  const targetZoom = useRef(zoom);
+  
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      setZoom(prev => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, prev + delta)));
+      const delta = e.deltaY > 0 ? -0.08 : 0.08;
+      targetZoom.current = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, targetZoom.current + delta));
     };
 
     const container = containerRef.current;
@@ -343,6 +366,21 @@ export default function SpaceMindMap() {
     return () => {
       container?.removeEventListener('wheel', handleWheel);
     };
+  }, []);
+  
+  // Плавная анимация zoom
+  useEffect(() => {
+    let animationId: number;
+    const animateZoom = () => {
+      setZoom(prev => {
+        const diff = targetZoom.current - prev;
+        if (Math.abs(diff) < 0.001) return targetZoom.current;
+        return prev + diff * 0.15; // Плавность
+      });
+      animationId = requestAnimationFrame(animateZoom);
+    };
+    animationId = requestAnimationFrame(animateZoom);
+    return () => cancelAnimationFrame(animationId);
   }, []);
 
   // Touch events
@@ -442,20 +480,25 @@ export default function SpaceMindMap() {
 
   return (
     <div ref={containerRef} className={`space-container ${isPanning ? 'panning' : ''}`}>
-      {/* Звёзды */}
-      {starLayers.map((layer, i) => (
-        <div key={i} className="star-layer" style={{
-          transform: `translate(${smoothTilt.x * layer.speed + pan.x * (0.1 + i * 0.05)}px, ${smoothTilt.y * layer.speed + pan.y * (0.1 + i * 0.05)}px)`,
-        }}>
-          {layer.stars.map((star, j) => (
-            <div key={j} className="star" style={{
-              left: `${star.x}%`, top: `${star.y}%`,
-              width: `${layer.size}px`, height: `${layer.size}px`,
-              opacity: layer.opacity,
-            }} />
-          ))}
-        </div>
-      ))}
+      {/* Звёзды - реагируют на zoom */}
+      {starLayers.map((layer, i) => {
+        // Дальние слои (маленькие звёзды) меньше реагируют на zoom
+        const zoomFactor = 1 + (zoom - 0.65) * (0.1 + i * 0.08);
+        return (
+          <div key={i} className="star-layer" style={{
+            transform: `translate(${smoothTilt.x * layer.speed + pan.x * (0.1 + i * 0.05)}px, ${smoothTilt.y * layer.speed + pan.y * (0.1 + i * 0.05)}px) scale(${zoomFactor})`,
+            transition: 'transform 0.3s ease-out',
+          }}>
+            {layer.stars.map((star, j) => (
+              <div key={j} className="star" style={{
+                left: `${star.x}%`, top: `${star.y}%`,
+                width: `${layer.size}px`, height: `${layer.size}px`,
+                opacity: layer.opacity,
+              }} />
+            ))}
+          </div>
+        );
+      })}
 
       {/* Падающие звёзды */}
       {shootingStars.map(star => (

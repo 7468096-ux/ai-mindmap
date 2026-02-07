@@ -1152,6 +1152,256 @@ export const initialNodes: AINode[] = [
       },
     },
   },
+
+  // ========== MORE IMPLEMENTATIONS ==========
+  {
+    id: 'vit',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🔲',
+      level: 'algorithm',
+      ru: {
+        label: 'Vision Transformer',
+        description: 'ViT — применение архитектуры трансформера к изображениям через разбиение на патчи.',
+        keyPoints: [
+          '🧩 Изображение → патчи 16x16 → токены',
+          '👁️ Self-attention между патчами',
+          '🚀 Превосходит CNN на больших данных',
+          '📊 Требует много данных для pre-training',
+        ],
+        howItWorks: 'Изображение 224x224 разбивается на патчи 16x16 = 196 патчей. Каждый патч flatten\'ится и проецируется в embedding. Добавляется positional encoding и [CLS] токен. Стандартный Transformer encoder обрабатывает последовательность патчей. [CLS] токен используется для классификации. Без inductive bias CNN (локальность, трансляционная инвариантность), поэтому требует больше данных. Pre-training на ImageNet-21k (14M), затем fine-tuning.',
+      },
+      en: {
+        label: 'Vision Transformer',
+        description: 'ViT — applying transformer architecture to images by splitting into patches.',
+        keyPoints: [
+          '🧩 Image → 16x16 patches → tokens',
+          '👁️ Self-attention between patches',
+          '🚀 Outperforms CNN on large data',
+          '📊 Requires lots of data for pre-training',
+        ],
+        howItWorks: 'Image 224x224 split into 16x16 patches = 196 patches. Each patch flattened and projected to embedding. Positional encoding and [CLS] token added. Standard Transformer encoder processes patch sequence. [CLS] token used for classification. Without CNN inductive bias (locality, translation invariance), so needs more data. Pre-training on ImageNet-21k (14M), then fine-tuning.',
+      },
+    },
+  },
+  {
+    id: 'word2vec',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '📝',
+      level: 'algorithm',
+      ru: {
+        label: 'Word2Vec',
+        description: 'Алгоритм создания векторных представлений слов на основе контекста.',
+        keyPoints: [
+          '📊 Слово → вектор 100-300 размерности',
+          '🔄 CBOW vs Skip-gram архитектуры',
+          '➕ king - man + woman ≈ queen',
+          '📅 Google, 2013 — прорыв в NLP',
+        ],
+        howItWorks: 'Две архитектуры: CBOW (Continuous Bag of Words): предсказывает слово по контексту. Skip-gram: предсказывает контекст по слову. Обучение: sliding window по тексту, negative sampling для эффективности. Результат: слова с похожим контекстом имеют близкие векторы. Семантическая арифметика: vector("king") - vector("man") + vector("woman") ≈ vector("queen"). Ограничение: один вектор на слово, не учитывает полисемию (bank = банк или берег).',
+      },
+      en: {
+        label: 'Word2Vec',
+        description: 'Algorithm for creating word vector representations based on context.',
+        keyPoints: [
+          '📊 Word → vector 100-300 dimensions',
+          '🔄 CBOW vs Skip-gram architectures',
+          '➕ king - man + woman ≈ queen',
+          '📅 Google, 2013 — NLP breakthrough',
+        ],
+        howItWorks: 'Two architectures: CBOW (Continuous Bag of Words): predicts word from context. Skip-gram: predicts context from word. Training: sliding window over text, negative sampling for efficiency. Result: words with similar context have close vectors. Semantic arithmetic: vector("king") - vector("man") + vector("woman") ≈ vector("queen"). Limitation: one vector per word, doesn\'t handle polysemy (bank = financial or river).',
+      },
+    },
+  },
+  {
+    id: 'rag',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🔍',
+      level: 'method',
+      ru: {
+        label: 'RAG',
+        description: 'Retrieval-Augmented Generation — дополнение LLM внешними знаниями через поиск.',
+        keyPoints: [
+          '🔎 Retriever находит релевантные документы',
+          '📝 Generator использует их как контекст',
+          '🧠 Решает проблему устаревших знаний LLM',
+          '💼 Применение: чат-боты, QA системы',
+        ],
+        howItWorks: 'Пайплайн: 1) Запрос пользователя → embedding 2) Поиск похожих документов в vector DB (FAISS, Pinecone) 3) Top-K документов добавляются в prompt 4) LLM генерирует ответ с учётом контекста. Преимущества: актуальная информация, меньше галлюцинаций, возможность цитирования источников. Chunking: документы разбиваются на части ~500 токенов. Reranking: дополнительная фильтрация найденных документов.',
+      },
+      en: {
+        label: 'RAG',
+        description: 'Retrieval-Augmented Generation — augmenting LLM with external knowledge via search.',
+        keyPoints: [
+          '🔎 Retriever finds relevant documents',
+          '📝 Generator uses them as context',
+          '🧠 Solves LLM outdated knowledge problem',
+          '💼 Applications: chatbots, QA systems',
+        ],
+        howItWorks: 'Pipeline: 1) User query → embedding 2) Search similar docs in vector DB (FAISS, Pinecone) 3) Top-K docs added to prompt 4) LLM generates answer with context. Benefits: up-to-date info, fewer hallucinations, source citations. Chunking: documents split into ~500 token parts. Reranking: additional filtering of retrieved docs.',
+      },
+    },
+  },
+  {
+    id: 'finetuning',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🎯',
+      level: 'method',
+      ru: {
+        label: 'Fine-tuning',
+        description: 'Метод дообучения предобученной модели на специфичной задаче.',
+        keyPoints: [
+          '🔄 Pre-trained → Fine-tuned на своих данных',
+          '📉 Меньше данных чем обучение с нуля',
+          '🎛️ Варианты: full, LoRA, prefix-tuning',
+          '⚠️ Риск catastrophic forgetting',
+        ],
+        howItWorks: 'Full fine-tuning: обновляем все веса модели на новых данных. Дорого для больших моделей. LoRA (Low-Rank Adaptation): добавляем маленькие trainable матрицы к замороженным весам. A×B где A и B — низкоранговые. Эффективно: 0.1% параметров. Prefix-tuning: обучаем только "виртуальные токены" в начале. Prompt-tuning: обучаем soft prompt. RLHF: fine-tuning с reward model на основе человеческих предпочтений.',
+      },
+      en: {
+        label: 'Fine-tuning',
+        description: 'Method of adapting a pre-trained model to a specific task.',
+        keyPoints: [
+          '🔄 Pre-trained → Fine-tuned on your data',
+          '📉 Less data than training from scratch',
+          '🎛️ Variants: full, LoRA, prefix-tuning',
+          '⚠️ Risk of catastrophic forgetting',
+        ],
+        howItWorks: 'Full fine-tuning: update all model weights on new data. Expensive for large models. LoRA (Low-Rank Adaptation): add small trainable matrices to frozen weights. A×B where A and B are low-rank. Efficient: 0.1% parameters. Prefix-tuning: train only "virtual tokens" at the start. Prompt-tuning: train soft prompt. RLHF: fine-tuning with reward model based on human preferences.',
+      },
+    },
+  },
+  {
+    id: 'dropout',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🎲',
+      level: 'algorithm',
+      ru: {
+        label: 'Dropout',
+        description: 'Техника регуляризации — случайное "выключение" нейронов при обучении.',
+        keyPoints: [
+          '🎯 Предотвращает переобучение',
+          '📊 Обычно p = 0.1-0.5',
+          '🔄 При inference масштабируем веса',
+          '🧠 Эффект: ансамбль подсетей',
+        ],
+        howItWorks: 'При каждом forward pass случайно обнуляем p% нейронов. Разные нейроны при каждом batch. Это заставляет сеть не полагаться на конкретные нейроны — учит избыточные представления. При inference используем все нейроны, но умножаем на (1-p) для корректного масштаба. Или inverted dropout: при обучении делим на (1-p), при inference ничего не делаем. Интерпретация: обучаем экспоненциально много подсетей, inference — усреднение.',
+      },
+      en: {
+        label: 'Dropout',
+        description: 'Regularization technique — randomly "turning off" neurons during training.',
+        keyPoints: [
+          '🎯 Prevents overfitting',
+          '📊 Usually p = 0.1-0.5',
+          '🔄 Scale weights at inference',
+          '🧠 Effect: ensemble of subnetworks',
+        ],
+        howItWorks: 'Each forward pass randomly zeros p% of neurons. Different neurons each batch. Forces network not to rely on specific neurons — learns redundant representations. At inference use all neurons but multiply by (1-p) for correct scale. Or inverted dropout: divide by (1-p) at training, nothing at inference. Interpretation: train exponentially many subnetworks, inference — averaging.',
+      },
+    },
+  },
+  {
+    id: 'batchnorm',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '📏',
+      level: 'algorithm',
+      ru: {
+        label: 'Batch Normalization',
+        description: 'Нормализация активаций по batch для стабилизации и ускорения обучения.',
+        keyPoints: [
+          '📊 Нормализует mean=0, std=1 по batch',
+          '🎛️ Learnable γ и β параметры',
+          '⚡ Позволяет выше learning rate',
+          '🔄 При inference использует running stats',
+        ],
+        howItWorks: 'Для каждого batch: μ = mean(x), σ² = var(x). Нормализация: x̂ = (x - μ) / √(σ² + ε). Scale и shift: y = γx̂ + β (learnable). Зачем γ и β? Позволяют сети "отменить" нормализацию если нужно. При обучении копим running mean/var. При inference используем running stats (не batch stats). Проблемы: зависит от batch size, не работает для RNN. Альтернативы: LayerNorm (по features), GroupNorm, InstanceNorm.',
+      },
+      en: {
+        label: 'Batch Normalization',
+        description: 'Normalizing activations across batch to stabilize and speed up training.',
+        keyPoints: [
+          '📊 Normalizes mean=0, std=1 across batch',
+          '🎛️ Learnable γ and β parameters',
+          '⚡ Allows higher learning rate',
+          '🔄 Uses running stats at inference',
+        ],
+        howItWorks: 'For each batch: μ = mean(x), σ² = var(x). Normalization: x̂ = (x - μ) / √(σ² + ε). Scale and shift: y = γx̂ + β (learnable). Why γ and β? Allow network to "undo" normalization if needed. During training accumulate running mean/var. At inference use running stats (not batch stats). Issues: depends on batch size, doesn\'t work for RNN. Alternatives: LayerNorm (across features), GroupNorm, InstanceNorm.',
+      },
+    },
+  },
+  {
+    id: 'adam',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🏃',
+      level: 'algorithm',
+      ru: {
+        label: 'Adam Optimizer',
+        description: 'Adaptive Moment Estimation — оптимизатор с адаптивным learning rate для каждого параметра.',
+        keyPoints: [
+          '📊 Комбинация Momentum + RMSprop',
+          '🎯 Адаптивный LR для каждого веса',
+          '⚡ Быстрая сходимость',
+          '🔧 Default: lr=0.001, β1=0.9, β2=0.999',
+        ],
+        howItWorks: 'Хранит два момента: m (среднее градиентов, как momentum) и v (среднее квадратов градиентов, как RMSprop). m_t = β1·m_{t-1} + (1-β1)·g_t, v_t = β2·v_{t-1} + (1-β2)·g_t². Bias correction: m̂ = m/(1-β1^t), v̂ = v/(1-β2^t). Update: θ = θ - lr·m̂/(√v̂ + ε). Адаптивность: параметры с маленькими градиентами получают большие шаги и наоборот. AdamW: исправленный weight decay (L2 регуляризация отдельно от Adam).',
+      },
+      en: {
+        label: 'Adam Optimizer',
+        description: 'Adaptive Moment Estimation — optimizer with adaptive learning rate per parameter.',
+        keyPoints: [
+          '📊 Combines Momentum + RMSprop',
+          '🎯 Adaptive LR for each weight',
+          '⚡ Fast convergence',
+          '🔧 Default: lr=0.001, β1=0.9, β2=0.999',
+        ],
+        howItWorks: 'Stores two moments: m (gradient average, like momentum) and v (squared gradient average, like RMSprop). m_t = β1·m_{t-1} + (1-β1)·g_t, v_t = β2·v_{t-1} + (1-β2)·g_t². Bias correction: m̂ = m/(1-β1^t), v̂ = v/(1-β2^t). Update: θ = θ - lr·m̂/(√v̂ + ε). Adaptivity: parameters with small gradients get larger steps and vice versa. AdamW: corrected weight decay (L2 regularization separate from Adam).',
+      },
+    },
+  },
+  {
+    id: 'agents',
+    position: { x: 0, y: 0 },
+    type: 'custom',
+    data: {
+      emoji: '🤖',
+      level: 'implementation',
+      ru: {
+        label: 'AI Agents',
+        description: 'Автономные системы на базе LLM, способные планировать и выполнять действия.',
+        keyPoints: [
+          '🧠 LLM как "мозг" для рассуждений',
+          '🔧 Tools: поиск, код, API, браузер',
+          '📋 Planning: разбиение задачи на шаги',
+          '🔄 ReAct: Reasoning + Acting цикл',
+        ],
+        howItWorks: 'Архитектура агента: 1) Perception — получение входных данных 2) Planning — LLM разбивает задачу на подзадачи 3) Action — выбор и вызов tool 4) Observation — анализ результата 5) Repeat. ReAct паттерн: Thought → Action → Observation → Thought... Memory: short-term (контекст) и long-term (vector DB). Примеры: AutoGPT, LangChain agents, OpenAI Assistants. Проблемы: галлюцинации, застревание в циклах, безопасность.',
+      },
+      en: {
+        label: 'AI Agents',
+        description: 'Autonomous LLM-based systems capable of planning and executing actions.',
+        keyPoints: [
+          '🧠 LLM as "brain" for reasoning',
+          '🔧 Tools: search, code, API, browser',
+          '📋 Planning: breaking task into steps',
+          '🔄 ReAct: Reasoning + Acting cycle',
+        ],
+        howItWorks: 'Agent architecture: 1) Perception — receive input 2) Planning — LLM breaks task into subtasks 3) Action — select and call tool 4) Observation — analyze result 5) Repeat. ReAct pattern: Thought → Action → Observation → Thought... Memory: short-term (context) and long-term (vector DB). Examples: AutoGPT, LangChain agents, OpenAI Assistants. Issues: hallucinations, getting stuck in loops, safety.',
+      },
+    },
+  },
 ];
 
 // ==================== EDGES ====================
@@ -1212,6 +1462,16 @@ export const initialEdges: Edge[] = [
   { id: 'cv-clip', source: 'cv', target: 'clip', style: { strokeDasharray: '5,5' } },
   { id: 'nlp-clip', source: 'nlp', target: 'clip', style: { strokeDasharray: '5,5' } },
   
+  // New nodes
+  { id: 'cv-vit', source: 'cv', target: 'vit' },
+  { id: 'emb-word2vec', source: 'embeddings', target: 'word2vec' },
+  { id: 'llm-rag', source: 'llm', target: 'rag' },
+  { id: 'llm-finetuning', source: 'llm', target: 'finetuning' },
+  { id: 'nn-dropout', source: 'nn', target: 'dropout' },
+  { id: 'nn-batchnorm', source: 'nn', target: 'batchnorm' },
+  { id: 'nn-adam', source: 'nn', target: 'adam' },
+  { id: 'llm-agents', source: 'llm', target: 'agents' },
+  
   // Cross-connections (dashed = связь между ветками)
   { id: 'trans-llm', source: 'transformer', target: 'llm', style: { strokeDasharray: '5,5' } },
   { id: 'sup-nn', source: 'supervised', target: 'nn', style: { strokeDasharray: '5,5' } },
@@ -1219,4 +1479,6 @@ export const initialEdges: Edge[] = [
   { id: 'attn-llm', source: 'attention', target: 'llm', style: { strokeDasharray: '5,5' } },
   { id: 'cnn-cv', source: 'cnn', target: 'cv', style: { strokeDasharray: '5,5' } },
   { id: 'cnn-resnet', source: 'cnn', target: 'resnet', style: { strokeDasharray: '5,5' } },
+  { id: 'trans-vit', source: 'transformer', target: 'vit', style: { strokeDasharray: '5,5' } },
+  { id: 'rag-agents', source: 'rag', target: 'agents', style: { strokeDasharray: '5,5' } },
 ];
