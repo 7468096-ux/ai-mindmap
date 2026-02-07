@@ -314,20 +314,33 @@
 /* === CONNECTION LINES (Bezier) === */
 .connection-line {
   stroke-linecap: round;
-  transition: stroke-width 0.3s ease;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 3px rgba(168, 85, 247, 0.3));
+  transition: stroke-width 0.3s ease, filter 0.3s ease;
 }
 
-.connection-line:hover {
-  stroke-width: 4;
+/* Плавный градиент для линий */
+.connections linearGradient stop {
+  transition: stop-color 0.3s ease;
 }
 
-/* Анимация потока по линиям */
-@keyframes flowPulse {
-  0% { stroke-dashoffset: 0; }
-  100% { stroke-dashoffset: -20; }
+/* Тонкая анимация свечения */
+@keyframes lineGlow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 3px rgba(168, 85, 247, 0.3));
+    opacity: 0.7;
+  }
+  50% { 
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.5));
+    opacity: 1;
+  }
 }
 
 .connection-line {
-  stroke-dasharray: 10 10;
-  animation: flowPulse 1s linear infinite;
+  animation: lineGlow 3s ease-in-out infinite;
 }
+
+.connection-line:nth-child(2) { animation-delay: 0.5s; }
+.connection-line:nth-child(3) { animation-delay: 1s; }
+.connection-line:nth-child(4) { animation-delay: 1.5s; }
+.connection-line:nth-child(5) { animation-delay: 2s; }

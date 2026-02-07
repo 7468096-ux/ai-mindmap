@@ -281,33 +281,50 @@ export default function Playground() {
         {/* SVG для связей */}
         <svg className="connections" width="2000" height="2000" style={{ position: 'absolute', top: 0, left: 0 }}>
           <defs>
+            {/* Основной градиент - плавный переход */}
             <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#00d4ff" stopOpacity="0.4" />
-              <stop offset="50%" stopColor="#a855f7" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#10b981" stopOpacity="0.4" />
+              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.6" />
+              <stop offset="50%" stopColor="#a855f7" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#6366f1" stopOpacity="0.6" />
             </linearGradient>
+            {/* Glow эффект */}
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
           </defs>
           {connections.map((conn, i) => {
             const from = getNodeById(conn.from);
             const to = getNodeById(conn.to);
             if (!from || !to) return null;
             
-            // Bezier контрольные точки для органичной кривой
-            const midX = (from.x + to.x) / 2;
-            const midY = (from.y + to.y) / 2;
-            const dx = to.x - from.x;
-            const dy = to.y - from.y;
-            const offset = Math.min(Math.abs(dx), Math.abs(dy)) * 0.3;
+            // Точки выхода/входа (центр правой/левой стороны ноды)
+            const startX = from.x + 120; // правый край ноды
+            const startY = from.y + 25;  // середина по высоте
+            const endX = to.x;           // левый край ноды
+            const endY = to.y + 25;
+            
+            // Расстояние для контрольных точек (чем дальше ноды - тем плавнее изгиб)
+            const dx = Math.abs(endX - startX);
+            const tension = Math.max(dx * 0.5, 80); // минимум 80px для плавности
+            
+            // Cubic Bezier: горизонтальный выход, плавный вход
+            const c1x = startX + tension;
+            const c1y = startY;
+            const c2x = endX - tension;
+            const c2y = endY;
             
             return (
               <path
                 key={i}
-                d={`M ${from.x + 60} ${from.y + 25} 
-                    Q ${midX} ${from.y + 25 + offset}, ${midX} ${midY}
-                    Q ${midX} ${to.y + 25 - offset}, ${to.x + 60} ${to.y + 25}`}
+                d={`M ${startX} ${startY} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${endX} ${endY}`}
                 stroke="url(#lineGradient)"
-                strokeWidth="2"
+                strokeWidth="2.5"
                 fill="none"
+                filter="url(#glow)"
                 className="connection-line"
               />
             );
