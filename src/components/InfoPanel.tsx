@@ -25,13 +25,20 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
   };
 
   return (
-    <div 
-      className="absolute right-4 top-4 w-[420px] bg-gray-900 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[90vh] overflow-y-auto"
-      onMouseDown={stopPropagation}
-      onMouseMove={stopPropagation}
-      onTouchStart={stopPropagation}
-      onTouchMove={stopPropagation}
-    >
+    <>
+      {/* Mobile overlay */}
+      <div 
+        className="fixed inset-0 bg-black/50 z-40 md:hidden"
+        onClick={onClose}
+      />
+      
+      <div 
+        className="fixed md:absolute inset-x-2 bottom-2 md:bottom-auto md:inset-x-auto md:right-4 md:top-4 md:w-[420px] bg-gray-900 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[70vh] md:max-h-[90vh] overflow-y-auto"
+        onMouseDown={stopPropagation}
+        onMouseMove={stopPropagation}
+        onTouchStart={stopPropagation}
+        onTouchMove={stopPropagation}
+      >
       {/* Header */}
       <div 
         className="p-4 flex items-center gap-3 sticky top-0 z-10"
@@ -46,7 +53,7 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
         </div>
         <button 
           onClick={onClose}
-          className="text-white/70 hover:text-white text-2xl font-light"
+          className="text-white/70 hover:text-white text-2xl font-light w-8 h-8 flex items-center justify-center bg-black/20 rounded-full"
         >
           ×
         </button>
@@ -124,5 +131,6 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
         </div>
       )}
     </div>
+    </>
   );
 }
