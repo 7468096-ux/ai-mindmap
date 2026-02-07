@@ -10,6 +10,10 @@ export interface NodeContent {
   howItWorks: string; // Подробное объяснение механизма
   useCases?: string[]; // Real-world applications
   whenToUse?: string; // Selection criteria
+  codeExample?: {
+    language: string;
+    code: string;
+  };
 }
 
 export interface AINodeData {
@@ -310,6 +314,16 @@ export const initialNodes: AINode[] = [
         howItWorks: 'Imagine a chart: X axis — apartment size, Y axis — price. Linear regression draws a straight line through points so it\'s as close as possible to all of them.\n\nLine formula: y = w·x + b\n• w (weight) — line slope. Higher w = steeper slope\n• b (bias) — where line crosses Y axis\n\nHow it learns: model tries different w and b, measures error (MSE — average squared distance from points to line), and step by step reduces it. This is called gradient descent — moving toward smaller error.\n\n⚠️ Only works if relationship is actually linear!',
         useCases: ['House price prediction', 'Sales forecasting', 'Trend analysis', 'Simple baseline models'],
         whenToUse: 'Use when: relationship is linear, need interpretability, fast training, small dataset. Avoid when: complex nonlinear patterns, high-dimensional data.',
+        codeExample: {
+          language: 'python',
+          code: `from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)
+
+print(f"Coef: {model.coef_}, Intercept: {model.intercept_}")`
+        },
       },
     },
   },
@@ -374,6 +388,16 @@ export const initialNodes: AINode[] = [
         howItWorks: 'Idea: many "weak" models together make "strong" one. Training: 1) For each tree take bootstrap sample (with replacement) 2) At each node consider random subset of features 3) Build tree without restrictions. Prediction: classification — majority vote, regression — average. Randomization reduces correlation between trees → reduces variance → less overfitting. Downside: loses interpretability.',
         useCases: ['Credit scoring', 'Fraud detection', 'Medical diagnosis', 'Feature importance ranking'],
         whenToUse: 'Use when: need robust model, interpretability less important than accuracy, medium-sized datasets.',
+        codeExample: {
+          language: 'python',
+          code: `from sklearn.ensemble import RandomForestClassifier
+
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+rf.fit(X_train, y_train)
+
+predictions = rf.predict(X_test)
+importance = rf.feature_importances_`
+        },
       },
     },
   },
@@ -407,6 +431,16 @@ export const initialNodes: AINode[] = [
         howItWorks: 'Goal: find hyperplane maximally distant from nearest points of both classes (support vectors). Margin = distance to nearest points × 2. Kernel trick: projects data to higher-dimensional space where linearly separable. Kernel examples: RBF (radial), polynomial. Soft margin: allows errors for non-separable data. Mathematically: solved as quadratic programming problem.',
         useCases: ['Text classification', 'Image classification', 'Bioinformatics', 'Handwriting recognition'],
         whenToUse: 'Use when: small-to-medium dataset, high-dimensional data, need clear margin. Avoid when: very large datasets (slow training).',
+        codeExample: {
+          language: 'python',
+          code: `from sklearn.svm import SVC
+
+svm = SVC(kernel='rbf', C=1.0)
+svm.fit(X_train, y_train)
+
+predictions = svm.predict(X_test)
+support_vectors = svm.support_vectors_`
+        },
       },
     },
   },
@@ -440,6 +474,16 @@ export const initialNodes: AINode[] = [
         howItWorks: 'Imagine: you have 100 customers and want to split them into 3 groups by behavior.\n\n1️⃣ Place 3 "flags" (centroids) at random locations\n2️⃣ Each customer goes to nearest flag — this forms groups\n3️⃣ Move each flag to center of its group\n4️⃣ Repeat steps 2-3 until flags stop moving\n\nImportant:\n• K (number of groups) we set ourselves — algorithm doesn\'t guess\n• Starting positions affect result! Different start = different groups\n• Elbow method: try K=2,3,4... and see where error stops dropping sharply',
         useCases: ['Customer segmentation', 'Image compression', 'Anomaly detection', 'Document clustering'],
         whenToUse: 'Use when: need to find natural groups, no labels available. Choose K using elbow method or domain knowledge.',
+        codeExample: {
+          language: 'python',
+          code: `from sklearn.cluster import KMeans
+
+kmeans = KMeans(n_clusters=3, random_state=42)
+kmeans.fit(X)
+
+labels = kmeans.labels_
+centers = kmeans.cluster_centers_`
+        },
       },
     },
   },
@@ -568,6 +612,22 @@ export const initialNodes: AINode[] = [
         howItWorks: 'Convolution: filter (kernel) 3x3 or 5x5 slides over image, computing dot product. One filter = one feature (edge, color). Stride — step, padding — adding borders. Pooling (usually max): reduces size, preserving main info. Architecture: [Conv→ReLU→Pool] × N → Flatten → Dense. Examples: LeNet (1998), AlexNet (2012), VGG, ResNet (skip connections for very deep networks).',
         useCases: ['Face recognition (FaceID)', 'Medical imaging (X-ray, MRI)', 'Self-driving cars', 'Photo filters', 'OCR'],
         whenToUse: 'Use when: working with images/video, spatial patterns matter. Best for: classification, object detection, segmentation.',
+        codeExample: {
+          language: 'python',
+          code: `import torch.nn as nn
+
+class SimpleCNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(3, 32, 3, padding=1)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.fc = nn.Linear(32 * 16 * 16, 10)
+    
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = x.view(-1, 32 * 16 * 16)
+        return self.fc(x)`
+        },
       },
     },
   },
@@ -663,6 +723,17 @@ export const initialNodes: AINode[] = [
         howItWorks: 'Self-attention: for each token compute Query, Key, Value via linear projections. Attention(Q,K,V) = softmax(QKᵀ/√d)V. Each token gets weighted sum of all Values, weights = Query-Key similarity. Multi-head: several attention in parallel → different relationship types. Encoder: self-attention + feed-forward. Decoder: masked self-attention (sees only past) + cross-attention to encoder. Positional encoding adds position information.',
         useCases: ['ChatGPT, Claude (LLM)', 'Google Translate', 'GitHub Copilot', 'BERT for search', 'Whisper (speech-to-text)'],
         whenToUse: 'Use when: long-range dependencies matter, need parallelization, working with text/sequences. The foundation of modern NLP.',
+        codeExample: {
+          language: 'python',
+          code: `from transformers import AutoTokenizer, AutoModel
+
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+model = AutoModel.from_pretrained("bert-base-uncased")
+
+inputs = tokenizer("Hello world!", return_tensors="pt")
+outputs = model(**inputs)
+embeddings = outputs.last_hidden_state`
+        },
       },
     },
   },

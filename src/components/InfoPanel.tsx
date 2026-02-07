@@ -121,13 +121,35 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
       
       {/* When to Use - only show if available */}
       {content.whenToUse && (
-        <div className="p-4">
+        <div className="p-4 border-b border-gray-800">
           <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3">
             🎯 {lang === 'ru' ? 'Когда использовать' : 'When to Use'}
           </h3>
           <p className="text-gray-300 text-sm leading-relaxed">
             {content.whenToUse}
           </p>
+        </div>
+      )}
+      
+      {/* Code Example - only show if available */}
+      {content.codeExample && (
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-gray-400 text-xs uppercase tracking-wide">
+              💻 {lang === 'ru' ? 'Пример кода' : 'Code Example'}
+            </h3>
+            <button
+              onClick={() => navigator.clipboard.writeText(content.codeExample!.code)}
+              className="text-xs text-gray-500 hover:text-purple-400 transition-colors"
+            >
+              📋 {lang === 'ru' ? 'Копировать' : 'Copy'}
+            </button>
+          </div>
+          <pre className="bg-gray-950 rounded-lg p-3 overflow-x-auto text-xs">
+            <code className="text-green-400 font-mono whitespace-pre">
+              {content.codeExample.code}
+            </code>
+          </pre>
         </div>
       )}
     </div>
