@@ -84,7 +84,7 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
       </div>
       
       {/* How It Works */}
-      <div className="p-4">
+      <div className="p-4 border-b border-gray-800">
         <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3">
           ⚙️ {lang === 'ru' ? 'Как это работает' : 'How It Works'}
         </h3>
@@ -92,6 +92,37 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
           {content.howItWorks}
         </p>
       </div>
+      
+      {/* Use Cases - only show if available */}
+      {content.useCases && content.useCases.length > 0 && (
+        <div className="p-4 border-b border-gray-800">
+          <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3">
+            🌍 {lang === 'ru' ? 'Где применяется' : 'Real-World Use Cases'}
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {content.useCases.map((useCase, i) => (
+              <span 
+                key={i} 
+                className="px-2 py-1 bg-gray-800 text-gray-300 text-xs rounded-full"
+              >
+                {useCase}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {/* When to Use - only show if available */}
+      {content.whenToUse && (
+        <div className="p-4">
+          <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3">
+            🎯 {lang === 'ru' ? 'Когда использовать' : 'When to Use'}
+          </h3>
+          <p className="text-gray-300 text-sm leading-relaxed">
+            {content.whenToUse}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

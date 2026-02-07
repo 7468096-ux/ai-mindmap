@@ -8,6 +8,8 @@ export interface NodeContent {
   description: string;
   keyPoints: string[];
   howItWorks: string; // Подробное объяснение механизма
+  useCases?: string[]; // Real-world applications
+  whenToUse?: string; // Selection criteria
 }
 
 export interface AINodeData {
@@ -306,6 +308,8 @@ export const initialNodes: AINode[] = [
           '📊 Baseline algorithm for regression',
         ],
         howItWorks: 'Imagine a chart: X axis — apartment size, Y axis — price. Linear regression draws a straight line through points so it\'s as close as possible to all of them.\n\nLine formula: y = w·x + b\n• w (weight) — line slope. Higher w = steeper slope\n• b (bias) — where line crosses Y axis\n\nHow it learns: model tries different w and b, measures error (MSE — average squared distance from points to line), and step by step reduces it. This is called gradient descent — moving toward smaller error.\n\n⚠️ Only works if relationship is actually linear!',
+        useCases: ['House price prediction', 'Sales forecasting', 'Trend analysis', 'Simple baseline models'],
+        whenToUse: 'Use when: relationship is linear, need interpretability, fast training, small dataset. Avoid when: complex nonlinear patterns, high-dimensional data.',
       },
     },
   },
@@ -368,6 +372,8 @@ export const initialNodes: AINode[] = [
           '💪 Robust to overfitting',
         ],
         howItWorks: 'Idea: many "weak" models together make "strong" one. Training: 1) For each tree take bootstrap sample (with replacement) 2) At each node consider random subset of features 3) Build tree without restrictions. Prediction: classification — majority vote, regression — average. Randomization reduces correlation between trees → reduces variance → less overfitting. Downside: loses interpretability.',
+        useCases: ['Credit scoring', 'Fraud detection', 'Medical diagnosis', 'Feature importance ranking'],
+        whenToUse: 'Use when: need robust model, interpretability less important than accuracy, medium-sized datasets.',
       },
     },
   },
@@ -399,6 +405,8 @@ export const initialNodes: AINode[] = [
           '📊 Good for small datasets',
         ],
         howItWorks: 'Goal: find hyperplane maximally distant from nearest points of both classes (support vectors). Margin = distance to nearest points × 2. Kernel trick: projects data to higher-dimensional space where linearly separable. Kernel examples: RBF (radial), polynomial. Soft margin: allows errors for non-separable data. Mathematically: solved as quadratic programming problem.',
+        useCases: ['Text classification', 'Image classification', 'Bioinformatics', 'Handwriting recognition'],
+        whenToUse: 'Use when: small-to-medium dataset, high-dimensional data, need clear margin. Avoid when: very large datasets (slow training).',
       },
     },
   },
@@ -430,6 +438,8 @@ export const initialNodes: AINode[] = [
           '⚡ Fast, but sensitive to initial points',
         ],
         howItWorks: 'Imagine: you have 100 customers and want to split them into 3 groups by behavior.\n\n1️⃣ Place 3 "flags" (centroids) at random locations\n2️⃣ Each customer goes to nearest flag — this forms groups\n3️⃣ Move each flag to center of its group\n4️⃣ Repeat steps 2-3 until flags stop moving\n\nImportant:\n• K (number of groups) we set ourselves — algorithm doesn\'t guess\n• Starting positions affect result! Different start = different groups\n• Elbow method: try K=2,3,4... and see where error stops dropping sharply',
+        useCases: ['Customer segmentation', 'Image compression', 'Anomaly detection', 'Document clustering'],
+        whenToUse: 'Use when: need to find natural groups, no labels available. Choose K using elbow method or domain knowledge.',
       },
     },
   },
@@ -556,6 +566,8 @@ export const initialNodes: AINode[] = [
           '📸 Uses: recognition, detection',
         ],
         howItWorks: 'Convolution: filter (kernel) 3x3 or 5x5 slides over image, computing dot product. One filter = one feature (edge, color). Stride — step, padding — adding borders. Pooling (usually max): reduces size, preserving main info. Architecture: [Conv→ReLU→Pool] × N → Flatten → Dense. Examples: LeNet (1998), AlexNet (2012), VGG, ResNet (skip connections for very deep networks).',
+        useCases: ['Face recognition (FaceID)', 'Medical imaging (X-ray, MRI)', 'Self-driving cars', 'Photo filters', 'OCR'],
+        whenToUse: 'Use when: working with images/video, spatial patterns matter. Best for: classification, object detection, segmentation.',
       },
     },
   },
@@ -649,6 +661,8 @@ export const initialNodes: AINode[] = [
           '📄 Paper "Attention Is All You Need" (2017)',
         ],
         howItWorks: 'Self-attention: for each token compute Query, Key, Value via linear projections. Attention(Q,K,V) = softmax(QKᵀ/√d)V. Each token gets weighted sum of all Values, weights = Query-Key similarity. Multi-head: several attention in parallel → different relationship types. Encoder: self-attention + feed-forward. Decoder: masked self-attention (sees only past) + cross-attention to encoder. Positional encoding adds position information.',
+        useCases: ['ChatGPT, Claude (LLM)', 'Google Translate', 'GitHub Copilot', 'BERT for search', 'Whisper (speech-to-text)'],
+        whenToUse: 'Use when: long-range dependencies matter, need parallelization, working with text/sequences. The foundation of modern NLP.',
       },
     },
   },
@@ -759,7 +773,7 @@ export const initialNodes: AINode[] = [
           '➡️ Forward: добавляем шум шаг за шагом',
           '⬅️ Reverse: убираем шум (генерация)',
           '🎨 SOTA для генерации изображений',
-          '🖼️ Stable Diffusion, DALL-E, Midjourney',
+          '🖼️ Stable Diffusion, DALL-E 2/3, Midjourney',
         ],
         howItWorks: 'Forward process: x₀ → x₁ → ... → xₜ, на каждом шаге добавляем гауссовский шум, в конце — чистый шум. Reverse process: модель учится предсказывать шум добавленный на шаге t, и вычитает его: xₜ → xₜ₋₁ → ... → x₀. Обучение: берём чистое изображение, добавляем шум, модель предсказывает этот шум. Генерация: начинаем с чистого шума, итеративно убираем. Условная генерация: добавляем текстовый embedding (CLIP) для контроля.',
       },
@@ -770,7 +784,7 @@ export const initialNodes: AINode[] = [
           '➡️ Forward: add noise step by step',
           '⬅️ Reverse: remove noise (generation)',
           '🎨 SOTA for image generation',
-          '🖼️ Stable Diffusion, DALL-E, Midjourney',
+          '🖼️ Stable Diffusion, DALL-E 2/3, Midjourney',
         ],
         howItWorks: 'Forward process: x₀ → x₁ → ... → xₜ, at each step add Gaussian noise, end with pure noise. Reverse process: model learns to predict noise added at step t, and subtracts it: xₜ → xₜ₋₁ → ... → x₀. Training: take clean image, add noise, model predicts this noise. Generation: start from pure noise, iteratively remove. Conditional generation: add text embedding (CLIP) for control.',
       },
