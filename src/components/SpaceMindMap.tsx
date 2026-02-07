@@ -3,7 +3,9 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import InfoPanel from './InfoPanel';
 import LanguageToggle from './LanguageToggle';
+import LearningPathsPanel from './LearningPathsPanel';
 import { initialNodes as dataNodes, initialEdges, AINode, Language, levelColors, levelLabels, AbstractionLevel } from '@/data/nodes';
+import { getPathById } from '@/data/learningPaths';
 
 interface SpaceNode {
   id: string;
@@ -187,6 +189,8 @@ export default function SpaceMindMap() {
   // English по умолчанию
   const [lang, setLang] = useState<Language>('en');
   const [selectedNode, setSelectedNode] = useState<AINode | null>(null);
+  const [activePath, setActivePath] = useState<string | null>(null);
+  const [completedNodes, setCompletedNodes] = useState<string[]>([]);
   const [smoothTilt, setSmoothTilt] = useState({ x: 0, y: 0 });
   const targetTilt = useRef({ x: 0, y: 0 });
   const animationRef = useRef<number>();
@@ -500,6 +504,11 @@ export default function SpaceMindMap() {
       data: node.data,
     };
     setSelectedNode(selectedNode?.id === node.id ? null : aiNode);
+    
+    // Mark as completed when opened (if not already)
+    if (!completedNodes.includes(node.id)) {
+      setCompletedNodes(prev => [...prev, node.id]);
+    }
   };
 
   return (
@@ -551,6 +560,18 @@ export default function SpaceMindMap() {
         </div>
         <LanguageToggle lang={lang} onChange={setLang} />
       </div>
+
+      {/* Learning Paths Panel */}
+      <LearningPathsPanel
+        lang={lang}
+        activePath={activePath}
+        onSelectPath={setActivePath}
+        onNodeClick={(nodeId) => {
+          const node = dataNodes.find(n => n.id === nodeId);
+          if (node) setSelectedNode(node);
+        }}
+        completedNodes={completedNodes}
+      />
 
       {/* Pan layer */}
       <div className="pan-layer" style={{ 
@@ -643,11 +664,13 @@ export default function SpaceMindMap() {
         {/* Ноды */}
         {nodes.map((node) => {
           const isDragging = draggingNodeId === node.id;
+          const isInActivePath = activePath ? getPathById(activePath)?.nodeIds.includes(node.id) : false;
+          const isCompleted = completedNodes.includes(node.id);
           return (
             <div
               key={node.id}
               ref={(el) => { if (el) nodeRefs.current.set(node.id, el); }}
-              className={`space-node ${selectedNode?.id === node.id ? 'selected' : ''} ${isDragging ? 'dragging' : ''}`}
+              className={`space-node ${selectedNode?.id === node.id ? 'selected' : ''} ${isDragging ? 'dragging' : ''} ${isInActivePath ? 'in-path' : ''} ${isCompleted ? 'completed' : ''}`}
               style={{ 
                 left: `${node.x}px`, 
                 top: `${node.y}px`,
