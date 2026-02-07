@@ -43,74 +43,59 @@
   position: absolute;
   pointer-events: none;
   z-index: 50;
-  /* Поворачиваем весь элемент под углом */
-  transform: rotate(var(--angle, 40deg));
-  transform-origin: top right;
+  width: 4px;
+  height: 4px;
+  animation: shootStar var(--speed, 2s) linear forwards;
 }
 
+/* Яркая голова */
 .shooting-star::before {
   content: '';
   position: absolute;
   top: 0;
-  right: 0;
-  width: var(--length, 150px);
-  height: 3px;
-  /* Хвост: толще у головы (справа), тоньше к концу (слева) */
-  background: linear-gradient(270deg, 
-    rgba(255,255,255,0.95) 0%,
-    rgba(200,220,255,0.7) 20%,
-    rgba(150,180,255,0.3) 60%,
-    transparent 100%
-  );
-  clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 60%);
-  transform-origin: right center;
-  animation: shootTrail var(--speed, 2s) linear forwards;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 
+    0 0 8px 3px rgba(255,255,255,0.9), 
+    0 0 20px 6px rgba(200,220,255,0.6),
+    0 0 40px 10px rgba(150,180,255,0.3);
 }
 
-/* Яркая голова звезды */
+/* Хвост */
 .shooting-star::after {
   content: '';
   position: absolute;
-  top: -2px;
-  right: -3px;
-  width: 6px;
-  height: 6px;
-  background: white;
-  border-radius: 50%;
-  box-shadow: 0 0 10px 3px rgba(255,255,255,0.9), 0 0 25px 6px rgba(200,220,255,0.5);
-  animation: shootHead var(--speed, 2s) linear forwards;
+  top: 1px;
+  left: 5px;
+  width: var(--length, 120px);
+  height: 3px;
+  background: linear-gradient(90deg, 
+    rgba(255,255,255,0.9) 0%,
+    rgba(200,220,255,0.6) 30%,
+    rgba(150,180,255,0.2) 70%,
+    transparent 100%
+  );
+  transform-origin: left center;
+  transform: rotate(0deg);
+  clip-path: polygon(0 0, 100% 30%, 100% 70%, 0 100%);
 }
 
-@keyframes shootTrail {
+@keyframes shootStar {
   0% {
-    transform: translate(0, 0);
+    transform: translate(0, 0) rotate(var(--angle, 40deg));
     opacity: 0;
   }
-  3% {
+  5% {
     opacity: 1;
   }
-  85% {
-    opacity: 0.6;
-  }
-  100% {
-    transform: translate(calc(-150vw), calc(100vh));
-    opacity: 0;
-  }
-}
-
-@keyframes shootHead {
-  0% {
-    transform: translate(0, 0);
-    opacity: 0;
-  }
-  3% {
-    opacity: 1;
-  }
-  85% {
+  80% {
     opacity: 1;
   }
   100% {
-    transform: translate(calc(-150vw), calc(100vh));
+    transform: translate(calc(-150vw), calc(120vh)) rotate(var(--angle, 40deg));
     opacity: 0;
   }
 }
@@ -268,8 +253,13 @@
 }
 
 .space-node.selected .node-content {
-  background: rgba(35, 35, 55, 0.95);
-  border-color: var(--level-color, #6366f1);
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.25) 0%,
+    rgba(139, 92, 246, 0.2) 50%,
+    rgba(168, 85, 247, 0.25) 100%
+  );
+  border-color: #a855f7;
   transform: translateY(-3px);
 }
 
@@ -278,6 +268,7 @@
   right: 15%;
   height: 3px;
   opacity: 1;
+  background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
 }
 
 /* === ЛИНИИ СВЯЗЕЙ === */

@@ -390,21 +390,32 @@ export default function Playground() {
                   filter="url(#glow)"
                   className={`connection-line ${isActive ? 'active' : ''}`}
                 />
-                {/* Импульсы-точки на активных линиях (движутся к AI = от to к from) */}
+                {/* Импульсы-точки на активных линиях (движутся к AI) */}
                 {isActive && (
                   <>
-                    <circle r="4" fill="#a855f7" filter="url(#glow)">
-                      <animateMotion dur="1.5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
+                    {/* Яркие точки с random интервалами */}
+                    <circle r="5" fill="white" style={{ filter: 'drop-shadow(0 0 6px #a855f7) drop-shadow(0 0 12px #a855f7)' }}>
+                      <animateMotion dur="3s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear" begin="0s">
                         <mpath href={`#${pathId}`} />
                       </animateMotion>
                     </circle>
-                    <circle r="4" fill="#a855f7" filter="url(#glow)">
-                      <animateMotion dur="1.5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear" begin="0.5s">
+                    <circle r="4" fill="white" style={{ filter: 'drop-shadow(0 0 5px #a855f7) drop-shadow(0 0 10px #a855f7)' }}>
+                      <animateMotion dur="3s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear" begin="0.7s">
                         <mpath href={`#${pathId}`} />
                       </animateMotion>
                     </circle>
-                    <circle r="4" fill="#a855f7" filter="url(#glow)">
-                      <animateMotion dur="1.5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear" begin="1s">
+                    <circle r="5" fill="white" style={{ filter: 'drop-shadow(0 0 6px #a855f7) drop-shadow(0 0 12px #a855f7)' }}>
+                      <animateMotion dur="3s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear" begin="1.3s">
+                        <mpath href={`#${pathId}`} />
+                      </animateMotion>
+                    </circle>
+                    <circle r="4" fill="white" style={{ filter: 'drop-shadow(0 0 5px #a855f7) drop-shadow(0 0 10px #a855f7)' }}>
+                      <animateMotion dur="3s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear" begin="2.1s">
+                        <mpath href={`#${pathId}`} />
+                      </animateMotion>
+                    </circle>
+                    <circle r="5" fill="white" style={{ filter: 'drop-shadow(0 0 6px #a855f7) drop-shadow(0 0 12px #a855f7)' }}>
+                      <animateMotion dur="3s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear" begin="2.6s">
                         <mpath href={`#${pathId}`} />
                       </animateMotion>
                     </circle>
