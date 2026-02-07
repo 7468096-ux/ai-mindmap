@@ -43,13 +43,19 @@
   position: absolute;
   pointer-events: none;
   z-index: 50;
+  /* Движение под углом: влево-вниз. Используем calc с CSS переменной */
   animation: shootStar var(--speed, 2s) linear forwards;
 }
 
-/* Яркая голова */
-.shooting-star::before {
+/* Контейнер для головы и хвоста - поворачиваем весь элемент */
+.shooting-star::before,
+.shooting-star::after {
   content: '';
   position: absolute;
+}
+
+/* Яркая голова звезды */
+.shooting-star::before {
   top: 0;
   left: 0;
   width: 4px;
@@ -61,69 +67,39 @@
     0 0 15px 4px rgba(200,220,255,0.5);
 }
 
-/* Хвост - повёрнут под углом движения */
+/* Хвост - направлен вправо (противоположно движению влево) */
 .shooting-star::after {
-  content: '';
-  position: absolute;
-  top: 2px;
+  top: 0;
   left: 4px;
   width: var(--length, 180px);
-  height: 1.5px;
+  height: 2px;
   background: linear-gradient(90deg, 
-    rgba(255,255,255,0.8) 0%,
-    rgba(200,220,255,0.5) 25%,
-    rgba(150,180,255,0.2) 60%,
+    rgba(255,255,255,0.9) 0%,
+    rgba(200,220,255,0.6) 20%,
+    rgba(150,180,255,0.3) 50%,
     transparent 100%
   );
   transform-origin: left center;
-  /* Хвост направлен назад-вверх (противоположно движению) */
-  transform: rotate(calc(-1 * var(--angle, 40deg)));
+  /* Хвост горизонтальный, весь элемент повёрнут через transform в анимации */
 }
 
-/* Анимация движения по экранным координатам (влево-вниз) */
+/* Анимация: звезда летит влево-вниз под углом --angle */
 @keyframes shootStar {
   0% {
-    transform: translate(0, 0);
+    transform: rotate(var(--angle, 40deg)) translate(0, 0);
     opacity: 0;
   }
   5% {
     opacity: 1;
   }
-  80% {
+  85% {
     opacity: 1;
   }
   100% {
-    /* Движение: влево и вниз по экрану */
-    transform: translate(-150vw, 100vh);
+    /* Движение вдоль направления (после поворота, translate идёт по локальной оси X) */
+    transform: rotate(var(--angle, 40deg)) translate(-200vw, 0);
     opacity: 0;
   }
-}
-
-/* === ЗАГОЛОВКИ === */
-.space-title {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: white;
-  font-size: 1.5rem;
-  font-weight: 600;
-  text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
-  z-index: 100;
-  pointer-events: none;
-}
-
-.space-subtitle {
-  position: absolute;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.9rem;
-  z-index: 100;
-  text-align: center;
-  padding: 0 20px;
-  pointer-events: none;
 }
 
 /* === PAN LAYER === */
@@ -173,7 +149,6 @@
   padding: 18px 26px;
   min-width: 110px;
   
-  /* Clean minimal background */
   background: rgba(20, 20, 35, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -211,13 +186,7 @@
   letter-spacing: 0.01em;
 }
 
-/* === УРОВНИ НОД (цвета) - minimal accent === */
-.level-0 .node-content::before { background: #6366f1; }
-.level-1 .node-content::before { background: #8b5cf6; }
-.level-2 .node-content::before { background: #06b6d4; }
-.level-3 .node-content::before { background: #10b981; }
-
-/* === HOVER - subtle lift === */
+/* === HOVER === */
 .space-node:hover .node-content {
   background: rgba(30, 30, 50, 0.9);
   border-color: rgba(255, 255, 255, 0.15);
@@ -246,7 +215,7 @@
   pointer-events: none;
 }
 
-/* === SELECTED STATE - clean active === */
+/* === SELECTED STATE === */
 .space-node.selected .node-glow {
   opacity: 0.4;
 }
@@ -335,27 +304,4 @@
   font-family: monospace;
   z-index: 100;
   pointer-events: none;
-}
-
-/* === GYRO BUTTON === */
-.gyro-button {
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 12px 24px;
-  background: rgba(168, 85, 247, 0.3);
-  border: 1px solid rgba(168, 85, 247, 0.6);
-  border-radius: 25px;
-  color: white;
-  font-size: 0.9rem;
-  cursor: pointer;
-  z-index: 100;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-}
-
-.gyro-button:hover {
-  background: rgba(168, 85, 247, 0.5);
-  box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
 }

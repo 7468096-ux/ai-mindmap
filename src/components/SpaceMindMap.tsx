@@ -5,7 +5,6 @@ import InfoPanel from './InfoPanel';
 import LanguageToggle from './LanguageToggle';
 import { initialNodes as dataNodes, initialEdges, AINode, Language, levelColors, levelLabels, AbstractionLevel } from '@/data/nodes';
 
-// Преобразуем данные из ReactFlow формата в наш формат
 interface SpaceNode {
   id: string;
   name: string;
@@ -55,7 +54,6 @@ interface ShootingStar {
   speed: number;
 }
 
-// Цвета уровней для нод
 const spaceColors: Record<AbstractionLevel, string> = {
   field: '#6366f1',
   theory: '#8b5cf6',
@@ -64,26 +62,87 @@ const spaceColors: Record<AbstractionLevel, string> = {
   implementation: '#f59e0b',
 };
 
+// Автоматический расчёт позиций для горизонтального дерева
+function calculateTreeLayout(
+  edges: Connection[],
+  nodeIds: string[]
+): Map<string, { x: number; y: number }> {
+  const positions = new Map<string, { x: number; y: number }>();
+  
+  // Построим дерево
+  const children = new Map<string, string[]>();
+  const parents = new Map<string, string>();
+  
+  edges.forEach(edge => {
+    if (!edge.dashed) { // Только основные связи для layout
+      if (!children.has(edge.from)) children.set(edge.from, []);
+      children.get(edge.from)!.push(edge.to);
+      parents.set(edge.to, edge.from);
+    }
+  });
+  
+  // Найти корень (ai)
+  const root = 'ai';
+  
+  // BFS для определения уровней (columns)
+  const levels = new Map<string, number>();
+  const queue: string[] = [root];
+  levels.set(root, 0);
+  
+  while (queue.length > 0) {
+    const node = queue.shift()!;
+    const level = levels.get(node)!;
+    const nodeChildren = children.get(node) || [];
+    nodeChildren.forEach(child => {
+      if (!levels.has(child)) {
+        levels.set(child, level + 1);
+        queue.push(child);
+      }
+    });
+  }
+  
+  // Добавить ноды без связей
+  nodeIds.forEach(id => {
+    if (!levels.has(id)) {
+      levels.set(id, 5); // Ставим справа
+    }
+  });
+  
+  // Группируем по уровням
+  const nodesByLevel = new Map<number, string[]>();
+  levels.forEach((level, nodeId) => {
+    if (!nodesByLevel.has(level)) nodesByLevel.set(level, []);
+    nodesByLevel.get(level)!.push(nodeId);
+  });
+  
+  // Расстановка
+  const LEVEL_WIDTH = 250; // Расстояние между колонками
+  const NODE_HEIGHT = 100; // Расстояние между нодами в колонке
+  const START_X = 100;
+  const CENTER_Y = 400;
+  
+  nodesByLevel.forEach((nodes, level) => {
+    const x = START_X + level * LEVEL_WIDTH;
+    const totalHeight = (nodes.length - 1) * NODE_HEIGHT;
+    const startY = CENTER_Y - totalHeight / 2;
+    
+    nodes.forEach((nodeId, index) => {
+      positions.set(nodeId, {
+        x,
+        y: startY + index * NODE_HEIGHT,
+      });
+    });
+  });
+  
+  return positions;
+}
+
 export default function SpaceMindMap() {
   const [lang, setLang] = useState<Language>('ru');
   const [selectedNode, setSelectedNode] = useState<AINode | null>(null);
   const [smoothTilt, setSmoothTilt] = useState({ x: 0, y: 0 });
   const targetTilt = useRef({ x: 0, y: 0 });
   const animationRef = useRef<number>();
-  
-  // Преобразуем данные из nodes.ts
-  const nodes = useMemo<SpaceNode[]>(() => 
-    dataNodes.map(node => ({
-      id: node.id,
-      name: node.data[lang]?.label || node.id,
-      emoji: node.data.emoji || '📦',
-      level: node.data.level,
-      x: node.position.x,
-      y: node.position.y,
-      data: node.data,
-    })),
-    [lang]
-  );
   
   const connections = useMemo<Connection[]>(() => 
     initialEdges.map(edge => ({
@@ -92,6 +151,32 @@ export default function SpaceMindMap() {
       dashed: edge.style?.strokeDasharray !== undefined,
     })),
     []
+  );
+  
+  // Рассчитываем начальные позиции
+  const initialPositions = useMemo(() => {
+    const nodeIds = dataNodes.map(n => n.id);
+    return calculateTreeLayout(connections, nodeIds);
+  }, [connections]);
+  
+  // Состояние позиций нод (для drag)
+  const [nodePositions, setNodePositions] = useState<Map<string, { x: number; y: number }>>(initialPositions);
+  
+  // Ноды с актуальными позициями
+  const nodes = useMemo<SpaceNode[]>(() => 
+    dataNodes.map(node => {
+      const pos = nodePositions.get(node.id) || { x: 0, y: 0 };
+      return {
+        id: node.id,
+        name: node.data[lang]?.label || node.id,
+        emoji: node.data.emoji || '📦',
+        level: node.data.level,
+        x: pos.x,
+        y: pos.y,
+        data: node.data,
+      };
+    }),
+    [lang, nodePositions]
   );
 
   const nodeRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -105,15 +190,20 @@ export default function SpaceMindMap() {
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Zoom state
-  const [zoom, setZoom] = useState(0.8);
+  const [zoom, setZoom] = useState(0.7);
   const MIN_ZOOM = 0.2;
   const MAX_ZOOM = 2;
+  
+  // Node drag state
+  const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null);
+  const dragStart = useRef({ x: 0, y: 0 });
+  const nodeStartPos = useRef({ x: 0, y: 0 });
 
   // Shooting stars
   const [shootingStars, setShootingStars] = useState<ShootingStar[]>([]);
   const shootingStarId = useRef(0);
 
-  // Измерение размеров нод после рендера
+  // Измерение размеров нод
   useEffect(() => {
     const timer = setTimeout(() => {
       const sizes = new Map<string, { width: number; height: number }>();
@@ -152,10 +242,37 @@ export default function SpaceMindMap() {
       timeoutId = setTimeout(createShootingStar, nextDelay);
     };
 
-    const firstDelay = 5000 + Math.random() * 10000;
+    const firstDelay = 3000 + Math.random() * 5000;
     timeoutId = setTimeout(createShootingStar, firstDelay);
 
     return () => clearTimeout(timeoutId);
+  }, []);
+
+  // Node drag handlers
+  const handleNodeDragStart = useCallback((nodeId: string, clientX: number, clientY: number) => {
+    const pos = nodePositions.get(nodeId);
+    if (!pos) return;
+    setDraggingNodeId(nodeId);
+    dragStart.current = { x: clientX, y: clientY };
+    nodeStartPos.current = { x: pos.x, y: pos.y };
+  }, [nodePositions]);
+
+  const handleNodeDragMove = useCallback((clientX: number, clientY: number) => {
+    if (draggingNodeId === null) return;
+    const dx = (clientX - dragStart.current.x) / zoom;
+    const dy = (clientY - dragStart.current.y) / zoom;
+    setNodePositions(prev => {
+      const next = new Map(prev);
+      next.set(draggingNodeId, {
+        x: nodeStartPos.current.x + dx,
+        y: nodeStartPos.current.y + dy,
+      });
+      return next;
+    });
+  }, [draggingNodeId, zoom]);
+
+  const handleNodeDragEnd = useCallback(() => {
+    setDraggingNodeId(null);
   }, []);
 
   // Pan handlers
@@ -184,9 +301,16 @@ export default function SpaceMindMap() {
       handlePanStart(e.clientX, e.clientY);
     };
     const handleMouseMove = (e: MouseEvent) => {
-      if (isPanning) handlePanMove(e.clientX, e.clientY);
+      if (draggingNodeId !== null) {
+        handleNodeDragMove(e.clientX, e.clientY);
+      } else if (isPanning) {
+        handlePanMove(e.clientX, e.clientY);
+      }
     };
-    const handleMouseUp = () => { handlePanEnd(); };
+    const handleMouseUp = () => { 
+      handlePanEnd(); 
+      handleNodeDragEnd(); 
+    };
 
     const container = containerRef.current;
     if (container) {
@@ -199,7 +323,7 @@ export default function SpaceMindMap() {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isPanning, handlePanStart, handlePanMove, handlePanEnd]);
+  }, [isPanning, draggingNodeId, handlePanStart, handlePanMove, handlePanEnd, handleNodeDragMove, handleNodeDragEnd]);
 
   // Zoom with mouse wheel
   useEffect(() => {
@@ -225,11 +349,18 @@ export default function SpaceMindMap() {
       if (e.touches.length === 1) handlePanStart(e.touches[0].clientX, e.touches[0].clientY);
     };
     const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length === 1 && isPanning) {
-        handlePanMove(e.touches[0].clientX, e.touches[0].clientY);
+      if (e.touches.length === 1) {
+        if (draggingNodeId !== null) {
+          handleNodeDragMove(e.touches[0].clientX, e.touches[0].clientY);
+        } else if (isPanning) {
+          handlePanMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
       }
     };
-    const handleTouchEnd = () => { handlePanEnd(); };
+    const handleTouchEnd = () => { 
+      handlePanEnd(); 
+      handleNodeDragEnd(); 
+    };
 
     const container = containerRef.current;
     if (container) {
@@ -242,7 +373,7 @@ export default function SpaceMindMap() {
       container?.removeEventListener('touchmove', handleTouchMove);
       container?.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [isPanning, handlePanStart, handlePanMove, handlePanEnd]);
+  }, [isPanning, draggingNodeId, handlePanStart, handlePanMove, handlePanEnd, handleNodeDragMove, handleNodeDragEnd]);
 
   // Parallax effect
   useEffect(() => {
@@ -256,7 +387,7 @@ export default function SpaceMindMap() {
     animationRef.current = requestAnimationFrame(smoothing);
 
     const handleMouseMove = (event: MouseEvent) => {
-      if (isPanning) return;
+      if (isPanning || draggingNodeId) return;
       targetTilt.current = {
         x: (event.clientX / window.innerWidth - 0.5) * 2,
         y: (event.clientY / window.innerHeight - 0.5) * 2,
@@ -268,19 +399,18 @@ export default function SpaceMindMap() {
       window.removeEventListener('mousemove', handleMouseMove);
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
-  }, [isPanning]);
+  }, [isPanning, draggingNodeId]);
 
   const getNodeById = (id: string) => nodes.find(n => n.id === id);
-  const getNodeSize = (id: string) => nodeSizes.get(id) || { width: 120, height: 60 };
+  const getNodeSize = (id: string) => nodeSizes.get(id) || { width: 130, height: 70 };
   
-  // Найти путь от выбранной ноды к корню
   const getPathToRoot = useCallback((nodeId: string | null): string[] => {
     if (!nodeId) return [];
     const path: string[] = [nodeId];
     let current = nodeId;
     
     while (current !== 'ai') {
-      const parentConn = connections.find(c => c.to === current);
+      const parentConn = connections.find(c => c.to === current && !c.dashed);
       if (!parentConn) break;
       path.push(parentConn.from);
       current = parentConn.from;
@@ -296,8 +426,8 @@ export default function SpaceMindMap() {
     return fromIndex !== -1 && toIndex !== -1 && Math.abs(fromIndex - toIndex) === 1;
   }, [selectedNode, getPathToRoot]);
 
-  const handleNodeClick = (node: SpaceNode) => {
-    // Преобразуем обратно в AINode формат для InfoPanel
+  const handleNodeClick = (node: SpaceNode, wasDragging: boolean) => {
+    if (wasDragging) return; // Не открывать панель после drag
     const aiNode: AINode = {
       id: node.id,
       position: { x: node.x, y: node.y },
@@ -346,7 +476,7 @@ export default function SpaceMindMap() {
             🧠 AI Mindmap
           </h1>
           <p className="text-gray-400 text-sm">
-            {lang === 'ru' ? 'Кликни на узел для описания' : 'Click a node for details'}
+            {lang === 'ru' ? 'Перетаскивай ноды • Кликни для описания' : 'Drag nodes • Click for details'}
           </p>
         </div>
         <LanguageToggle lang={lang} onChange={setLang} />
@@ -412,7 +542,6 @@ export default function SpaceMindMap() {
                   filter="url(#glow)"
                   className={`connection-line ${isActive ? 'active' : ''}`}
                 />
-                {/* Импульсы на активных связях */}
                 {isActive && (() => {
                   const baseOffset = (i * 1.7) % 5;
                   const glow = 'drop-shadow(0 0 4px #fff) drop-shadow(0 0 8px #a855f7) drop-shadow(0 0 15px #a855f7) drop-shadow(0 0 25px #8b5cf6)';
@@ -442,25 +571,44 @@ export default function SpaceMindMap() {
         </svg>
 
         {/* Ноды */}
-        {nodes.map((node) => (
-          <div
-            key={node.id}
-            ref={(el) => { if (el) nodeRefs.current.set(node.id, el); }}
-            className={`space-node ${selectedNode?.id === node.id ? 'selected' : ''}`}
-            style={{ 
-              left: `${node.x}px`, 
-              top: `${node.y}px`,
-              '--level-color': spaceColors[node.level],
-            } as React.CSSProperties}
-            onClick={() => handleNodeClick(node)}
-          >
-            <div className="node-glow"></div>
-            <div className="node-content">
-              <span className="node-icon">{node.emoji}</span>
-              <span className="node-name">{node.name}</span>
+        {nodes.map((node) => {
+          const isDragging = draggingNodeId === node.id;
+          return (
+            <div
+              key={node.id}
+              ref={(el) => { if (el) nodeRefs.current.set(node.id, el); }}
+              className={`space-node ${selectedNode?.id === node.id ? 'selected' : ''} ${isDragging ? 'dragging' : ''}`}
+              style={{ 
+                left: `${node.x}px`, 
+                top: `${node.y}px`,
+                '--level-color': spaceColors[node.level],
+              } as React.CSSProperties}
+              onMouseDown={(e) => { 
+                e.stopPropagation(); 
+                handleNodeDragStart(node.id, e.clientX, e.clientY); 
+              }}
+              onTouchStart={(e) => { 
+                e.stopPropagation(); 
+                if (e.touches.length === 1) {
+                  handleNodeDragStart(node.id, e.touches[0].clientX, e.touches[0].clientY); 
+                }
+              }}
+              onClick={(e) => { 
+                e.stopPropagation(); 
+                // Проверяем был ли drag (если мышь сдвинулась больше 5px)
+                const wasDragging = Math.abs(e.clientX - dragStart.current.x) > 5 || 
+                                   Math.abs(e.clientY - dragStart.current.y) > 5;
+                handleNodeClick(node, wasDragging); 
+              }}
+            >
+              <div className="node-glow"></div>
+              <div className="node-content">
+                <span className="node-icon">{node.emoji}</span>
+                <span className="node-name">{node.name}</span>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Легенда */}
@@ -486,7 +634,6 @@ export default function SpaceMindMap() {
         📍 {Math.round(pan.x)}, {Math.round(pan.y)} | 🔍 {Math.round(zoom * 100)}%
       </div>
 
-      {/* Info Panel */}
       <InfoPanel node={selectedNode} lang={lang} onClose={() => setSelectedNode(null)} />
     </div>
   );
