@@ -66,65 +66,62 @@ const spaceColors: Record<AbstractionLevel, string> = {
 function getManualPositions(): Map<string, { x: number; y: number }> {
   const positions = new Map<string, { x: number; y: number }>();
   
-  // Константы для расстояний
-  const COL1 = 50;    // AI
-  const COL2 = 280;   // ML, DL, NLP
-  const COL3 = 520;   // Methods (Supervised, Unsupervised, RL) / Architectures
-  const COL4 = 780;   // Algorithms level 1
-  const COL5 = 1040;  // Algorithms level 2 / Implementations
-  const COL6 = 1300;  // Far right implementations
-  
-  const VGAP = 90;    // Вертикальный промежуток между нодами
+  // Константы для расстояний - УВЕЛИЧЕННЫЕ для воздуха
+  const COL1 = 50;     // AI
+  const COL2 = 320;    // ML, DL, NLP
+  const COL3 = 620;    // Methods / Architectures
+  const COL4 = 940;    // Algorithms level 1
+  const COL5 = 1260;   // Algorithms level 2 / Implementations
   
   // === ROOT ===
-  positions.set('ai', { x: COL1, y: 450 });
+  positions.set('ai', { x: COL1, y: 550 });
   
-  // === THEORY LEVEL (3 главные ветки) ===
-  positions.set('ml', { x: COL2, y: 180 });    // Machine Learning - верх
-  positions.set('dl', { x: COL2, y: 480 });    // Deep Learning - центр  
-  positions.set('nlp', { x: COL2, y: 820 });   // NLP - низ
+  // === THEORY LEVEL (3 главные ветки) - больше разнесены ===
+  positions.set('ml', { x: COL2, y: 150 });     // Machine Learning - верх
+  positions.set('dl', { x: COL2, y: 580 });     // Deep Learning - центр  
+  positions.set('nlp', { x: COL2, y: 1100 });   // NLP - низ (больше отступ)
   
   // === ML BRANCH ===
   // Methods под ML
-  positions.set('supervised', { x: COL3, y: 80 });
-  positions.set('unsupervised', { x: COL3, y: 220 });
-  positions.set('rl', { x: COL3, y: 340 });
+  positions.set('supervised', { x: COL3, y: 50 });
+  positions.set('unsupervised', { x: COL3, y: 200 });
+  positions.set('rl', { x: COL3, y: 350 });
   
   // Algorithms под Supervised
-  positions.set('linear-reg', { x: COL4, y: 20 });
-  positions.set('decision-tree', { x: COL4, y: 100 });
-  positions.set('svm', { x: COL4, y: 180 });
+  positions.set('linear-reg', { x: COL4, y: -30 });
+  positions.set('decision-tree', { x: COL4, y: 60 });
+  positions.set('svm', { x: COL4, y: 150 });
   positions.set('random-forest', { x: COL5, y: 60 });
   
   // Algorithms под Unsupervised
-  positions.set('kmeans', { x: COL4, y: 260 });
-  positions.set('pca', { x: COL4, y: 340 });
+  positions.set('kmeans', { x: COL4, y: 240 });
+  positions.set('pca', { x: COL4, y: 330 });
   
   // Algorithms под RL
   positions.set('qlearning', { x: COL4, y: 420 });
   
-  // === DL BRANCH ===
-  // Neural architectures под DL
-  positions.set('nn', { x: COL3, y: 460 });
-  positions.set('cnn', { x: COL3, y: 540 });
-  positions.set('rnn', { x: COL3, y: 620 });
-  positions.set('transformer', { x: COL3 + 50, y: 700 });
+  // === DL BRANCH === (больше пространства)
+  // Neural architectures
+  positions.set('nn', { x: COL3, y: 520 });
+  positions.set('cnn', { x: COL3, y: 620 });
+  positions.set('rnn', { x: COL3, y: 720 });
+  positions.set('transformer', { x: COL3, y: 820 });
   
   // Под RNN
-  positions.set('lstm', { x: COL4, y: 620 });
+  positions.set('lstm', { x: COL4, y: 720 });
   
-  // Под Transformer и вокруг
-  positions.set('attention', { x: COL4, y: 700 });
+  // Под Transformer
+  positions.set('attention', { x: COL4, y: 820 });
   
-  // Generative models
-  positions.set('gan', { x: COL4, y: 500 });
-  positions.set('vae', { x: COL4, y: 780 });
-  positions.set('diffusion', { x: COL4, y: 860 });
+  // Generative models - справа
+  positions.set('gan', { x: COL4, y: 540 });
+  positions.set('vae', { x: COL4, y: 920 });
+  positions.set('diffusion', { x: COL4, y: 1020 });
   
-  // === NLP BRANCH ===
-  positions.set('llm', { x: COL3, y: 880 });
-  positions.set('embeddings', { x: COL3, y: 960 });
-  positions.set('tokenization', { x: COL3, y: 1040 });
+  // === NLP BRANCH === (больше отступ от DL)
+  positions.set('llm', { x: COL3, y: 1100 });
+  positions.set('embeddings', { x: COL3, y: 1200 });
+  positions.set('tokenization', { x: COL3, y: 1300 });
   
   return positions;
 }

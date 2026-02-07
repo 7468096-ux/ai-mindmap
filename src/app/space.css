@@ -149,16 +149,26 @@
   padding: 18px 26px;
   min-width: 110px;
   
-  background: rgba(20, 20, 35, 0.85);
+  /* Цветной фон на основе уровня */
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--level-color, #6366f1) 15%, rgba(20, 20, 35, 0.9)),
+    color-mix(in srgb, var(--level-color, #6366f1) 8%, rgba(20, 20, 35, 0.95))
+  );
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid color-mix(in srgb, var(--level-color, #6366f1) 40%, transparent);
   
   transition: all 0.25s ease;
   white-space: nowrap;
   position: relative;
+  
+  /* Тонкое свечение бордера */
+  box-shadow: 
+    0 0 15px color-mix(in srgb, var(--level-color, #6366f1) 20%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 /* Тонкая линия акцента сверху */
@@ -166,12 +176,12 @@
   content: '';
   position: absolute;
   top: 0;
-  left: 20%;
-  right: 20%;
+  left: 15%;
+  right: 15%;
   height: 2px;
   background: var(--level-color, #6366f1);
   border-radius: 0 0 2px 2px;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .node-icon {
@@ -188,9 +198,16 @@
 
 /* === HOVER === */
 .space-node:hover .node-content {
-  background: rgba(30, 30, 50, 0.9);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--level-color, #6366f1) 25%, rgba(30, 30, 50, 0.9)),
+    color-mix(in srgb, var(--level-color, #6366f1) 15%, rgba(30, 30, 50, 0.95))
+  );
+  border-color: color-mix(in srgb, var(--level-color, #6366f1) 60%, transparent);
   transform: translateY(-2px);
+  box-shadow: 
+    0 0 25px color-mix(in srgb, var(--level-color, #6366f1) 35%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .space-node:hover .node-content::before {
@@ -217,26 +234,29 @@
 
 /* === SELECTED STATE === */
 .space-node.selected .node-glow {
-  opacity: 0.4;
+  opacity: 0.5;
 }
 
 .space-node.selected .node-content {
   background: linear-gradient(
     135deg,
-    rgba(99, 102, 241, 0.25) 0%,
-    rgba(139, 92, 246, 0.2) 50%,
-    rgba(168, 85, 247, 0.25) 100%
+    color-mix(in srgb, var(--level-color, #6366f1) 35%, rgba(20, 20, 35, 0.9)),
+    color-mix(in srgb, var(--level-color, #6366f1) 20%, rgba(20, 20, 35, 0.95))
   );
-  border-color: #a855f7;
+  border-color: var(--level-color, #a855f7);
   transform: translateY(-3px);
+  box-shadow: 
+    0 0 30px color-mix(in srgb, var(--level-color, #6366f1) 50%, transparent),
+    0 0 60px color-mix(in srgb, var(--level-color, #6366f1) 25%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .space-node.selected .node-content::before {
-  left: 15%;
-  right: 15%;
+  left: 10%;
+  right: 10%;
   height: 3px;
   opacity: 1;
-  background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
+  background: var(--level-color, #a855f7);
 }
 
 /* === ЛИНИИ СВЯЗЕЙ === */
