@@ -66,10 +66,10 @@ export default function LearningPathsPanel({
 
   return (
     <>
-      {/* Toggle Button */}
+      {/* Toggle Button - positioned right side, next to language toggle */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed left-4 top-4 z-40 px-4 py-2 rounded-lg font-medium transition-all ${
+        className={`fixed right-20 top-4 z-40 px-4 py-2 rounded-lg font-medium transition-all ${
           isOpen || activePath
             ? 'bg-purple-600 text-white'
             : 'bg-gray-800/80 text-gray-300 hover:bg-gray-700/80'
@@ -85,7 +85,7 @@ export default function LearningPathsPanel({
 
       {/* Panel */}
       {isOpen && (
-        <div className="fixed left-4 top-16 z-40 w-80 bg-gray-900/95 backdrop-blur rounded-xl shadow-2xl overflow-hidden border border-gray-700">
+        <div className="fixed right-4 top-16 z-40 w-80 bg-gray-900/95 backdrop-blur rounded-xl shadow-2xl overflow-hidden border border-gray-700">
           <div className="p-4 border-b border-gray-700">
             <h2 className="text-white font-bold text-lg">{t.title}</h2>
             <p className="text-gray-400 text-sm">{t.subtitle}</p>
