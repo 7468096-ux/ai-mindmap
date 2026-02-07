@@ -30,6 +30,7 @@ const TransformerDemo = dynamic(() => import('./TransformerDemo'), { ssr: false 
 const VAEDemo = dynamic(() => import('./VAEDemo'), { ssr: false });
 const ResNetDemo = dynamic(() => import('./ResNetDemo'), { ssr: false });
 const ViTDemo = dynamic(() => import('./ViTDemo'), { ssr: false });
+const XGBoostDemo = dynamic(() => import('./XGBoostDemo'), { ssr: false });
 
 type DemoComponent = React.ComponentType<{ lang?: Language }>;
 
@@ -62,6 +63,7 @@ export const demos: Record<string, DemoComponent> = {
   'vae': VAEDemo,
   'resnet': ResNetDemo,
   'vit': ViTDemo,
+  'xgboost': XGBoostDemo,
 };
 
 export function hasDemo(nodeId: string): boolean {
