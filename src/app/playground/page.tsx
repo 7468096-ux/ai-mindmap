@@ -4,16 +4,16 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import './space.css';
 
 // Размеры ноды (должны совпадать с CSS)
-const NODE_WIDTH = 130;  // примерная ширина ноды
-const NODE_HEIGHT = 54;  // примерная высота ноды
+const NODE_WIDTH = 120;   // фиксированная ширина ноды
+const NODE_HEIGHT = 70;   // фиксированная высота ноды
 
-// Тестовые ноды (теперь в пикселях для точного позиционирования)
-const testNodes = [
-  { id: 1, name: 'Input Layer', type: 'input', x: 150, y: 300 },
-  { id: 2, name: 'Hidden Layer 1', type: 'hidden', x: 400, y: 200 },
-  { id: 3, name: 'Hidden Layer 2', type: 'hidden', x: 400, y: 450 },
-  { id: 4, name: 'Attention', type: 'hidden', x: 650, y: 325 },
-  { id: 5, name: 'Output', type: 'output', x: 850, y: 325 },
+// Начальные позиции нод
+const initialNodes = [
+  { id: 1, name: 'Input', type: 'input', x: 100, y: 250 },
+  { id: 2, name: 'Hidden 1', type: 'hidden', x: 320, y: 150 },
+  { id: 3, name: 'Hidden 2', type: 'hidden', x: 320, y: 350 },
+  { id: 4, name: 'Attention', type: 'hidden', x: 540, y: 250 },
+  { id: 5, name: 'Output', type: 'output', x: 760, y: 250 },
 ];
 
 // Генерируем случайные звёзды для каждого слоя (улучшенный PRNG)
@@ -54,12 +54,47 @@ export default function Playground() {
   const animationRef = useRef<number>();
   const [permissionGranted, setPermissionGranted] = useState(false);
   
+  // Nodes state (для drag)
+  const [nodes, setNodes] = useState(initialNodes);
+  
   // Pan state
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const panStart = useRef({ x: 0, y: 0 });
   const panOffset = useRef({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Node drag state
+  const [draggingNodeId, setDraggingNodeId] = useState<number | null>(null);
+  const dragStart = useRef({ x: 0, y: 0 });
+  const nodeStartPos = useRef({ x: 0, y: 0 });
+  
+  // Node drag handlers
+  const handleNodeDragStart = useCallback((nodeId: number, clientX: number, clientY: number) => {
+    const node = nodes.find(n => n.id === nodeId);
+    if (!node) return;
+    
+    setDraggingNodeId(nodeId);
+    dragStart.current = { x: clientX, y: clientY };
+    nodeStartPos.current = { x: node.x, y: node.y };
+  }, [nodes]);
+  
+  const handleNodeDragMove = useCallback((clientX: number, clientY: number) => {
+    if (draggingNodeId === null) return;
+    
+    const dx = clientX - dragStart.current.x;
+    const dy = clientY - dragStart.current.y;
+    
+    setNodes(prev => prev.map(node => 
+      node.id === draggingNodeId 
+        ? { ...node, x: nodeStartPos.current.x + dx, y: nodeStartPos.current.y + dy }
+        : node
+    ));
+  }, [draggingNodeId]);
+  
+  const handleNodeDragEnd = useCallback(() => {
+    setDraggingNodeId(null);
+  }, []);
 
   // Pan handlers
   const handlePanStart = useCallback((clientX: number, clientY: number) => {
@@ -82,7 +117,7 @@ export default function Playground() {
     setIsPanning(false);
   }, []);
 
-  // Mouse events for panning
+  // Mouse events for panning and node dragging
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
       // Only pan on background, not on nodes
@@ -91,12 +126,17 @@ export default function Playground() {
     };
     
     const handleMouseMove = (e: MouseEvent) => {
-      if (isPanning) {
+      if (draggingNodeId !== null) {
+        handleNodeDragMove(e.clientX, e.clientY);
+      } else if (isPanning) {
         handlePanMove(e.clientX, e.clientY);
       }
     };
     
-    const handleMouseUp = () => handlePanEnd();
+    const handleMouseUp = () => {
+      handlePanEnd();
+      handleNodeDragEnd();
+    };
 
     const container = containerRef.current;
     if (container) {
@@ -112,9 +152,9 @@ export default function Playground() {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isPanning, handlePanStart, handlePanMove, handlePanEnd]);
+  }, [isPanning, draggingNodeId, handlePanStart, handlePanMove, handlePanEnd, handleNodeDragMove, handleNodeDragEnd]);
 
-  // Touch events for panning
+  // Touch events for panning and node dragging
   useEffect(() => {
     const handleTouchStart = (e: TouchEvent) => {
       if ((e.target as HTMLElement).closest('.space-node')) return;
@@ -124,12 +164,19 @@ export default function Playground() {
     };
     
     const handleTouchMove = (e: TouchEvent) => {
-      if (isPanning && e.touches.length === 1) {
-        handlePanMove(e.touches[0].clientX, e.touches[0].clientY);
+      if (e.touches.length === 1) {
+        if (draggingNodeId !== null) {
+          handleNodeDragMove(e.touches[0].clientX, e.touches[0].clientY);
+        } else if (isPanning) {
+          handlePanMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
       }
     };
     
-    const handleTouchEnd = () => handlePanEnd();
+    const handleTouchEnd = () => {
+      handlePanEnd();
+      handleNodeDragEnd();
+    };
 
     const container = containerRef.current;
     if (container) {
@@ -145,7 +192,7 @@ export default function Playground() {
         container.removeEventListener('touchend', handleTouchEnd);
       }
     };
-  }, [isPanning, handlePanStart, handlePanMove, handlePanEnd]);
+  }, [isPanning, draggingNodeId, handlePanStart, handlePanMove, handlePanEnd, handleNodeDragMove, handleNodeDragEnd]);
 
   useEffect(() => {
     // Плавное сглаживание (lerp)
@@ -230,7 +277,7 @@ export default function Playground() {
     { from: 4, to: 5 },
   ];
 
-  const getNodeById = (id: number) => testNodes.find(n => n.id === id);
+  const getNodeById = (id: number) => nodes.find(n => n.id === id);
 
   return (
     <div 
@@ -307,7 +354,7 @@ export default function Playground() {
           </defs>
           
           {/* Точки соединения на нодах */}
-          {testNodes.map((node) => (
+          {nodes.map((node) => (
             <g key={`dots-${node.id}`}>
               {/* Правая точка (выход) */}
               <circle
@@ -365,17 +412,30 @@ export default function Playground() {
         </svg>
 
         {/* Ноды */}
-        {testNodes.map((node) => (
+        {nodes.map((node) => (
           <div
             key={node.id}
-            className={`space-node node-${node.type} ${selectedId === node.id ? 'selected' : ''}`}
+            className={`space-node node-${node.type} ${selectedId === node.id ? 'selected' : ''} ${draggingNodeId === node.id ? 'dragging' : ''}`}
             style={{ 
               left: `${node.x}px`, 
               top: `${node.y}px`,
             }}
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              handleNodeDragStart(node.id, e.clientX, e.clientY);
+            }}
+            onTouchStart={(e) => {
+              e.stopPropagation();
+              if (e.touches.length === 1) {
+                handleNodeDragStart(node.id, e.touches[0].clientX, e.touches[0].clientY);
+              }
+            }}
             onClick={(e) => {
               e.stopPropagation();
-              setSelectedId(selectedId === node.id ? null : node.id);
+              // Только выбираем если не было drag
+              if (draggingNodeId === null) {
+                setSelectedId(selectedId === node.id ? null : node.id);
+              }
             }}
           >
             <div className="node-glow"></div>
