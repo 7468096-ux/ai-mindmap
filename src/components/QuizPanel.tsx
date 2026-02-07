@@ -524,16 +524,16 @@ export default function QuizPanel({ lang }: Props) {
   const [reviewMode, setReviewMode] = useState(false);
 
   const renderResults = () => (
-    <div className="p-6 text-center">
-      <div className="text-6xl mb-4">
+    <div className="p-4 md:p-6 text-center">
+      <div className="text-5xl md:text-6xl mb-3 md:mb-4">
         {percentage >= 80 ? '🏆' : percentage >= 60 ? '⭐' : '📚'}
       </div>
-      <h3 className="text-white text-2xl font-bold mb-2">{t.score}</h3>
-      <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500 mb-2">
+      <h3 className="text-white text-xl md:text-2xl font-bold mb-2">{t.score}</h3>
+      <div className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500 mb-2">
         {state.score}/{totalQuestions}
       </div>
-      <div className="text-2xl text-gray-300 mb-4">{percentage}%</div>
-      <p className="text-lg text-gray-400 mb-6">{getPerformanceMessage()}</p>
+      <div className="text-xl md:text-2xl text-gray-300 mb-3 md:mb-4">{percentage}%</div>
+      <p className="text-base md:text-lg text-gray-400 mb-4 md:mb-6">{getPerformanceMessage()}</p>
       
       {bestScore !== null && (
         <div className="mb-6 p-3 bg-purple-900/30 border border-purple-700/50 rounded-lg">
@@ -564,28 +564,28 @@ export default function QuizPanel({ lang }: Props) {
   );
 
   const renderReview = () => (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white text-lg font-bold">{t.wrongAnswersTitle}</h3>
+        <h3 className="text-white text-base md:text-lg font-bold">{t.wrongAnswersTitle}</h3>
         <button
           onClick={() => setReviewMode(false)}
-          className="text-gray-400 hover:text-white text-sm"
+          className="text-gray-400 hover:text-white text-xs md:text-sm"
         >
           ← {t.backToResults}
         </button>
       </div>
       
-      <div className="space-y-4 max-h-[500px] overflow-y-auto">
+      <div className="space-y-3 md:space-y-4">
         {state.wrongAnswers.map((qIndex) => {
           const question = state.shuffledQuestions[qIndex];
           return (
-            <div key={qIndex} className="bg-gray-800/50 rounded-lg p-4 border border-red-900/30">
-              <div className="text-white font-medium mb-3">{question.question[lang]}</div>
+            <div key={qIndex} className="bg-gray-800/50 rounded-lg p-3 md:p-4 border border-red-900/30">
+              <div className="text-white font-medium mb-3 text-sm md:text-base">{question.question[lang]}</div>
               <div className="space-y-2 mb-3">
                 {question.options[lang].map((option, i) => (
                   <div
                     key={i}
-                    className={`p-2 rounded text-sm ${
+                    className={`p-2 rounded text-xs md:text-sm ${
                       i === question.correctIndex
                         ? 'bg-green-900/30 border border-green-700/50 text-green-300'
                         : 'bg-gray-900/50 text-gray-400'
@@ -595,7 +595,7 @@ export default function QuizPanel({ lang }: Props) {
                   </div>
                 ))}
               </div>
-              <div className="text-xs text-gray-400 bg-gray-900/50 p-3 rounded">
+              <div className="text-xs text-gray-400 bg-gray-900/50 p-2 md:p-3 rounded">
                 <strong>{t.explanation}:</strong> {question.explanation[lang]}
               </div>
             </div>
@@ -624,22 +624,30 @@ export default function QuizPanel({ lang }: Props) {
         )}
       </button>
 
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
       {/* Panel */}
       {isOpen && (
-        <div className="fixed right-4 top-16 z-40 w-[500px] bg-gray-900/95 backdrop-blur rounded-xl shadow-2xl overflow-hidden border border-gray-700">
+        <div className="fixed md:absolute inset-x-2 bottom-2 md:bottom-auto md:inset-x-auto md:right-4 md:top-16 md:w-[500px] bg-gray-900/95 backdrop-blur rounded-xl shadow-2xl overflow-hidden border border-gray-700 max-h-[80vh] md:max-h-[90vh] overflow-y-auto z-40">
           {/* Header */}
-          <div className="p-4 border-b border-gray-700">
-            <h2 className="text-white font-bold text-lg">{t.title}</h2>
-            <p className="text-gray-400 text-sm">{t.subtitle}</p>
+          <div className="p-3 md:p-4 border-b border-gray-700 sticky top-0 bg-gray-900/95 backdrop-blur z-10">
+            <h2 className="text-white font-bold text-base md:text-lg">{t.title}</h2>
+            <p className="text-gray-400 text-xs md:text-sm">{t.subtitle}</p>
           </div>
 
           {/* Content */}
           {state.isFinished ? (
             reviewMode ? renderReview() : renderResults()
           ) : currentQ ? (
-            <div className="p-6">
+            <div className="p-4 md:p-6">
               {/* Progress */}
-              <div className="flex justify-between text-sm text-gray-400 mb-4">
+              <div className="flex justify-between text-xs md:text-sm text-gray-400 mb-3 md:mb-4">
                 <span>
                   {t.question} {state.currentQuestion + 1} {t.of} {totalQuestions}
                 </span>
@@ -649,7 +657,7 @@ export default function QuizPanel({ lang }: Props) {
               </div>
 
               {/* Progress bar */}
-              <div className="h-1 bg-gray-700 rounded-full overflow-hidden mb-6">
+              <div className="h-1 bg-gray-700 rounded-full overflow-hidden mb-4 md:mb-6">
                 <div
                   className="h-full bg-gradient-to-r from-pink-500 to-purple-500 transition-all duration-300"
                   style={{ width: `${((state.currentQuestion + 1) / totalQuestions) * 100}%` }}
@@ -657,23 +665,23 @@ export default function QuizPanel({ lang }: Props) {
               </div>
 
               {/* Question */}
-              <div className="mb-6">
+              <div className="mb-4 md:mb-6">
                 <div className="text-xs text-purple-400 mb-2 uppercase tracking-wide">
                   {currentQ.category}
                 </div>
-                <h3 className="text-white text-lg font-medium leading-relaxed">
+                <h3 className="text-white text-base md:text-lg font-medium leading-relaxed">
                   {currentQ.question[lang]}
                 </h3>
               </div>
 
               {/* Options */}
-              <div className="space-y-3 mb-6">
+              <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
                 {currentQ.options[lang].map((option, index) => {
                   const isSelected = state.selectedAnswer === index;
                   const isCorrect = index === currentQ.correctIndex;
                   const showResult = state.showExplanation;
 
-                  let className = 'w-full p-4 rounded-lg text-left transition-all border-2 ';
+                  let className = 'w-full p-3 md:p-4 rounded-lg text-left transition-all border-2 text-sm md:text-base ';
                   
                   if (showResult) {
                     if (isCorrect) {
@@ -696,13 +704,13 @@ export default function QuizPanel({ lang }: Props) {
                       disabled={state.showExplanation}
                       className={className}
                     >
-                      <div className="flex items-start gap-3">
-                        <span className="text-sm font-bold mt-0.5">
+                      <div className="flex items-start gap-2 md:gap-3">
+                        <span className="text-xs md:text-sm font-bold mt-0.5">
                           {String.fromCharCode(65 + index)}.
                         </span>
                         <span className="flex-1">{option}</span>
-                        {showResult && isCorrect && <span className="text-xl">✓</span>}
-                        {showResult && isSelected && !isCorrect && <span className="text-xl">✗</span>}
+                        {showResult && isCorrect && <span className="text-lg md:text-xl">✓</span>}
+                        {showResult && isSelected && !isCorrect && <span className="text-lg md:text-xl">✗</span>}
                       </div>
                     </button>
                   );
@@ -711,11 +719,11 @@ export default function QuizPanel({ lang }: Props) {
 
               {/* Explanation */}
               {state.showExplanation && (
-                <div className="mb-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                <div className="mb-4 md:mb-6 p-3 md:p-4 bg-gray-800/50 rounded-lg border border-gray-700">
                   <div className="text-xs text-gray-400 uppercase tracking-wide mb-2">
                     {t.explanation}
                   </div>
-                  <p className="text-gray-300 text-sm leading-relaxed">
+                  <p className="text-gray-300 text-xs md:text-sm leading-relaxed">
                     {currentQ.explanation[lang]}
                   </p>
                 </div>
@@ -725,7 +733,7 @@ export default function QuizPanel({ lang }: Props) {
               {state.showExplanation && (
                 <button
                   onClick={handleNext}
-                  className="w-full px-6 py-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white rounded-lg font-medium transition-all"
+                  className="w-full px-4 md:px-6 py-2.5 md:py-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white rounded-lg font-medium transition-all text-sm md:text-base"
                 >
                   {state.currentQuestion < totalQuestions - 1 ? t.next : t.finish} →
                 </button>
@@ -733,14 +741,6 @@ export default function QuizPanel({ lang }: Props) {
             </div>
           ) : null}
         </div>
-      )}
-
-      {/* Close overlay */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-30"
-          onClick={() => setIsOpen(false)}
-        />
       )}
     </>
   );
