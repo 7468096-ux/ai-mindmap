@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import './space.css';
 
-// Тестовые ноды
+// Тестовые ноды (теперь в пикселях для точного позиционирования)
 const testNodes = [
-  { id: 1, name: 'Input Layer', type: 'input', x: 15, y: 30 },
-  { id: 2, name: 'Hidden Layer 1', type: 'hidden', x: 40, y: 20 },
-  { id: 3, name: 'Hidden Layer 2', type: 'hidden', x: 40, y: 50 },
-  { id: 4, name: 'Attention', type: 'hidden', x: 65, y: 35 },
-  { id: 5, name: 'Output', type: 'output', x: 85, y: 35 },
+  { id: 1, name: 'Input Layer', type: 'input', x: 150, y: 300 },
+  { id: 2, name: 'Hidden Layer 1', type: 'hidden', x: 400, y: 200 },
+  { id: 3, name: 'Hidden Layer 2', type: 'hidden', x: 400, y: 450 },
+  { id: 4, name: 'Attention', type: 'hidden', x: 650, y: 325 },
+  { id: 5, name: 'Output', type: 'output', x: 850, y: 325 },
 ];
 
 // Генерируем случайные звёзды для каждого слоя (улучшенный PRNG)
@@ -49,6 +49,99 @@ export default function Playground() {
   const targetTilt = useRef({ x: 0, y: 0 });
   const animationRef = useRef<number>();
   const [permissionGranted, setPermissionGranted] = useState(false);
+  
+  // Pan state
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const panStart = useRef({ x: 0, y: 0 });
+  const panOffset = useRef({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Pan handlers
+  const handlePanStart = useCallback((clientX: number, clientY: number) => {
+    setIsPanning(true);
+    panStart.current = { x: clientX, y: clientY };
+    panOffset.current = { ...pan };
+  }, [pan]);
+
+  const handlePanMove = useCallback((clientX: number, clientY: number) => {
+    if (!isPanning) return;
+    const dx = clientX - panStart.current.x;
+    const dy = clientY - panStart.current.y;
+    setPan({
+      x: panOffset.current.x + dx,
+      y: panOffset.current.y + dy,
+    });
+  }, [isPanning]);
+
+  const handlePanEnd = useCallback(() => {
+    setIsPanning(false);
+  }, []);
+
+  // Mouse events for panning
+  useEffect(() => {
+    const handleMouseDown = (e: MouseEvent) => {
+      // Only pan on background, not on nodes
+      if ((e.target as HTMLElement).closest('.space-node')) return;
+      handlePanStart(e.clientX, e.clientY);
+    };
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isPanning) {
+        handlePanMove(e.clientX, e.clientY);
+      }
+    };
+    
+    const handleMouseUp = () => handlePanEnd();
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('mousedown', handleMouseDown);
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('mousedown', handleMouseDown);
+      }
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isPanning, handlePanStart, handlePanMove, handlePanEnd]);
+
+  // Touch events for panning
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      if ((e.target as HTMLElement).closest('.space-node')) return;
+      if (e.touches.length === 1) {
+        handlePanStart(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    };
+    
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isPanning && e.touches.length === 1) {
+        handlePanMove(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    };
+    
+    const handleTouchEnd = () => handlePanEnd();
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('touchstart', handleTouchStart, { passive: true });
+      container.addEventListener('touchmove', handleTouchMove, { passive: true });
+      container.addEventListener('touchend', handleTouchEnd);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('touchstart', handleTouchStart);
+        container.removeEventListener('touchmove', handleTouchMove);
+        container.removeEventListener('touchend', handleTouchEnd);
+      }
+    };
+  }, [isPanning, handlePanStart, handlePanMove, handlePanEnd]);
 
   useEffect(() => {
     // Плавное сглаживание (lerp)
@@ -91,8 +184,9 @@ export default function Playground() {
       }
     };
 
-    // Fallback: движение мышью на десктопе
+    // Fallback: движение мышью на десктопе (только если не панорамируем)
     const handleMouseMove = (event: MouseEvent) => {
+      if (isPanning) return; // Не двигаем звёзды во время pan
       const x = (event.clientX / window.innerWidth - 0.5) * 2;
       const y = (event.clientY / window.innerHeight - 0.5) * 2;
       targetTilt.current = { x, y };
@@ -111,7 +205,7 @@ export default function Playground() {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, []);
+  }, [isPanning]);
 
   const requestGyroPermission = async () => {
     if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
@@ -123,8 +217,22 @@ export default function Playground() {
     }
   };
 
+  // Связи между нодами (для SVG)
+  const connections = [
+    { from: 1, to: 2 },
+    { from: 1, to: 3 },
+    { from: 2, to: 4 },
+    { from: 3, to: 4 },
+    { from: 4, to: 5 },
+  ];
+
+  const getNodeById = (id: number) => testNodes.find(n => n.id === id);
+
   return (
-    <div className="space-container">
+    <div 
+      ref={containerRef}
+      className={`space-container ${isPanning ? 'panning' : ''}`}
+    >
       {/* Слои звёзд с параллаксом */}
       {starLayers.map((layer, layerIndex) => (
         <div
@@ -150,10 +258,10 @@ export default function Playground() {
         </div>
       ))}
 
-      {/* Заголовок */}
-      <h1 className="space-title">🌌 Neural Explorer - Space Design</h1>
+      {/* Заголовок (фиксированный) */}
+      <h1 className="space-title">🌌 Neural Explorer</h1>
       <p className="space-subtitle">
-        Кликни на ноду • Поверни телефон — звёзды двигаются
+        Перетаскивай поле • Кликай на ноды • Поверни телефон
       </p>
       
       {/* Кнопка разрешения для iOS */}
@@ -163,39 +271,78 @@ export default function Playground() {
         </button>
       )}
 
-      {/* Ноды */}
-      {testNodes.map((node) => (
-        <div
-          key={node.id}
-          className={`space-node node-${node.type} ${selectedId === node.id ? 'selected' : ''}`}
-          style={{ left: `${node.x}%`, top: `${node.y}%` }}
-          onClick={() => setSelectedId(selectedId === node.id ? null : node.id)}
-        >
-          <div className="node-glow"></div>
-          <div className="node-content">
-            <span className="node-icon">
-              {node.type === 'input' ? '📥' : node.type === 'output' ? '📤' : '🧠'}
-            </span>
-            <span className="node-name">{node.name}</span>
-          </div>
-        </div>
-      ))}
+      {/* Панорамируемый слой с нодами и связями */}
+      <div 
+        className="pan-layer"
+        style={{ 
+          transform: `translate(${pan.x}px, ${pan.y}px)`,
+        }}
+      >
+        {/* SVG для связей */}
+        <svg className="connections" width="2000" height="2000" style={{ position: 'absolute', top: 0, left: 0 }}>
+          <defs>
+            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#00d4ff" stopOpacity="0.4" />
+              <stop offset="50%" stopColor="#a855f7" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#10b981" stopOpacity="0.4" />
+            </linearGradient>
+          </defs>
+          {connections.map((conn, i) => {
+            const from = getNodeById(conn.from);
+            const to = getNodeById(conn.to);
+            if (!from || !to) return null;
+            
+            // Bezier контрольные точки для органичной кривой
+            const midX = (from.x + to.x) / 2;
+            const midY = (from.y + to.y) / 2;
+            const dx = to.x - from.x;
+            const dy = to.y - from.y;
+            const offset = Math.min(Math.abs(dx), Math.abs(dy)) * 0.3;
+            
+            return (
+              <path
+                key={i}
+                d={`M ${from.x + 60} ${from.y + 25} 
+                    Q ${midX} ${from.y + 25 + offset}, ${midX} ${midY}
+                    Q ${midX} ${to.y + 25 - offset}, ${to.x + 60} ${to.y + 25}`}
+                stroke="url(#lineGradient)"
+                strokeWidth="2"
+                fill="none"
+                className="connection-line"
+              />
+            );
+          })}
+        </svg>
 
-      {/* Линии связей */}
-      <svg className="connections">
-        <defs>
-          <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#00d4ff" stopOpacity="0.3" />
-            <stop offset="50%" stopColor="#a855f7" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#10b981" stopOpacity="0.3" />
-          </linearGradient>
-        </defs>
-        <line x1="18%" y1="32%" x2="38%" y2="22%" stroke="url(#lineGradient)" strokeWidth="2" />
-        <line x1="18%" y1="32%" x2="38%" y2="52%" stroke="url(#lineGradient)" strokeWidth="2" />
-        <line x1="43%" y1="22%" x2="63%" y2="37%" stroke="url(#lineGradient)" strokeWidth="2" />
-        <line x1="43%" y1="52%" x2="63%" y2="37%" stroke="url(#lineGradient)" strokeWidth="2" />
-        <line x1="68%" y1="37%" x2="83%" y2="37%" stroke="url(#lineGradient)" strokeWidth="2" />
-      </svg>
+        {/* Ноды */}
+        {testNodes.map((node) => (
+          <div
+            key={node.id}
+            className={`space-node node-${node.type} ${selectedId === node.id ? 'selected' : ''}`}
+            style={{ 
+              left: `${node.x}px`, 
+              top: `${node.y}px`,
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedId(selectedId === node.id ? null : node.id);
+            }}
+          >
+            <div className="node-glow"></div>
+            <div className="node-content">
+              <span className="node-icon">
+                {node.type === 'input' ? '📥' : node.type === 'output' ? '📤' : '🧠'}
+              </span>
+              <span className="node-name">{node.name}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Индикатор pan offset */}
+      <div className="pan-indicator">
+        📍 {Math.round(pan.x)}, {Math.round(pan.y)}
+      </div>
     </div>
   );
 }
