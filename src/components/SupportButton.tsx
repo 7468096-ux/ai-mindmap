@@ -34,7 +34,7 @@ export default function SupportButton({ lang }: Props) {
   // basePath для GitHub Pages
   const basePath = process.env.NODE_ENV === 'production' ? '/ai-mindmap' : '';
   // Version for cache busting
-  const version = 'v2';
+  const version = 'v3';
   
   const wallets = [
     {
