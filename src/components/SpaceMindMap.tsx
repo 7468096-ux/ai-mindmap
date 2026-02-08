@@ -7,6 +7,7 @@ import LearningPathsPanel from './LearningPathsPanel';
 import FlashcardsPanel from './FlashcardsPanel';
 import QuizPanel from './QuizPanel';
 import Breadcrumbs from './Breadcrumbs';
+import SupportButton from './SupportButton';
 import { initialNodes as dataNodes, initialEdges, AINode, Language, levelColors, levelLabels, AbstractionLevel } from '@/data/nodes';
 import { getPathById } from '@/data/learningPaths';
 
@@ -799,6 +800,9 @@ export default function SpaceMindMap() {
       />
 
       <InfoPanel node={selectedNode} lang={lang} onClose={() => setSelectedNode(null)} />
+
+      {/* Support Button */}
+      <SupportButton lang={lang} />
     </div>
   );
 }
