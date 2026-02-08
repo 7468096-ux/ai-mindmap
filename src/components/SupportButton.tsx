@@ -31,24 +31,27 @@ export default function SupportButton({ lang }: Props) {
   };
   const t = texts[lang];
 
+  // basePath для GitHub Pages
+  const basePath = process.env.NODE_ENV === 'production' ? '/ai-mindmap' : '';
+  
   const wallets = [
     {
       name: 'USDT (TRC20)',
       address: 'TDZTpZxkAZU6SsvRWFJTZcWYjxB8kgcpZA',
-      qr: '/usdt-qr.jpg',
+      qr: `${basePath}/usdt-qr.jpg`,
       emoji: '💵',
       recommended: true,
     },
     {
       name: 'Bitcoin',
       address: '1F22c1d4rVwgWnKvLF8i8oxnbFDVSvLkv7',
-      qr: '/btc-qr.jpg',
+      qr: `${basePath}/btc-qr.jpg`,
       emoji: '₿',
     },
     {
       name: 'Ethereum (ERC20)',
       address: '0x73fe57f0f560e7cdb83d968711d964b43c3fb2b0',
-      qr: '/eth-qr.jpg',
+      qr: `${basePath}/eth-qr.jpg`,
       emoji: '⟠',
     },
   ];
@@ -74,12 +77,12 @@ export default function SupportButton({ lang }: Props) {
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 md:hidden"
             onClick={() => setIsOpen(false)}
           />
 
-          {/* Modal Content */}
-          <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gray-900/95 backdrop-blur rounded-2xl shadow-2xl border border-gray-700">
+          {/* Modal Content - Side Panel like InfoPanel */}
+          <div className="fixed inset-x-2 bottom-2 md:bottom-auto md:inset-x-auto md:right-4 md:top-4 md:w-[440px] z-50 max-h-[80vh] md:max-h-[92vh] overflow-y-auto bg-gray-900/95 backdrop-blur rounded-2xl shadow-2xl border border-gray-700">
             {/* Header */}
             <div className="sticky top-0 bg-gray-900/95 backdrop-blur border-b border-gray-700 p-6">
               <div className="flex items-start justify-between">

@@ -783,11 +783,6 @@ export default function SpaceMindMap() {
         </div>
       </div>
 
-      {/* Индикатор zoom/pan */}
-      <div className="pan-indicator">
-        📍 {Math.round(pan.x)}, {Math.round(pan.y)} | 🔍 {Math.round(zoom * 100)}%
-      </div>
-
       {/* Breadcrumbs */}
       <Breadcrumbs
         selectedNode={selectedNode}
