@@ -119,11 +119,11 @@ export default function SupportButton({ lang }: Props) {
 
                   {/* QR Code */}
                   <div className="flex flex-col md:flex-row gap-4">
-                    <div className="flex-shrink-0 mx-auto md:mx-0">
+                    <div className="flex-shrink-0 mx-auto md:mx-0 w-48 h-48 rounded-lg border-2 border-gray-600 overflow-hidden bg-white">
                       <img
                         src={wallet.qr}
                         alt={`${wallet.name} QR`}
-                        className="w-48 h-48 rounded-lg border-2 border-gray-600"
+                        className="w-full h-full object-cover"
                       />
                     </div>
 

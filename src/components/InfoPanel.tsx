@@ -55,7 +55,7 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
         </div>
         <button 
           onClick={onClose}
-          className="text-white/70 hover:text-white text-2xl font-light w-8 h-8 flex items-center justify-center bg-black/20 rounded-full"
+          className="text-white/70 hover:text-white text-2xl font-light w-8 h-8 flex items-center justify-center bg-black/20 rounded-full leading-none transition-colors"
         >
           ×
         </button>
