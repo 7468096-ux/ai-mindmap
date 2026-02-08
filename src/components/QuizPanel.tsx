@@ -23,6 +23,8 @@ interface QuizQuestion {
 
 interface Props {
   lang: Language;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 const quizQuestions: QuizQuestion[] = [
@@ -380,8 +382,7 @@ interface QuizState {
   shuffledQuestions: QuizQuestion[];
 }
 
-export default function QuizPanel({ lang }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function QuizPanel({ lang, isOpen, onOpenChange }: Props) {
   const [bestScore, setBestScore] = useState<number | null>(null);
   
   const [state, setState] = useState<QuizState>({
@@ -609,8 +610,8 @@ export default function QuizPanel({ lang }: Props) {
     <>
       {/* Toggle Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={`fixed right-4 top-[140px] z-40 px-4 py-2 rounded-lg font-medium transition-all ${
+        onClick={() => onOpenChange(!isOpen)}
+        className={`fixed right-4 top-[120px] z-40 px-4 py-2 rounded-lg font-medium transition-all shadow-lg ${
           isOpen
             ? 'bg-purple-600 text-white'
             : 'bg-gray-800/80 text-gray-300 hover:bg-gray-700/80'
@@ -628,13 +629,13 @@ export default function QuizPanel({ lang }: Props) {
       {isOpen && (
         <div 
           className="fixed inset-0 bg-black/50 z-30 md:hidden"
-          onClick={() => setIsOpen(false)}
+          onClick={() => onOpenChange(false)}
         />
       )}
 
       {/* Panel */}
       {isOpen && (
-        <div className="fixed md:absolute inset-x-2 bottom-2 md:bottom-auto md:inset-x-auto md:right-4 md:top-16 md:w-[500px] bg-gray-900/95 backdrop-blur rounded-xl shadow-2xl overflow-hidden border border-gray-700 max-h-[80vh] md:max-h-[90vh] overflow-y-auto z-40">
+        <div className="fixed md:absolute inset-x-2 bottom-2 md:bottom-auto md:inset-x-auto md:right-4 md:top-[180px] md:w-[500px] bg-gray-900/95 backdrop-blur rounded-xl shadow-2xl overflow-hidden border border-gray-700 max-h-[80vh] md:max-h-[90vh] overflow-y-auto z-40">
           {/* Header */}
           <div className="p-3 md:p-4 border-b border-gray-700 sticky top-0 bg-gray-900/95 backdrop-blur z-10">
             <h2 className="text-white font-bold text-base md:text-lg">{t.title}</h2>

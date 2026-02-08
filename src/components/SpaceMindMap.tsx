@@ -249,6 +249,9 @@ export default function SpaceMindMap() {
   const [completedNodes, setCompletedNodes] = useState<string[]>(initialProgress.completedNodes);
   const [smoothTilt, setSmoothTilt] = useState({ x: 0, y: 0 });
   
+  // Manage which panel is open (only one at a time)
+  const [openPanel, setOpenPanel] = useState<string | null>(null);
+  
   // Save learning progress to localStorage whenever it changes
   useEffect(() => {
     saveLearningProgress({ activePath, completedNodes });
@@ -635,13 +638,23 @@ export default function SpaceMindMap() {
         }}
         completedNodes={completedNodes}
         onResetProgress={handleResetProgress}
+        isOpen={openPanel === 'paths'}
+        onOpenChange={(open) => setOpenPanel(open ? 'paths' : null)}
       />
 
       {/* Flashcards Panel */}
-      <FlashcardsPanel lang={lang} />
+      <FlashcardsPanel 
+        lang={lang}
+        isOpen={openPanel === 'flashcards'}
+        onOpenChange={(open) => setOpenPanel(open ? 'flashcards' : null)}
+      />
 
       {/* Quiz Panel */}
-      <QuizPanel lang={lang} />
+      <QuizPanel 
+        lang={lang}
+        isOpen={openPanel === 'quiz'}
+        onOpenChange={(open) => setOpenPanel(open ? 'quiz' : null)}
+      />
 
       {/* Pan layer */}
       <div className="pan-layer" style={{ 

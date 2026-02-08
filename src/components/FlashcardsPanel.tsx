@@ -18,6 +18,8 @@ interface Flashcard {
 
 interface Props {
   lang: Language;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 // Selected key algorithm cards from nodes data
@@ -296,8 +298,7 @@ const flashcards: Flashcard[] = [
 
 const STORAGE_KEY = 'ai-mindmap-flashcards';
 
-export default function FlashcardsPanel({ lang }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function FlashcardsPanel({ lang, isOpen, onOpenChange }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [knownCards, setKnownCards] = useState<Set<string>>(new Set());
@@ -426,8 +427,8 @@ export default function FlashcardsPanel({ lang }: Props) {
     <>
       {/* Toggle Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={`fixed right-4 top-[90px] z-40 px-4 py-2 rounded-lg font-medium transition-all ${
+        onClick={() => onOpenChange(!isOpen)}
+        className={`fixed right-4 top-[62px] z-40 px-4 py-2 rounded-lg font-medium transition-all shadow-lg ${
           isOpen
             ? 'bg-pink-600 text-white'
             : 'bg-gray-800/80 text-gray-300 hover:bg-gray-700/80'
@@ -443,7 +444,7 @@ export default function FlashcardsPanel({ lang }: Props) {
 
       {/* Panel */}
       {isOpen && (
-        <div className="fixed right-4 top-16 z-40 w-96 bg-gray-900/95 backdrop-blur rounded-xl shadow-2xl overflow-hidden border border-gray-700">
+        <div className="fixed right-4 top-[180px] z-40 w-96 bg-gray-900/95 backdrop-blur rounded-xl shadow-2xl overflow-hidden border border-gray-700">
           {/* Header */}
           <div className="p-4 border-b border-gray-700">
             <h2 className="text-white font-bold text-lg">{t.title}</h2>
@@ -620,7 +621,7 @@ export default function FlashcardsPanel({ lang }: Props) {
       {isOpen && (
         <div 
           className="fixed inset-0 z-30" 
-          onClick={() => setIsOpen(false)}
+          onClick={() => onOpenChange(false)}
         />
       )}
     </>
