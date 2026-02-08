@@ -564,11 +564,6 @@ export default function SpaceMindMap() {
       data: node.data,
     };
     setSelectedNode(selectedNode?.id === node.id ? null : aiNode);
-    
-    // Mark as completed when opened (if not already)
-    if (!completedNodes.includes(node.id)) {
-      setCompletedNodes(prev => [...prev, node.id]);
-    }
   };
 
   return (
