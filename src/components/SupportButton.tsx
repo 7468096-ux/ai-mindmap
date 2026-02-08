@@ -33,25 +33,27 @@ export default function SupportButton({ lang }: Props) {
 
   // basePath для GitHub Pages
   const basePath = process.env.NODE_ENV === 'production' ? '/ai-mindmap' : '';
+  // Version for cache busting
+  const version = 'v2';
   
   const wallets = [
     {
       name: 'USDT (TRC20)',
       address: 'TDZTpZxkAZU6SsvRWFJTZcWYjxB8kgcpZA',
-      qr: `${basePath}/usdt-qr.jpg`,
+      qr: `${basePath}/usdt-qr.jpg?${version}`,
       emoji: '💵',
       recommended: true,
     },
     {
       name: 'Bitcoin',
       address: '1F22c1d4rVwgWnKvLF8i8oxnbFDVSvLkv7',
-      qr: `${basePath}/btc-qr.jpg`,
+      qr: `${basePath}/btc-qr.jpg?${version}`,
       emoji: '₿',
     },
     {
       name: 'Ethereum (ERC20)',
       address: '0x73fe57f0f560e7cdb83d968711d964b43c3fb2b0',
-      qr: `${basePath}/eth-qr.jpg`,
+      qr: `${basePath}/eth-qr.jpg?${version}`,
       emoji: '⟠',
     },
   ];
