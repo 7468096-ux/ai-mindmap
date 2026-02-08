@@ -10,6 +10,7 @@ interface Props {
   onSelectPath: (pathId: string | null) => void;
   onNodeClick: (nodeId: string) => void;
   completedNodes: string[];
+  onResetProgress: () => void;
 }
 
 export default function LearningPathsPanel({ 
@@ -17,7 +18,8 @@ export default function LearningPathsPanel({
   activePath, 
   onSelectPath, 
   onNodeClick,
-  completedNodes 
+  completedNodes,
+  onResetProgress
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -33,6 +35,8 @@ export default function LearningPathsPanel({
       active: 'Active',
       progress: 'Progress',
       completed: 'Completed!',
+      reset: 'Reset Progress',
+      resetConfirm: 'Are you sure? This will clear all progress.',
     },
     ru: {
       title: 'Пути изучения',
@@ -43,6 +47,8 @@ export default function LearningPathsPanel({
       start: 'Начать',
       continue: 'Продолжить',
       active: 'Активный',
+      reset: 'Сбросить прогресс',
+      resetConfirm: 'Вы уверены? Это удалит весь прогресс.',
       progress: 'Прогресс',
       completed: 'Пройдено!',
     },
@@ -66,29 +72,41 @@ export default function LearningPathsPanel({
 
   return (
     <>
-      {/* Toggle Button - positioned right side, next to language toggle */}
+      {/* Toggle Button - stacked vertically */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed right-[100px] top-4 z-40 px-4 py-2 rounded-lg font-medium transition-all ${
+        className={`fixed right-4 top-4 z-40 px-4 py-2 rounded-lg font-medium transition-all ${
           isOpen || activePath
             ? 'bg-purple-600 text-white'
             : 'bg-gray-800/80 text-gray-300 hover:bg-gray-700/80'
         }`}
       >
         📚 {t.title}
-        {activePath && !isOpen && (
-          <span className="ml-2 text-xs bg-white/20 px-2 py-0.5 rounded">
-            {t.active}
-          </span>
-        )}
       </button>
 
       {/* Panel */}
       {isOpen && (
         <div className="fixed right-4 top-16 z-40 w-80 bg-gray-900/95 backdrop-blur rounded-xl shadow-2xl overflow-hidden border border-gray-700">
           <div className="p-4 border-b border-gray-700">
-            <h2 className="text-white font-bold text-lg">{t.title}</h2>
-            <p className="text-gray-400 text-sm">{t.subtitle}</p>
+            <div className="flex items-start justify-between">
+              <div>
+                <h2 className="text-white font-bold text-lg">{t.title}</h2>
+                <p className="text-gray-400 text-sm">{t.subtitle}</p>
+              </div>
+              {completedNodes.length > 0 && (
+                <button
+                  onClick={() => {
+                    if (confirm(t.resetConfirm)) {
+                      onResetProgress();
+                    }
+                  }}
+                  className="px-2 py-1 text-xs bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded transition-colors"
+                  title={t.reset}
+                >
+                  🔄
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="max-h-[60vh] overflow-y-auto">

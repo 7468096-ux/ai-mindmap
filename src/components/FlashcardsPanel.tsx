@@ -427,7 +427,7 @@ export default function FlashcardsPanel({ lang }: Props) {
       {/* Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed right-[300px] top-4 z-40 px-4 py-2 rounded-lg font-medium transition-all ${
+        className={`fixed right-4 top-[90px] z-40 px-4 py-2 rounded-lg font-medium transition-all ${
           isOpen
             ? 'bg-pink-600 text-white'
             : 'bg-gray-800/80 text-gray-300 hover:bg-gray-700/80'

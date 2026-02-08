@@ -253,6 +253,13 @@ export default function SpaceMindMap() {
   useEffect(() => {
     saveLearningProgress({ activePath, completedNodes });
   }, [activePath, completedNodes]);
+
+  // Reset learning progress
+  const handleResetProgress = () => {
+    setActivePath(null);
+    setCompletedNodes([]);
+  };
+
   const targetTilt = useRef({ x: 0, y: 0 });
   const animationRef = useRef<number>();
   
@@ -627,6 +634,7 @@ export default function SpaceMindMap() {
           if (node) setSelectedNode(node);
         }}
         completedNodes={completedNodes}
+        onResetProgress={handleResetProgress}
       />
 
       {/* Flashcards Panel */}
