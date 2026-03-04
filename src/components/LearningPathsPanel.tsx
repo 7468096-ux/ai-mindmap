@@ -75,18 +75,6 @@ export default function LearningPathsPanel({
 
   return (
     <>
-      {/* Toggle Button - stacked vertically */}
-      <button
-        onClick={() => onOpenChange(!isOpen)}
-        className={`fixed right-4 top-4 z-40 px-4 py-2 rounded-lg font-medium transition-all shadow-lg ${
-          isOpen || activePath
-            ? 'bg-purple-600 text-white'
-            : 'bg-gray-800/80 text-gray-300 hover:bg-gray-700/80'
-        }`}
-      >
-        📚 {t.title}
-      </button>
-
       {/* Panel */}
       {isOpen && (
         <div className="fixed right-4 top-[180px] z-40 w-80 bg-gray-900/95 backdrop-blur rounded-xl shadow-2xl overflow-hidden border border-gray-700">
@@ -195,13 +183,6 @@ export default function LearningPathsPanel({
         </div>
       )}
 
-      {/* Close overlay */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 z-30" 
-          onClick={() => onOpenChange(false)}
-        />
-      )}
     </>
   );
 }

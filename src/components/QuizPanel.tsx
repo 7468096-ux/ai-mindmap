@@ -610,31 +610,6 @@ export default function QuizPanel({ lang, isOpen, onOpenChange, onCorrectAnswer 
 
   return (
     <>
-      {/* Toggle Button */}
-      <button
-        onClick={() => onOpenChange(!isOpen)}
-        className={`fixed right-4 top-[120px] z-40 px-4 py-2 rounded-lg font-medium transition-all shadow-lg ${
-          isOpen
-            ? 'bg-purple-600 text-white'
-            : 'bg-gray-800/80 text-gray-300 hover:bg-gray-700/80'
-        }`}
-      >
-        📝 {t.title}
-        {bestScore !== null && !isOpen && (
-          <span className="ml-2 text-xs bg-white/20 px-2 py-0.5 rounded">
-            {t.best}: {bestScore}%
-          </span>
-        )}
-      </button>
-
-      {/* Mobile overlay */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-30 md:hidden"
-          onClick={() => onOpenChange(false)}
-        />
-      )}
-
       {/* Panel */}
       {isOpen && (
         <div className="fixed md:absolute inset-x-2 bottom-2 md:bottom-auto md:inset-x-auto md:right-4 md:top-[180px] md:w-[500px] bg-gray-900/95 backdrop-blur rounded-xl shadow-2xl overflow-hidden border border-gray-700 max-h-[80vh] md:max-h-[90vh] overflow-y-auto z-40">

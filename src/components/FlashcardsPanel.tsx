@@ -127,21 +127,6 @@ export default function FlashcardsPanel({ lang, isOpen, onOpenChange, onXP }: Pr
 
   return (
     <>
-      {/* Toggle Button */}
-      <button
-        onClick={() => onOpenChange(!isOpen)}
-        className={`fixed right-4 top-[62px] z-40 px-4 py-2 rounded-lg font-medium transition-all shadow-lg ${
-          isOpen ? 'bg-pink-600 text-white' : 'bg-gray-800/80 text-gray-300 hover:bg-gray-700/80'
-        }`}
-      >
-        🎴 {t.title}
-        {dueCount > 0 && !isOpen && (
-          <span className="ml-2 text-xs bg-red-500/80 px-2 py-0.5 rounded-full animate-pulse">
-            {dueCount}
-          </span>
-        )}
-      </button>
-
       {/* Panel */}
       {isOpen && (
         <div className="fixed right-4 top-[180px] z-40 w-96 bg-gray-900/95 backdrop-blur rounded-xl shadow-2xl overflow-hidden border border-gray-700">
@@ -250,7 +235,6 @@ export default function FlashcardsPanel({ lang, isOpen, onOpenChange, onXP }: Pr
         </div>
       )}
 
-      {isOpen && <div className="fixed inset-0 z-30" onClick={() => onOpenChange(false)} />}
     </>
   );
 }
