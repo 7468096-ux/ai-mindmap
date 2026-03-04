@@ -13,12 +13,17 @@ import XPBar from './XPBar';
 import ToolbarMenu, { PanelId } from './ToolbarMenu';
 import StatsPanel from './StatsPanel';
 import SettingsPanel from './SettingsPanel';
+import TopicQuizModal from './TopicQuizModal';
 import { initialNodes as dataNodes, initialEdges, AINode, Language, levelColors, levelLabels, AbstractionLevel } from '@/data/nodes';
 import { getPathById } from '@/data/learningPaths';
 import { GamificationState, loadGamification, awardXP, saveGamification } from '@/data/gamification';
 import { getDueCount, flashcardsData, loadSM2 } from '@/data/flashcards';
 import { getQuizForNode, TopicQuiz } from '@/data/topicQuizzes';
-import TopicQuizModal from './TopicQuizModal';
+import TimelinePanel from './TimelinePanel';
+import GlossaryPanel from './GlossaryPanel';
+import DailyChallengePanel from './DailyChallengePanel';
+import ModelComparisonPanel from './ModelComparisonPanel';
+import ConceptRelationsPanel from './ConceptRelationsPanel';
 
 interface SpaceNode {
   id: string;
@@ -204,6 +209,7 @@ export default function SpaceMindMap() {
   const [smoothTilt, setSmoothTilt] = useState({ x: 0, y: 0 });
   const [openPanel, setOpenPanel] = useState<PanelId>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [activeExam, setActiveExam] = useState<TopicQuiz | null>(null);
   const [activeTopicQuiz, setActiveTopicQuiz] = useState<TopicQuiz | null>(null);
   
   // Gamification
@@ -882,6 +888,14 @@ export default function SpaceMindMap() {
           onPass={handleExamPass}
         />
       )}
+
+      <TimelinePanel lang={lang} isOpen={openPanel === 'timeline'} onClose={() => setOpenPanel(null)} />
+      <GlossaryPanel lang={lang} isOpen={openPanel === 'glossary'} onClose={() => setOpenPanel(null)}
+        onNodeClick={(nodeId) => { const node = dataNodes.find(n => n.id === nodeId); if (node) { setSelectedNode(node); setOpenPanel(null); } }} />
+      <DailyChallengePanel lang={lang} isOpen={openPanel === 'daily'} onClose={() => setOpenPanel(null)}
+        onXP={(xp) => setGamification(prev => { const s = { ...prev, totalXP: prev.totalXP + xp }; saveGamification(s); return s; })} />
+      <ModelComparisonPanel lang={lang} isOpen={openPanel === 'models'} onClose={() => setOpenPanel(null)} />
+      <ConceptRelationsPanel lang={lang} isOpen={openPanel === 'relations'} onClose={() => setOpenPanel(null)} />
 
       {openPanel === 'support' && <SupportButton lang={lang} isModal onClose={() => setOpenPanel(null)} />}
     </div>

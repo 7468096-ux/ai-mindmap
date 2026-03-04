@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Language } from '@/data/nodes';
 import { GamificationState, getLevel } from '@/data/gamification';
 
-export type PanelId = 'paths' | 'flashcards' | 'quiz' | 'support' | 'stats' | 'settings' | null;
+export type PanelId = 'paths' | 'flashcards' | 'quiz' | 'support' | 'stats' | 'settings' | 'timeline' | 'glossary' | 'daily' | 'models' | 'relations' | null;
 
 interface Props {
   lang: Language;
@@ -67,8 +67,35 @@ export default function ToolbarMenu({
       dividerAfter: true,
     },
     {
-      id: 'stats',
+      id: 'daily',
+      emoji: '🎯',
+      label: { en: 'Daily Challenge', ru: 'Задача дня' },
+      dividerAfter: true,
+    },
+    {
+      id: 'timeline',
+      emoji: '📰',
+      label: { en: 'AI Timeline', ru: 'Хронология AI' },
+    },
+    {
+      id: 'glossary',
+      emoji: '📖',
+      label: { en: 'Glossary', ru: 'Глоссарий' },
+    },
+    {
+      id: 'models',
       emoji: '📊',
+      label: { en: 'Model Comparison', ru: 'Сравнение моделей' },
+    },
+    {
+      id: 'relations',
+      emoji: '🔗',
+      label: { en: 'Concept Relations', ru: 'Связи концепций' },
+      dividerAfter: true,
+    },
+    {
+      id: 'stats',
+      emoji: '🏆',
       label: { en: 'My Progress', ru: 'Мой прогресс' },
     },
     {
