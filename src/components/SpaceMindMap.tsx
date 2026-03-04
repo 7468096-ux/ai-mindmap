@@ -10,9 +10,13 @@ import Breadcrumbs from './Breadcrumbs';
 import SupportButton from './SupportButton';
 import SearchPalette from './SearchPalette';
 import XPBar from './XPBar';
+import ToolbarMenu, { PanelId } from './ToolbarMenu';
+import StatsPanel from './StatsPanel';
+import SettingsPanel from './SettingsPanel';
 import { initialNodes as dataNodes, initialEdges, AINode, Language, levelColors, levelLabels, AbstractionLevel } from '@/data/nodes';
 import { getPathById } from '@/data/learningPaths';
 import { GamificationState, loadGamification, awardXP, saveGamification } from '@/data/gamification';
+import { getDueCount, flashcardsData, loadSM2 } from '@/data/flashcards';
 
 interface SpaceNode {
   id: string;
@@ -196,7 +200,7 @@ export default function SpaceMindMap() {
   const [activePath, setActivePath] = useState<string | null>(initialProgress.activePath);
   const [completedNodes, setCompletedNodes] = useState<string[]>(initialProgress.completedNodes);
   const [smoothTilt, setSmoothTilt] = useState({ x: 0, y: 0 });
-  const [openPanel, setOpenPanel] = useState<string | null>(null);
+  const [openPanel, setOpenPanel] = useState<PanelId>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   
   // Gamification
@@ -360,9 +364,6 @@ export default function SpaceMindMap() {
 
   const [shootingStars, setShootingStars] = useState<ShootingStar[]>([]);
   const shootingStarId = useRef(0);
-
-  // Mobile menu
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -641,100 +642,63 @@ export default function SpaceMindMap() {
         <XPBar lang={lang} state={gamification} />
       </div>
 
-      {/* Desktop toolbar */}
-      <div className="hidden md:flex fixed right-4 top-4 z-40 flex-col gap-2" data-no-pan>
-        {/* Search button */}
-        <button
-          onClick={() => setSearchOpen(true)}
-          className="px-4 py-2 rounded-lg font-medium bg-gray-800/80 text-gray-300 hover:bg-gray-700/80 shadow-lg transition-all"
-        >
-          🔍 {lang === 'ru' ? 'Поиск' : 'Search'}
-          <kbd className="ml-2 text-xs text-gray-500">⌘K</kbd>
-        </button>
-      </div>
+      {/* Unified Toolbar Menu */}
+      <ToolbarMenu
+        lang={lang}
+        openPanel={openPanel}
+        onPanelChange={setOpenPanel}
+        onSearch={() => setSearchOpen(true)}
+        expandAll={expandAll}
+        onToggleExpandAll={() => setExpandAll(!expandAll)}
+        gamification={gamification}
+        dueCards={getDueCount(flashcardsData, loadSM2())}
+        totalNodes={dataNodes.length}
+        completedNodes={completedNodes.length}
+      />
 
-      {/* Mobile hamburger */}
-      <div className="md:hidden fixed right-4 top-4 z-40" data-no-pan>
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="w-10 h-10 rounded-lg bg-gray-800/90 text-white flex items-center justify-center text-lg shadow-lg"
-        >
-          {mobileMenuOpen ? '✕' : '☰'}
-        </button>
-        {mobileMenuOpen && (
-          <div className="absolute right-0 top-12 bg-gray-900/95 backdrop-blur rounded-xl shadow-2xl border border-gray-700 p-2 min-w-[180px]">
-            <button onClick={() => { setSearchOpen(true); setMobileMenuOpen(false); }} className="w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg text-sm">
-              🔍 {lang === 'ru' ? 'Поиск' : 'Search'}
-            </button>
-            <button onClick={() => { setOpenPanel(openPanel === 'paths' ? null : 'paths'); setMobileMenuOpen(false); }} className="w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg text-sm">
-              📚 {lang === 'ru' ? 'Пути изучения' : 'Learning Paths'}
-            </button>
-            <button onClick={() => { setOpenPanel(openPanel === 'quiz' ? null : 'quiz'); setMobileMenuOpen(false); }} className="w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg text-sm">
-              📝 {lang === 'ru' ? 'Мини-тест' : 'Mini-Quiz'}
-            </button>
-            <button onClick={() => { setOpenPanel(openPanel === 'flashcards' ? null : 'flashcards'); setMobileMenuOpen(false); }} className="w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg text-sm">
-              🎴 {lang === 'ru' ? 'Карточки' : 'Flashcards'}
-            </button>
-            <hr className="border-gray-700 my-1" />
-            <button onClick={() => { setExpandAll(!expandAll); setMobileMenuOpen(false); }} className="w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg text-sm">
-              {expandAll ? '📁' : '📂'} {expandAll ? (lang === 'ru' ? 'Свернуть' : 'Collapse') : (lang === 'ru' ? 'Развернуть всё' : 'Expand All')}
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Desktop: Learning Paths Panel */}
-      <div className="hidden md:block">
-        <LearningPathsPanel
-          lang={lang}
-          activePath={activePath}
-          onSelectPath={setActivePath}
-          onNodeClick={(nodeId) => {
-            const node = dataNodes.find(n => n.id === nodeId);
-            if (node) setSelectedNode(node);
-          }}
-          completedNodes={completedNodes}
-          onResetProgress={handleResetProgress}
-          isOpen={openPanel === 'paths'}
-          onOpenChange={(open) => setOpenPanel(open ? 'paths' : null)}
-        />
-      </div>
-
-      {/* Desktop: Flashcards */}
-      <div className="hidden md:block">
-        <FlashcardsPanel 
-          lang={lang}
-          isOpen={openPanel === 'flashcards'}
-          onOpenChange={(open) => setOpenPanel(open ? 'flashcards' : null)}
-          onXP={() => doAwardXP('flashcard')}
-        />
-      </div>
-
-      {/* Desktop: Quiz */}
-      <div className="hidden md:block">
-        <QuizPanel 
-          lang={lang}
-          isOpen={openPanel === 'quiz'}
-          onOpenChange={(open) => setOpenPanel(open ? 'quiz' : null)}
-          onCorrectAnswer={() => doAwardXP('quiz_correct')}
-        />
-      </div>
-
-      {/* Mobile panels (same components, shown conditionally) */}
-      <div className="md:hidden">
-        {openPanel === 'paths' && (
-          <LearningPathsPanel lang={lang} activePath={activePath} onSelectPath={setActivePath}
-            onNodeClick={(nodeId) => { const node = dataNodes.find(n => n.id === nodeId); if (node) setSelectedNode(node); }}
-            completedNodes={completedNodes} onResetProgress={handleResetProgress}
-            isOpen={true} onOpenChange={(open) => setOpenPanel(open ? 'paths' : null)} />
-        )}
-        {openPanel === 'flashcards' && (
-          <FlashcardsPanel lang={lang} isOpen={true} onOpenChange={(open) => setOpenPanel(open ? 'flashcards' : null)} onXP={() => doAwardXP('flashcard')} />
-        )}
-        {openPanel === 'quiz' && (
-          <QuizPanel lang={lang} isOpen={true} onOpenChange={(open) => setOpenPanel(open ? 'quiz' : null)} onCorrectAnswer={() => doAwardXP('quiz_correct')} />
-        )}
-      </div>
+      {/* Panels — opened from ToolbarMenu */}
+      <LearningPathsPanel
+        lang={lang}
+        activePath={activePath}
+        onSelectPath={setActivePath}
+        onNodeClick={(nodeId) => {
+          const node = dataNodes.find(n => n.id === nodeId);
+          if (node) setSelectedNode(node);
+        }}
+        completedNodes={completedNodes}
+        onResetProgress={handleResetProgress}
+        isOpen={openPanel === 'paths'}
+        onOpenChange={(open) => setOpenPanel(open ? 'paths' : null)}
+      />
+      <FlashcardsPanel 
+        lang={lang}
+        isOpen={openPanel === 'flashcards'}
+        onOpenChange={(open) => setOpenPanel(open ? 'flashcards' : null)}
+        onXP={() => doAwardXP('flashcard')}
+      />
+      <QuizPanel 
+        lang={lang}
+        isOpen={openPanel === 'quiz'}
+        onOpenChange={(open) => setOpenPanel(open ? 'quiz' : null)}
+        onCorrectAnswer={() => doAwardXP('quiz_correct')}
+      />
+      <StatsPanel
+        lang={lang}
+        isOpen={openPanel === 'stats'}
+        onClose={() => setOpenPanel(null)}
+        gamification={gamification}
+        completedNodes={completedNodes}
+      />
+      <SettingsPanel
+        lang={lang}
+        isOpen={openPanel === 'settings'}
+        onClose={() => setOpenPanel(null)}
+        onResetAll={() => {
+          setGamification(loadGamification());
+          setCompletedNodes([]);
+          setActivePath(null);
+        }}
+      />
 
       {/* Search Palette */}
       <SearchPalette
@@ -893,7 +857,7 @@ export default function SpaceMindMap() {
         onNavigateNext={handleNavigateNext}
       />
 
-      <SupportButton lang={lang} />
+      {openPanel === 'support' && <SupportButton lang={lang} isModal onClose={() => setOpenPanel(null)} />}
     </div>
   );
 }

@@ -5,10 +5,12 @@ import { Language } from '@/data/nodes';
 
 interface Props {
   lang: Language;
+  isModal?: boolean;
+  onClose?: () => void;
 }
 
-export default function SupportButton({ lang }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function SupportButton({ lang, isModal = false, onClose }: Props) {
+  const [isOpen, setIsOpen] = useState(isModal);
   const [copied, setCopied] = useState<string | null>(null);
 
   const texts = {
@@ -66,21 +68,23 @@ export default function SupportButton({ lang }: Props) {
 
   return (
     <>
-      {/* Toggle Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed right-4 bottom-4 z-50 px-4 py-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white rounded-full font-medium transition-all shadow-lg hover:shadow-xl hover:scale-105"
-      >
-        ☕ Support
-      </button>
+      {/* Toggle Button — hidden when in modal mode */}
+      {!isModal && (
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="fixed right-4 bottom-4 z-50 px-4 py-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white rounded-full font-medium transition-all shadow-lg hover:shadow-xl hover:scale-105"
+        >
+          ☕ Support
+        </button>
+      )}
 
       {/* Modal */}
       {isOpen && (
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 md:hidden"
-            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            onClick={() => { setIsOpen(false); onClose?.(); }}
           />
 
           {/* Modal Content - Side Panel like InfoPanel */}
@@ -93,7 +97,7 @@ export default function SupportButton({ lang }: Props) {
                   <p className="text-gray-400 text-sm mt-1">{t.subtitle}</p>
                 </div>
                 <button
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => { setIsOpen(false); onClose?.(); }}
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   ✕
@@ -158,7 +162,7 @@ export default function SupportButton({ lang }: Props) {
             {/* Footer */}
             <div className="sticky bottom-0 bg-gray-900/95 backdrop-blur border-t border-gray-700 p-4">
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={() => { setIsOpen(false); onClose?.(); }}
                 className="w-full px-6 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg font-medium transition-colors"
               >
                 {t.close}
