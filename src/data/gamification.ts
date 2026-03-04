@@ -6,11 +6,12 @@ export interface XPAction {
 }
 
 export const XP_REWARDS: Record<string, number> = {
-  read_node: 5,
-  flashcard: 10,
-  quiz_correct: 20,
-  complete_path: 100,
-  quiz_finish: 50,
+  read_node: 0,      // No XP for just reading — must pass topic exam
+  flashcard: 0,      // Practice, not XP source
+  quiz_correct: 0,   // General quiz — no XP
+  complete_path: 0,  // Path completion — no XP
+  quiz_finish: 0,    // General quiz finish — no XP
+  topic_exam: 0,     // Awarded dynamically from TopicQuiz.xpReward
 };
 
 export interface Level {

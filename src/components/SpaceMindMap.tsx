@@ -17,6 +17,8 @@ import { initialNodes as dataNodes, initialEdges, AINode, Language, levelColors,
 import { getPathById } from '@/data/learningPaths';
 import { GamificationState, loadGamification, awardXP, saveGamification } from '@/data/gamification';
 import { getDueCount, flashcardsData, loadSM2 } from '@/data/flashcards';
+import { getQuizForNode, TopicQuiz } from '@/data/topicQuizzes';
+import TopicQuizModal from './TopicQuizModal';
 
 interface SpaceNode {
   id: string;
@@ -202,6 +204,7 @@ export default function SpaceMindMap() {
   const [smoothTilt, setSmoothTilt] = useState({ x: 0, y: 0 });
   const [openPanel, setOpenPanel] = useState<PanelId>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [activeTopicQuiz, setActiveTopicQuiz] = useState<TopicQuiz | null>(null);
   
   // Gamification
   const [gamification, setGamification] = useState<GamificationState>(loadGamification());
@@ -284,6 +287,19 @@ export default function SpaceMindMap() {
       doAwardXP('read_node');
     }
   }, [completedNodes, doAwardXP]);
+
+  const handleStartExam = useCallback((nodeId: string) => {
+    const quiz = getQuizForNode(nodeId);
+    if (quiz) setActiveTopicQuiz(quiz);
+  }, []);
+
+  const handleExamPass = useCallback((xp: number) => {
+    setGamification(prev => {
+      const newState = { ...prev, totalXP: prev.totalXP + xp };
+      saveGamification(newState);
+      return newState;
+    });
+  }, []);
 
   const handleNavigateNext = useCallback((nodeId: string) => {
     const node = dataNodes.find(n => n.id === nodeId);
@@ -576,10 +592,9 @@ export default function SpaceMindMap() {
       setSelectedNode(aiNode);
       // Expand this node to show children
       toggleExpand(node.id);
-      // Award XP for reading
+      // Track read nodes (no XP — must pass exam)
       if (!gamification.readNodes.includes(node.id)) {
-        const newState = awardXP(gamification, 'read_node');
-        newState.readNodes = [...(newState.readNodes || []), node.id];
+        const newState = { ...gamification, readNodes: [...(gamification.readNodes || []), node.id] };
         saveGamification(newState);
         setGamification(newState);
       }
@@ -855,7 +870,18 @@ export default function SpaceMindMap() {
         completedNodes={completedNodes}
         onMarkComplete={handleMarkComplete}
         onNavigateNext={handleNavigateNext}
+        onStartExam={handleStartExam}
       />
+
+      {/* Topic Exam Modal */}
+      {activeTopicQuiz && (
+        <TopicQuizModal
+          quiz={activeTopicQuiz}
+          lang={lang}
+          onClose={() => setActiveTopicQuiz(null)}
+          onPass={handleExamPass}
+        />
+      )}
 
       {openPanel === 'support' && <SupportButton lang={lang} isModal onClose={() => setOpenPanel(null)} />}
     </div>

@@ -5,6 +5,7 @@ import { hasDemo, getDemo } from './demos';
 import { getComparisonsForNode } from '@/data/comparisons';
 import ComparisonTable from './ComparisonTable';
 import { getPathById } from '@/data/learningPaths';
+import { getQuizForNode, loadQuizResults } from '@/data/topicQuizzes';
 
 interface InfoPanelProps {
   node: AINode | null;
@@ -14,9 +15,10 @@ interface InfoPanelProps {
   completedNodes?: string[];
   onMarkComplete?: (nodeId: string) => void;
   onNavigateNext?: (nodeId: string) => void;
+  onStartExam?: (nodeId: string) => void;
 }
 
-export default function InfoPanel({ node, lang, onClose, activePath, completedNodes = [], onMarkComplete, onNavigateNext }: InfoPanelProps) {
+export default function InfoPanel({ node, lang, onClose, activePath, completedNodes = [], onMarkComplete, onNavigateNext, onStartExam }: InfoPanelProps) {
   if (!node) return null;
 
   const { emoji, level } = node.data;
@@ -209,6 +211,33 @@ export default function InfoPanel({ node, lang, onClose, activePath, completedNo
           <ComparisonTable comparison={comparison} currentNodeId={node.id} lang={lang} />
         </div>
       ))}
+
+      {/* Topic Exam Button */}
+      {(() => {
+        const topicQuiz = getQuizForNode(node.id);
+        if (!topicQuiz) return null;
+        const results = loadQuizResults();
+        const result = results[node.id];
+        const isPassed = result?.passed;
+        return (
+          <div className="p-4 border-b border-gray-800">
+            <button
+              onClick={() => onStartExam?.(node.id)}
+              className={`w-full px-4 py-3 rounded-lg font-medium text-sm transition-all ${
+                isPassed
+                  ? 'bg-green-900/20 text-green-400 border border-green-700/30'
+                  : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg'
+              }`}
+            >
+              {isPassed ? (
+                <>✅ {lang === 'ru' ? `Контрольная сдана (${result.score}%) • +${topicQuiz.xpReward} XP` : `Exam passed (${result.score}%) • +${topicQuiz.xpReward} XP`}</>
+              ) : (
+                <>📝 {lang === 'ru' ? `Контрольная работа (+${topicQuiz.xpReward} XP)` : `Take Exam (+${topicQuiz.xpReward} XP)`}</>
+              )}
+            </button>
+          </div>
+        );
+      })()}
 
       {/* Learning Path Navigation */}
       {isInPath && path && (
