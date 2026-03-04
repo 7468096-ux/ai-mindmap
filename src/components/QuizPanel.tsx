@@ -25,6 +25,7 @@ interface Props {
   lang: Language;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  onCorrectAnswer?: () => void;
 }
 
 const quizQuestions: QuizQuestion[] = [
@@ -382,7 +383,7 @@ interface QuizState {
   shuffledQuestions: QuizQuestion[];
 }
 
-export default function QuizPanel({ lang, isOpen, onOpenChange }: Props) {
+export default function QuizPanel({ lang, isOpen, onOpenChange, onCorrectAnswer }: Props) {
   const [bestScore, setBestScore] = useState<number | null>(null);
   
   const [state, setState] = useState<QuizState>({
@@ -441,6 +442,7 @@ export default function QuizPanel({ lang, isOpen, onOpenChange }: Props) {
       score: isCorrect ? prev.score + 1 : prev.score,
       wrongAnswers: isCorrect ? prev.wrongAnswers : [...prev.wrongAnswers, prev.currentQuestion],
     }));
+    if (isCorrect && onCorrectAnswer) onCorrectAnswer();
   };
 
   const handleNext = () => {

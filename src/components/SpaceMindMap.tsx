@@ -8,8 +8,11 @@ import FlashcardsPanel from './FlashcardsPanel';
 import QuizPanel from './QuizPanel';
 import Breadcrumbs from './Breadcrumbs';
 import SupportButton from './SupportButton';
+import SearchPalette from './SearchPalette';
+import XPBar from './XPBar';
 import { initialNodes as dataNodes, initialEdges, AINode, Language, levelColors, levelLabels, AbstractionLevel } from '@/data/nodes';
 import { getPathById } from '@/data/learningPaths';
+import { GamificationState, loadGamification, awardXP, saveGamification } from '@/data/gamification';
 
 interface SpaceNode {
   id: string;
@@ -27,14 +30,11 @@ interface Connection {
   dashed?: boolean;
 }
 
-// Генерация звёзд
+// Star generation
 function generateStars(count: number, seed: number) {
   const stars = [];
   let s = seed;
-  const random = () => {
-    s = (s * 1103515245 + 12345) & 0x7fffffff;
-    return s / 0x7fffffff;
-  };
+  const random = () => { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; };
   for (let i = 0; i < 10; i++) random();
   for (let i = 0; i < count; i++) {
     stars.push({ x: random() * 200 - 50, y: random() * 200 - 50 });
@@ -43,15 +43,12 @@ function generateStars(count: number, seed: number) {
 }
 
 const starLayers = [
-  // Дальний план - мелкие тусклые
   { stars: generateStars(60, 1), size: 0.8, speed: 140, opacity: 0.3 },
   { stars: generateStars(50, 2), size: 1, speed: 120, opacity: 0.4 },
   { stars: generateStars(45, 3), size: 1.3, speed: 100, opacity: 0.5 },
-  // Средний план
   { stars: generateStars(35, 4), size: 1.8, speed: 80, opacity: 0.6 },
   { stars: generateStars(30, 5), size: 2.2, speed: 60, opacity: 0.7 },
   { stars: generateStars(25, 6), size: 2.8, speed: 40, opacity: 0.8 },
-  // Передний план - крупные яркие
   { stars: generateStars(15, 7), size: 3.5, speed: 25, opacity: 0.9 },
   { stars: generateStars(10, 8), size: 4.5, speed: 15, opacity: 1 },
   { stars: generateStars(5, 9), size: 6, speed: 8, opacity: 1 },
@@ -74,54 +71,26 @@ const spaceColors: Record<AbstractionLevel, string> = {
   implementation: '#f59e0b',
 };
 
-// Ручная расстановка позиций - СЕТКА с подгруппами
+// Manual positions for beautiful tree layout
 function getManualPositions(): Map<string, { x: number; y: number }> {
   const positions = new Map<string, { x: number; y: number }>();
+  const COL0 = 0; const COL1 = 350; const COL2 = 700; const COL3 = 1050; const COL4 = 1400; const COL5 = 1750;
+  const ML_Y = 0; const DL_Y = 900; const NLP_Y = 2100; const CV_Y = 2900;
+  const ROW = 120;
   
-  // Сетка - колонки
-  const COL0 = 0;       // AI (корень)
-  const COL1 = 350;     // Theory (ML, DL, NLP, CV)
-  const COL2 = 700;     // Methods
-  const COL3 = 1050;    // Algorithms
-  const COL4 = 1400;    // Implementations
-  const COL5 = 1750;    // Far implementations
-  
-  // Вертикальные секции для подгрупп
-  const ML_Y = 0;           // ML branch top
-  const DL_Y = 900;         // DL branch 
-  const NLP_Y = 2100;       // NLP branch
-  const CV_Y = 2900;        // CV branch
-  
-  const ROW = 120;          // Шаг между нодами в группе
-  
-  // === ROOT ===
   positions.set('ai', { x: COL0, y: 1400 });
-  
-  // === ML BRANCH (верх) ===
   positions.set('ml', { x: COL1, y: ML_Y + 300 });
-  
-  // ML Methods - вертикальный столбец
   positions.set('supervised', { x: COL2, y: ML_Y + 100 });
   positions.set('unsupervised', { x: COL2, y: ML_Y + 400 });
   positions.set('rl', { x: COL2, y: ML_Y + 700 });
-  
-  // Supervised algorithms - столбец
   positions.set('linear-reg', { x: COL3, y: ML_Y });
   positions.set('decision-tree', { x: COL3, y: ML_Y + ROW });
   positions.set('svm', { x: COL3, y: ML_Y + ROW * 2 });
   positions.set('random-forest', { x: COL4, y: ML_Y + ROW });
-  
-  // Unsupervised algorithms
   positions.set('kmeans', { x: COL3, y: ML_Y + 400 });
   positions.set('pca', { x: COL3, y: ML_Y + 400 + ROW });
-  
-  // RL algorithms
   positions.set('qlearning', { x: COL3, y: ML_Y + 720 });
-  
-  // === DL BRANCH (центр-верх) ===
   positions.set('dl', { x: COL1, y: DL_Y + 400 });
-  
-  // DL Architectures - столбец
   positions.set('nn', { x: COL2, y: DL_Y });
   positions.set('cnn', { x: COL2, y: DL_Y + ROW });
   positions.set('rnn', { x: COL2, y: DL_Y + ROW * 2 });
@@ -129,139 +98,215 @@ function getManualPositions(): Map<string, { x: number; y: number }> {
   positions.set('gan', { x: COL2, y: DL_Y + ROW * 5 });
   positions.set('vae', { x: COL2, y: DL_Y + ROW * 6 });
   positions.set('diffusion', { x: COL2, y: DL_Y + ROW * 7 });
-  
-  // DL sub-architectures
   positions.set('lstm', { x: COL3, y: DL_Y + ROW * 2 });
   positions.set('attention', { x: COL3, y: DL_Y + ROW * 3 });
-  
-  // === NLP BRANCH (центр-низ) ===
   positions.set('nlp', { x: COL1, y: NLP_Y + 200 });
-  
-  // NLP components - столбец
   positions.set('embeddings', { x: COL2, y: NLP_Y });
   positions.set('tokenization', { x: COL2, y: NLP_Y + ROW });
   positions.set('llm', { x: COL2, y: NLP_Y + ROW * 3 });
-  
-  // NLP implementations
   positions.set('gpt', { x: COL3, y: NLP_Y + ROW * 3 });
   positions.set('bert', { x: COL3, y: NLP_Y + ROW * 4 });
   positions.set('clip', { x: COL4, y: NLP_Y + ROW * 5 });
-  
-  // === CV BRANCH (низ) ===
   positions.set('cv', { x: COL1, y: CV_Y + 200 });
-  
-  // CV methods - столбец
   positions.set('img-classification', { x: COL2, y: CV_Y });
   positions.set('obj-detection', { x: COL2, y: CV_Y + ROW });
   positions.set('segmentation', { x: COL2, y: CV_Y + ROW * 2 });
-  
-  // CV implementations
   positions.set('resnet', { x: COL3, y: CV_Y });
   positions.set('yolo', { x: COL3, y: CV_Y + ROW });
   positions.set('vit', { x: COL3, y: CV_Y + ROW * 3 });
-  
-  // === NEW NODES ===
-  // NLP additions
   positions.set('word2vec', { x: COL3, y: NLP_Y });
   positions.set('rag', { x: COL4, y: NLP_Y + ROW * 3 });
   positions.set('finetuning', { x: COL4, y: NLP_Y + ROW * 5 });
   positions.set('agents', { x: COL5, y: NLP_Y + ROW * 4 });
-  
-  // DL training techniques - справа от архитектур, не накладываются
   positions.set('dropout', { x: COL4, y: DL_Y + 30 });
   positions.set('batchnorm', { x: COL4, y: DL_Y + ROW + 50 });
   positions.set('adam', { x: COL4, y: DL_Y + ROW * 2 + 70 });
   positions.set('autoencoder', { x: COL2, y: DL_Y + ROW * 8 });
   positions.set('moe', { x: COL3, y: DL_Y + ROW * 5 });
-  
-  // More ML algorithms
   positions.set('logreg', { x: COL4, y: ML_Y + 240 });
   positions.set('xgboost', { x: COL5, y: ML_Y + 180 });
-  
-  // CV implementations
   positions.set('unet', { x: COL4, y: CV_Y + ROW * 2 + 30 });
   positions.set('stable-diffusion', { x: COL4, y: DL_Y + ROW * 8 });
-  
-  // NLP/LLM techniques
   positions.set('prompt-eng', { x: COL3, y: NLP_Y + ROW * 5 + 30 });
   positions.set('cot', { x: COL4, y: NLP_Y + ROW * 6 });
   
   return positions;
 }
 
-// localStorage key for learning progress
 const LEARNING_PROGRESS_KEY = 'ai-mindmap-learning-progress';
 
-// Types for localStorage data
 interface LearningProgress {
   activePath: string | null;
   completedNodes: string[];
 }
 
-// Load learning progress from localStorage
 function loadLearningProgress(): LearningProgress {
-  if (typeof window === 'undefined') {
-    return { activePath: null, completedNodes: [] };
-  }
-  
+  if (typeof window === 'undefined') return { activePath: null, completedNodes: [] };
   try {
     const stored = localStorage.getItem(LEARNING_PROGRESS_KEY);
-    if (!stored) {
-      return { activePath: null, completedNodes: [] };
-    }
-    
+    if (!stored) return { activePath: null, completedNodes: [] };
     const parsed = JSON.parse(stored) as LearningProgress;
-    
-    // Validate the data structure
-    if (typeof parsed === 'object' && parsed !== null) {
-      return {
-        activePath: typeof parsed.activePath === 'string' ? parsed.activePath : null,
-        completedNodes: Array.isArray(parsed.completedNodes) ? parsed.completedNodes : [],
-      };
-    }
-    
-    return { activePath: null, completedNodes: [] };
-  } catch (error) {
-    console.warn('Failed to load learning progress from localStorage:', error);
-    return { activePath: null, completedNodes: [] };
-  }
+    return {
+      activePath: typeof parsed.activePath === 'string' ? parsed.activePath : null,
+      completedNodes: Array.isArray(parsed.completedNodes) ? parsed.completedNodes : [],
+    };
+  } catch { return { activePath: null, completedNodes: [] }; }
 }
 
-// Save learning progress to localStorage
 function saveLearningProgress(progress: LearningProgress) {
   if (typeof window === 'undefined') return;
-  
-  try {
-    localStorage.setItem(LEARNING_PROGRESS_KEY, JSON.stringify(progress));
-  } catch (error) {
-    console.warn('Failed to save learning progress to localStorage:', error);
+  try { localStorage.setItem(LEARNING_PROGRESS_KEY, JSON.stringify(progress)); } catch {}
+}
+
+// Build parent→children map from edges
+function buildChildrenMap(): Map<string, string[]> {
+  const map = new Map<string, string[]>();
+  initialEdges.forEach(edge => {
+    if (!edge.style?.strokeDasharray) { // only solid edges = parent-child
+      const children = map.get(edge.source) || [];
+      children.push(edge.target);
+      map.set(edge.source, children);
+    }
+  });
+  return map;
+}
+
+// Get all descendants of a node
+function getDescendants(nodeId: string, childrenMap: Map<string, string[]>): Set<string> {
+  const result = new Set<string>();
+  const queue = [nodeId];
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    const children = childrenMap.get(current) || [];
+    for (const child of children) {
+      if (!result.has(child)) {
+        result.add(child);
+        queue.push(child);
+      }
+    }
   }
+  return result;
 }
 
 export default function SpaceMindMap() {
-  // English по умолчанию
   const [lang, setLang] = useState<Language>('en');
   const [selectedNode, setSelectedNode] = useState<AINode | null>(null);
   
-  // Load initial state from localStorage
   const initialProgress = loadLearningProgress();
   const [activePath, setActivePath] = useState<string | null>(initialProgress.activePath);
   const [completedNodes, setCompletedNodes] = useState<string[]>(initialProgress.completedNodes);
   const [smoothTilt, setSmoothTilt] = useState({ x: 0, y: 0 });
-  
-  // Manage which panel is open (only one at a time)
   const [openPanel, setOpenPanel] = useState<string | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
   
-  // Save learning progress to localStorage whenever it changes
+  // Gamification
+  const [gamification, setGamification] = useState<GamificationState>(loadGamification());
+  
+  // Progressive disclosure
+  const childrenMap = useMemo(() => buildChildrenMap(), []);
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(() => {
+    // Start with top-level expanded
+    return new Set(['ai']);
+  });
+  const [expandAll, setExpandAll] = useState(false);
+
+  // Compute visible nodes
+  const visibleNodeIds = useMemo<Set<string>>(() => {
+    if (expandAll) {
+      return new Set(dataNodes.map(n => n.id));
+    }
+    const visible = new Set<string>();
+    // Always show field and theory levels
+    dataNodes.forEach(n => {
+      if (n.data.level === 'field' || n.data.level === 'theory') {
+        visible.add(n.id);
+      }
+    });
+    // Show children of expanded nodes
+    expandedNodes.forEach(nodeId => {
+      const children = childrenMap.get(nodeId) || [];
+      children.forEach(c => visible.add(c));
+    });
+    // If a learning path is active, show all path nodes
+    if (activePath) {
+      const path = getPathById(activePath);
+      if (path) {
+        path.nodeIds.forEach(id => visible.add(id));
+      }
+    }
+    return visible;
+  }, [expandedNodes, expandAll, childrenMap, activePath]);
+
+  // Count hidden children for badge
+  const getHiddenChildCount = useCallback((nodeId: string): number => {
+    if (expandAll) return 0;
+    const allDesc = getDescendants(nodeId, childrenMap);
+    let hidden = 0;
+    allDesc.forEach(id => {
+      if (!visibleNodeIds.has(id)) hidden++;
+    });
+    return hidden;
+  }, [expandAll, childrenMap, visibleNodeIds]);
+
+  const toggleExpand = useCallback((nodeId: string) => {
+    setExpandedNodes(prev => {
+      const next = new Set(prev);
+      if (next.has(nodeId)) {
+        next.delete(nodeId);
+      } else {
+        next.add(nodeId);
+      }
+      return next;
+    });
+  }, []);
+
   useEffect(() => {
     saveLearningProgress({ activePath, completedNodes });
   }, [activePath, completedNodes]);
 
-  // Reset learning progress
   const handleResetProgress = () => {
     setActivePath(null);
     setCompletedNodes([]);
   };
+
+  // Award XP helper
+  const doAwardXP = useCallback((action: string) => {
+    setGamification(prev => awardXP(prev, action));
+  }, []);
+
+  const handleMarkComplete = useCallback((nodeId: string) => {
+    if (!completedNodes.includes(nodeId)) {
+      setCompletedNodes(prev => [...prev, nodeId]);
+      doAwardXP('read_node');
+    }
+  }, [completedNodes, doAwardXP]);
+
+  const handleNavigateNext = useCallback((nodeId: string) => {
+    const node = dataNodes.find(n => n.id === nodeId);
+    if (node) {
+      setSelectedNode(node);
+      // Ensure node is visible
+      setExpandedNodes(prev => {
+        const next = new Set(prev);
+        // Find parent edge
+        const parentEdge = initialEdges.find(e => e.target === nodeId && !e.style?.strokeDasharray);
+        if (parentEdge) next.add(parentEdge.source);
+        return next;
+      });
+    }
+  }, []);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const targetTilt = useRef({ x: 0, y: 0 });
   const animationRef = useRef<number>();
@@ -275,54 +320,50 @@ export default function SpaceMindMap() {
     []
   );
   
-  // Ручные позиции для красивого дерева
   const initialPositions = useMemo(() => getManualPositions(), []);
-  
-  // Состояние позиций нод (для drag)
   const [nodePositions, setNodePositions] = useState<Map<string, { x: number; y: number }>>(initialPositions);
   
-  // Ноды с актуальными позициями
   const nodes = useMemo<SpaceNode[]>(() => 
-    dataNodes.map(node => {
-      const pos = nodePositions.get(node.id) || { x: 0, y: 0 };
-      return {
-        id: node.id,
-        name: node.data[lang]?.label || node.id,
-        emoji: node.data.emoji || '📦',
-        level: node.data.level,
-        x: pos.x,
-        y: pos.y,
-        data: node.data,
-      };
-    }),
-    [lang, nodePositions]
+    dataNodes
+      .filter(node => visibleNodeIds.has(node.id))
+      .map(node => {
+        const pos = nodePositions.get(node.id) || { x: 0, y: 0 };
+        return {
+          id: node.id,
+          name: node.data[lang]?.label || node.id,
+          emoji: node.data.emoji || '📦',
+          level: node.data.level,
+          x: pos.x,
+          y: pos.y,
+          data: node.data,
+        };
+      }),
+    [lang, nodePositions, visibleNodeIds]
   );
 
   const nodeRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const [nodeSizes, setNodeSizes] = useState<Map<string, { width: number; height: number }>>(new Map());
   
-  // Pan state
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const panStart = useRef({ x: 0, y: 0 });
   const panOffset = useRef({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Zoom state
   const [zoom, setZoom] = useState(0.65);
   const MIN_ZOOM = 0.2;
   const MAX_ZOOM = 2;
   
-  // Node drag state
   const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null);
   const dragStart = useRef({ x: 0, y: 0 });
   const nodeStartPos = useRef({ x: 0, y: 0 });
 
-  // Shooting stars
   const [shootingStars, setShootingStars] = useState<ShootingStar[]>([]);
   const shootingStarId = useRef(0);
 
-  // Измерение размеров нод
+  // Mobile menu
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       const sizes = new Map<string, { width: number; height: number }>();
@@ -337,37 +378,23 @@ export default function SpaceMindMap() {
     return () => clearTimeout(timer);
   }, [nodes, zoom]);
 
-  // Создание падающих звёзд - по всему пространству
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
-    
     const createShootingStar = () => {
-      // Случайная позиция по всему экрану
-      const startX = -20 + Math.random() * 140; // От -20% до 120%
-      const startY = -20 + Math.random() * 100; // От -20% до 80%
-      
+      const startX = -20 + Math.random() * 140;
+      const startY = -20 + Math.random() * 100;
       const star: ShootingStar = {
         id: shootingStarId.current++,
-        startX,
-        startY,
-        angle: 30 + Math.random() * 30, // 30-60 градусов
+        startX, startY,
+        angle: 30 + Math.random() * 30,
         length: 150 + Math.random() * 200,
         speed: 2 + Math.random() * 1.5,
       };
       setShootingStars(prev => [...prev, star]);
-      
-      setTimeout(() => {
-        setShootingStars(prev => prev.filter(s => s.id !== star.id));
-      }, star.speed * 1000 + 500);
-      
-      // Чаще - каждые 10-30 сек
-      const nextDelay = 10000 + Math.random() * 20000;
-      timeoutId = setTimeout(createShootingStar, nextDelay);
+      setTimeout(() => setShootingStars(prev => prev.filter(s => s.id !== star.id)), star.speed * 1000 + 500);
+      timeoutId = setTimeout(createShootingStar, 10000 + Math.random() * 20000);
     };
-
-    const firstDelay = 2000 + Math.random() * 3000;
-    timeoutId = setTimeout(createShootingStar, firstDelay);
-
+    timeoutId = setTimeout(createShootingStar, 2000 + Math.random() * 3000);
     return () => clearTimeout(timeoutId);
   }, []);
 
@@ -386,19 +413,13 @@ export default function SpaceMindMap() {
     const dy = (clientY - dragStart.current.y) / zoom;
     setNodePositions(prev => {
       const next = new Map(prev);
-      next.set(draggingNodeId, {
-        x: nodeStartPos.current.x + dx,
-        y: nodeStartPos.current.y + dy,
-      });
+      next.set(draggingNodeId, { x: nodeStartPos.current.x + dx, y: nodeStartPos.current.y + dy });
       return next;
     });
   }, [draggingNodeId, zoom]);
 
-  const handleNodeDragEnd = useCallback(() => {
-    setDraggingNodeId(null);
-  }, []);
+  const handleNodeDragEnd = useCallback(() => { setDraggingNodeId(null); }, []);
 
-  // Pan handlers
   const handlePanStart = useCallback((clientX: number, clientY: number) => {
     setIsPanning(true);
     panStart.current = { x: clientX, y: clientY };
@@ -407,34 +428,21 @@ export default function SpaceMindMap() {
 
   const handlePanMove = useCallback((clientX: number, clientY: number) => {
     if (!isPanning) return;
-    setPan({
-      x: panOffset.current.x + (clientX - panStart.current.x),
-      y: panOffset.current.y + (clientY - panStart.current.y),
-    });
+    setPan({ x: panOffset.current.x + (clientX - panStart.current.x), y: panOffset.current.y + (clientY - panStart.current.y) });
   }, [isPanning]);
 
-  const handlePanEnd = useCallback(() => {
-    setIsPanning(false);
-  }, []);
+  const handlePanEnd = useCallback(() => { setIsPanning(false); }, []);
 
-  // Mouse events
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
-      if ((e.target as HTMLElement).closest('.space-node')) return;
+      if ((e.target as HTMLElement).closest('.space-node') || (e.target as HTMLElement).closest('[data-no-pan]')) return;
       handlePanStart(e.clientX, e.clientY);
     };
     const handleMouseMove = (e: MouseEvent) => {
-      if (draggingNodeId !== null) {
-        handleNodeDragMove(e.clientX, e.clientY);
-      } else if (isPanning) {
-        handlePanMove(e.clientX, e.clientY);
-      }
+      if (draggingNodeId !== null) handleNodeDragMove(e.clientX, e.clientY);
+      else if (isPanning) handlePanMove(e.clientX, e.clientY);
     };
-    const handleMouseUp = () => { 
-      handlePanEnd(); 
-      handleNodeDragEnd(); 
-    };
-
+    const handleMouseUp = () => { handlePanEnd(); handleNodeDragEnd(); };
     const container = containerRef.current;
     if (container) {
       container.addEventListener('mousedown', handleMouseDown);
@@ -448,33 +456,25 @@ export default function SpaceMindMap() {
     };
   }, [isPanning, draggingNodeId, handlePanStart, handlePanMove, handlePanEnd, handleNodeDragMove, handleNodeDragEnd]);
 
-  // Zoom with mouse wheel - плавный
   const targetZoom = useRef(zoom);
-  
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
       const delta = e.deltaY > 0 ? -0.08 : 0.08;
       targetZoom.current = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, targetZoom.current + delta));
     };
-
     const container = containerRef.current;
-    if (container) {
-      container.addEventListener('wheel', handleWheel, { passive: false });
-    }
-    return () => {
-      container?.removeEventListener('wheel', handleWheel);
-    };
+    if (container) container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => { container?.removeEventListener('wheel', handleWheel); };
   }, []);
   
-  // Супер-плавная анимация zoom
   useEffect(() => {
     let animationId: number;
     const animateZoom = () => {
       setZoom(prev => {
         const diff = targetZoom.current - prev;
         if (Math.abs(diff) < 0.0005) return targetZoom.current;
-        return prev + diff * 0.06; // Супер-плавность
+        return prev + diff * 0.06;
       });
       animationId = requestAnimationFrame(animateZoom);
     };
@@ -482,7 +482,6 @@ export default function SpaceMindMap() {
     return () => cancelAnimationFrame(animationId);
   }, []);
 
-  // Touch events
   useEffect(() => {
     const handleTouchStart = (e: TouchEvent) => {
       if ((e.target as HTMLElement).closest('.space-node')) return;
@@ -490,18 +489,11 @@ export default function SpaceMindMap() {
     };
     const handleTouchMove = (e: TouchEvent) => {
       if (e.touches.length === 1) {
-        if (draggingNodeId !== null) {
-          handleNodeDragMove(e.touches[0].clientX, e.touches[0].clientY);
-        } else if (isPanning) {
-          handlePanMove(e.touches[0].clientX, e.touches[0].clientY);
-        }
+        if (draggingNodeId !== null) handleNodeDragMove(e.touches[0].clientX, e.touches[0].clientY);
+        else if (isPanning) handlePanMove(e.touches[0].clientX, e.touches[0].clientY);
       }
     };
-    const handleTouchEnd = () => { 
-      handlePanEnd(); 
-      handleNodeDragEnd(); 
-    };
-
+    const handleTouchEnd = () => { handlePanEnd(); handleNodeDragEnd(); };
     const container = containerRef.current;
     if (container) {
       container.addEventListener('touchstart', handleTouchStart, { passive: true });
@@ -515,7 +507,6 @@ export default function SpaceMindMap() {
     };
   }, [isPanning, draggingNodeId, handlePanStart, handlePanMove, handlePanEnd, handleNodeDragMove, handleNodeDragEnd]);
 
-  // Parallax effect
   useEffect(() => {
     const smoothing = () => {
       setSmoothTilt(prev => ({
@@ -525,7 +516,6 @@ export default function SpaceMindMap() {
       animationRef.current = requestAnimationFrame(smoothing);
     };
     animationRef.current = requestAnimationFrame(smoothing);
-
     const handleMouseMove = (event: MouseEvent) => {
       if (isPanning || draggingNodeId) return;
       targetTilt.current = {
@@ -534,7 +524,6 @@ export default function SpaceMindMap() {
       };
     };
     window.addEventListener('mousemove', handleMouseMove);
-
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
@@ -548,7 +537,6 @@ export default function SpaceMindMap() {
     if (!nodeId) return [];
     const path: string[] = [nodeId];
     let current = nodeId;
-    
     while (current !== 'ai') {
       const parentConn = connections.find(c => c.to === current && !c.dashed);
       if (!parentConn) break;
@@ -566,6 +554,12 @@ export default function SpaceMindMap() {
     return fromIndex !== -1 && toIndex !== -1 && Math.abs(fromIndex - toIndex) === 1;
   }, [selectedNode, getPathToRoot]);
 
+  // Visible connections (both ends must be visible)
+  const visibleConnections = useMemo(() => 
+    connections.filter(c => visibleNodeIds.has(c.from) && visibleNodeIds.has(c.to)),
+    [connections, visibleNodeIds]
+  );
+
   const handleNodeClick = (node: SpaceNode, wasDragging: boolean) => {
     if (wasDragging) return;
     const aiNode: AINode = {
@@ -574,14 +568,40 @@ export default function SpaceMindMap() {
       type: 'custom',
       data: node.data,
     };
-    setSelectedNode(selectedNode?.id === node.id ? null : aiNode);
+    
+    if (selectedNode?.id === node.id) {
+      setSelectedNode(null);
+    } else {
+      setSelectedNode(aiNode);
+      // Expand this node to show children
+      toggleExpand(node.id);
+      // Award XP for reading
+      if (!gamification.readNodes.includes(node.id)) {
+        const newState = awardXP(gamification, 'read_node');
+        newState.readNodes = [...(newState.readNodes || []), node.id];
+        saveGamification(newState);
+        setGamification(newState);
+      }
+    }
   };
+
+  const handleSearchSelect = useCallback((node: AINode) => {
+    setSelectedNode(node);
+    // Ensure node is visible
+    const parentEdge = initialEdges.find(e => e.target === node.id && !e.style?.strokeDasharray);
+    if (parentEdge) {
+      setExpandedNodes(prev => {
+        const next = new Set(prev);
+        next.add(parentEdge.source);
+        return next;
+      });
+    }
+  }, []);
 
   return (
     <div ref={containerRef} className={`space-container ${isPanning ? 'panning' : ''}`}>
-      {/* Звёзды - реагируют на zoom */}
+      {/* Stars */}
       {starLayers.map((layer, i) => {
-        // Дальние слои (маленькие звёзды) меньше реагируют на zoom
         const zoomFactor = 1 + (zoom - 0.65) * (0.1 + i * 0.08);
         return (
           <div key={i} className="star-layer" style={{
@@ -599,61 +619,129 @@ export default function SpaceMindMap() {
         );
       })}
 
-      {/* Падающие звёзды */}
+      {/* Shooting stars */}
       {shootingStars.map(star => (
-        <div
-          key={star.id}
-          className="shooting-star"
-          style={{
-            left: `${star.startX}%`,
-            top: `${star.startY}%`,
-            '--angle': `${star.angle}deg`,
-            '--length': `${star.length}px`,
-            '--speed': `${star.speed}s`,
-          } as React.CSSProperties}
-        />
+        <div key={star.id} className="shooting-star" style={{
+          left: `${star.startX}%`, top: `${star.startY}%`,
+          '--angle': `${star.angle}deg`, '--length': `${star.length}px`, '--speed': `${star.speed}s`,
+        } as React.CSSProperties} />
       ))}
 
-      {/* Заголовок */}
-      <div className="absolute top-4 left-4 z-50 flex items-start gap-4">
-        <div className="text-white">
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            🧠 AI Mindmap
-          </h1>
-          <p className="text-gray-400 text-sm">
-            {lang === 'ru' ? 'Перетаскивай ноды • Кликни для описания' : 'Drag nodes • Click for details'}
-          </p>
+      {/* Header: Title + Language + XP */}
+      <div className="absolute top-4 left-4 z-50 flex flex-col gap-2" data-no-pan>
+        <div className="flex items-start gap-4">
+          <div className="text-white">
+            <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2">🧠 AI Mindmap</h1>
+            <p className="text-gray-400 text-xs md:text-sm">
+              {lang === 'ru' ? 'Кликни для описания • ⌘K поиск' : 'Click for details • ⌘K search'}
+            </p>
+          </div>
+          <LanguageToggle lang={lang} onChange={setLang} />
         </div>
-        <LanguageToggle lang={lang} onChange={setLang} />
+        <XPBar lang={lang} state={gamification} />
       </div>
 
-      {/* Learning Paths Panel */}
-      <LearningPathsPanel
-        lang={lang}
-        activePath={activePath}
-        onSelectPath={setActivePath}
-        onNodeClick={(nodeId) => {
-          const node = dataNodes.find(n => n.id === nodeId);
-          if (node) setSelectedNode(node);
-        }}
-        completedNodes={completedNodes}
-        onResetProgress={handleResetProgress}
-        isOpen={openPanel === 'paths'}
-        onOpenChange={(open) => setOpenPanel(open ? 'paths' : null)}
-      />
+      {/* Desktop toolbar */}
+      <div className="hidden md:flex fixed right-4 top-4 z-40 flex-col gap-2" data-no-pan>
+        {/* Search button */}
+        <button
+          onClick={() => setSearchOpen(true)}
+          className="px-4 py-2 rounded-lg font-medium bg-gray-800/80 text-gray-300 hover:bg-gray-700/80 shadow-lg transition-all"
+        >
+          🔍 {lang === 'ru' ? 'Поиск' : 'Search'}
+          <kbd className="ml-2 text-xs text-gray-500">⌘K</kbd>
+        </button>
+      </div>
 
-      {/* Flashcards Panel */}
-      <FlashcardsPanel 
-        lang={lang}
-        isOpen={openPanel === 'flashcards'}
-        onOpenChange={(open) => setOpenPanel(open ? 'flashcards' : null)}
-      />
+      {/* Mobile hamburger */}
+      <div className="md:hidden fixed right-4 top-4 z-40" data-no-pan>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="w-10 h-10 rounded-lg bg-gray-800/90 text-white flex items-center justify-center text-lg shadow-lg"
+        >
+          {mobileMenuOpen ? '✕' : '☰'}
+        </button>
+        {mobileMenuOpen && (
+          <div className="absolute right-0 top-12 bg-gray-900/95 backdrop-blur rounded-xl shadow-2xl border border-gray-700 p-2 min-w-[180px]">
+            <button onClick={() => { setSearchOpen(true); setMobileMenuOpen(false); }} className="w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg text-sm">
+              🔍 {lang === 'ru' ? 'Поиск' : 'Search'}
+            </button>
+            <button onClick={() => { setOpenPanel(openPanel === 'paths' ? null : 'paths'); setMobileMenuOpen(false); }} className="w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg text-sm">
+              📚 {lang === 'ru' ? 'Пути изучения' : 'Learning Paths'}
+            </button>
+            <button onClick={() => { setOpenPanel(openPanel === 'quiz' ? null : 'quiz'); setMobileMenuOpen(false); }} className="w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg text-sm">
+              📝 {lang === 'ru' ? 'Мини-тест' : 'Mini-Quiz'}
+            </button>
+            <button onClick={() => { setOpenPanel(openPanel === 'flashcards' ? null : 'flashcards'); setMobileMenuOpen(false); }} className="w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg text-sm">
+              🎴 {lang === 'ru' ? 'Карточки' : 'Flashcards'}
+            </button>
+            <hr className="border-gray-700 my-1" />
+            <button onClick={() => { setExpandAll(!expandAll); setMobileMenuOpen(false); }} className="w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-800 rounded-lg text-sm">
+              {expandAll ? '📁' : '📂'} {expandAll ? (lang === 'ru' ? 'Свернуть' : 'Collapse') : (lang === 'ru' ? 'Развернуть всё' : 'Expand All')}
+            </button>
+          </div>
+        )}
+      </div>
 
-      {/* Quiz Panel */}
-      <QuizPanel 
+      {/* Desktop: Learning Paths Panel */}
+      <div className="hidden md:block">
+        <LearningPathsPanel
+          lang={lang}
+          activePath={activePath}
+          onSelectPath={setActivePath}
+          onNodeClick={(nodeId) => {
+            const node = dataNodes.find(n => n.id === nodeId);
+            if (node) setSelectedNode(node);
+          }}
+          completedNodes={completedNodes}
+          onResetProgress={handleResetProgress}
+          isOpen={openPanel === 'paths'}
+          onOpenChange={(open) => setOpenPanel(open ? 'paths' : null)}
+        />
+      </div>
+
+      {/* Desktop: Flashcards */}
+      <div className="hidden md:block">
+        <FlashcardsPanel 
+          lang={lang}
+          isOpen={openPanel === 'flashcards'}
+          onOpenChange={(open) => setOpenPanel(open ? 'flashcards' : null)}
+          onXP={() => doAwardXP('flashcard')}
+        />
+      </div>
+
+      {/* Desktop: Quiz */}
+      <div className="hidden md:block">
+        <QuizPanel 
+          lang={lang}
+          isOpen={openPanel === 'quiz'}
+          onOpenChange={(open) => setOpenPanel(open ? 'quiz' : null)}
+          onCorrectAnswer={() => doAwardXP('quiz_correct')}
+        />
+      </div>
+
+      {/* Mobile panels (same components, shown conditionally) */}
+      <div className="md:hidden">
+        {openPanel === 'paths' && (
+          <LearningPathsPanel lang={lang} activePath={activePath} onSelectPath={setActivePath}
+            onNodeClick={(nodeId) => { const node = dataNodes.find(n => n.id === nodeId); if (node) setSelectedNode(node); }}
+            completedNodes={completedNodes} onResetProgress={handleResetProgress}
+            isOpen={true} onOpenChange={(open) => setOpenPanel(open ? 'paths' : null)} />
+        )}
+        {openPanel === 'flashcards' && (
+          <FlashcardsPanel lang={lang} isOpen={true} onOpenChange={(open) => setOpenPanel(open ? 'flashcards' : null)} onXP={() => doAwardXP('flashcard')} />
+        )}
+        {openPanel === 'quiz' && (
+          <QuizPanel lang={lang} isOpen={true} onOpenChange={(open) => setOpenPanel(open ? 'quiz' : null)} onCorrectAnswer={() => doAwardXP('quiz_correct')} />
+        )}
+      </div>
+
+      {/* Search Palette */}
+      <SearchPalette
         lang={lang}
-        isOpen={openPanel === 'quiz'}
-        onOpenChange={(open) => setOpenPanel(open ? 'quiz' : null)}
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        onSelectNode={handleSearchSelect}
       />
 
       {/* Pan layer */}
@@ -661,14 +749,10 @@ export default function SpaceMindMap() {
         transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`, 
         transformOrigin: 'center center' 
       }}>
-        {/* SVG для связей */}
+        {/* SVG connections */}
         <svg className="connections" style={{
-          position: 'absolute',
-          left: '-2000px',
-          top: '-2000px',
-          width: '6000px',
-          height: '6000px',
-          overflow: 'visible',
+          position: 'absolute', left: '-2000px', top: '-2000px',
+          width: '6000px', height: '6000px', overflow: 'visible',
         }}>
           <defs>
             <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -678,26 +762,21 @@ export default function SpaceMindMap() {
             </linearGradient>
             <filter id="glow">
               <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-              <feMerge>
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
+              <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
           </defs>
           
-          {connections.map((conn, i) => {
+          {visibleConnections.map((conn, i) => {
             const from = getNodeById(conn.from);
             const to = getNodeById(conn.to);
             if (!from || !to) return null;
             
             const fromSize = getNodeSize(from.id);
             const toSize = getNodeSize(to.id);
-            
             const startX = from.x + fromSize.width + 2000;
             const startY = from.y + fromSize.height / 2 + 2000;
             const endX = to.x + 2000;
             const endY = to.y + toSize.height / 2 + 2000;
-            
             const dx = Math.abs(endX - startX);
             const tension = Math.max(dx * 0.4, 50);
             const pathD = `M ${startX} ${startY} C ${startX + tension} ${startY}, ${endX - tension} ${endY}, ${endX} ${endY}`;
@@ -706,14 +785,11 @@ export default function SpaceMindMap() {
             
             return (
               <g key={i}>
-                <path
-                  id={pathId}
-                  d={pathD}
+                <path id={pathId} d={pathD}
                   stroke={isActive ? '#a855f7' : 'url(#lineGradient)'}
                   strokeWidth={isActive ? 2.5 : 2}
                   strokeDasharray={conn.dashed ? '5,5' : undefined}
-                  fill="none"
-                  filter="url(#glow)"
+                  fill="none" filter="url(#glow)"
                   className={`connection-line ${isActive ? 'active' : ''}`}
                 />
                 {isActive && (() => {
@@ -722,19 +798,13 @@ export default function SpaceMindMap() {
                   return (
                     <>
                       <circle r="2.5" fill="white" style={{ filter: glow }}>
-                        <animateMotion dur="5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear" begin={`${baseOffset}s`}>
-                          <mpath href={`#${pathId}`} />
-                        </animateMotion>
+                        <animateMotion dur="5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear" begin={`${baseOffset}s`}><mpath href={`#${pathId}`} /></animateMotion>
                       </circle>
                       <circle r="2.5" fill="white" style={{ filter: glow }}>
-                        <animateMotion dur="5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear" begin={`${baseOffset + 1.6}s`}>
-                          <mpath href={`#${pathId}`} />
-                        </animateMotion>
+                        <animateMotion dur="5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear" begin={`${baseOffset + 1.6}s`}><mpath href={`#${pathId}`} /></animateMotion>
                       </circle>
                       <circle r="2.5" fill="white" style={{ filter: glow }}>
-                        <animateMotion dur="5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear" begin={`${baseOffset + 3.3}s`}>
-                          <mpath href={`#${pathId}`} />
-                        </animateMotion>
+                        <animateMotion dur="5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear" begin={`${baseOffset + 3.3}s`}><mpath href={`#${pathId}`} /></animateMotion>
                       </circle>
                     </>
                   );
@@ -744,35 +814,24 @@ export default function SpaceMindMap() {
           })}
         </svg>
 
-        {/* Ноды */}
+        {/* Nodes */}
         {nodes.map((node) => {
           const isDragging = draggingNodeId === node.id;
           const isInActivePath = activePath ? getPathById(activePath)?.nodeIds.includes(node.id) : false;
           const isCompleted = completedNodes.includes(node.id);
+          const hiddenCount = getHiddenChildCount(node.id);
+          
           return (
             <div
               key={node.id}
               ref={(el) => { if (el) nodeRefs.current.set(node.id, el); }}
               className={`space-node ${selectedNode?.id === node.id ? 'selected' : ''} ${isDragging ? 'dragging' : ''} ${isInActivePath ? 'in-path' : ''} ${isCompleted ? 'completed' : ''}`}
-              style={{ 
-                left: `${node.x}px`, 
-                top: `${node.y}px`,
-                '--level-color': spaceColors[node.level],
-              } as React.CSSProperties}
-              onMouseDown={(e) => { 
-                e.stopPropagation(); 
-                handleNodeDragStart(node.id, e.clientX, e.clientY); 
-              }}
-              onTouchStart={(e) => { 
-                e.stopPropagation(); 
-                if (e.touches.length === 1) {
-                  handleNodeDragStart(node.id, e.touches[0].clientX, e.touches[0].clientY); 
-                }
-              }}
+              style={{ left: `${node.x}px`, top: `${node.y}px`, '--level-color': spaceColors[node.level] } as React.CSSProperties}
+              onMouseDown={(e) => { e.stopPropagation(); handleNodeDragStart(node.id, e.clientX, e.clientY); }}
+              onTouchStart={(e) => { e.stopPropagation(); if (e.touches.length === 1) handleNodeDragStart(node.id, e.touches[0].clientX, e.touches[0].clientY); }}
               onClick={(e) => { 
                 e.stopPropagation(); 
-                const wasDragging = Math.abs(e.clientX - dragStart.current.x) > 5 || 
-                                   Math.abs(e.clientY - dragStart.current.y) > 5;
+                const wasDragging = Math.abs(e.clientX - dragStart.current.x) > 5 || Math.abs(e.clientY - dragStart.current.y) > 5;
                 handleNodeClick(node, wasDragging); 
               }}
             >
@@ -780,24 +839,33 @@ export default function SpaceMindMap() {
               <div className="node-content">
                 <span className="node-icon">{node.emoji}</span>
                 <span className="node-name">{node.name}</span>
+                {/* Hidden children badge */}
+                {hiddenCount > 0 && (
+                  <span className="absolute -bottom-2 -right-2 bg-purple-600 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
+                    +{hiddenCount > 99 ? '99' : hiddenCount}
+                  </span>
+                )}
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Легенда */}
-      <div className="absolute bottom-4 left-4 bg-gray-900/90 rounded-lg p-3 text-xs backdrop-blur z-50">
-        <div className="text-gray-400 mb-2 uppercase tracking-wide">
-          {lang === 'ru' ? 'Уровень абстракции' : 'Abstraction Level'}
+      {/* Legend + Expand toggle */}
+      <div className="absolute bottom-4 left-4 bg-gray-900/90 rounded-lg p-3 text-xs backdrop-blur z-50 max-w-[280px]" data-no-pan>
+        <div className="text-gray-400 mb-2 uppercase tracking-wide flex items-center justify-between">
+          <span>{lang === 'ru' ? 'Уровень абстракции' : 'Abstraction Level'}</span>
+          <button
+            onClick={() => setExpandAll(!expandAll)}
+            className="text-purple-400 hover:text-purple-300 transition-colors normal-case"
+          >
+            {expandAll ? (lang === 'ru' ? '📁 Свернуть' : '📁 Collapse') : (lang === 'ru' ? '📂 Показать все' : '📂 Show All')}
+          </button>
         </div>
-        <div className="flex flex-wrap gap-2 mb-3">
+        <div className="flex flex-wrap gap-2">
           {(Object.keys(levelColors) as Array<AbstractionLevel>).map((level) => (
             <span key={level} className="flex items-center gap-1.5 text-gray-300">
-              <span 
-                className="w-3 h-3 rounded"
-                style={{ backgroundColor: levelColors[level] }}
-              />
+              <span className="w-3 h-3 rounded" style={{ backgroundColor: levelColors[level] }} />
               {levelLabels[lang][level]}
             </span>
           ))}
@@ -815,9 +883,16 @@ export default function SpaceMindMap() {
         }}
       />
 
-      <InfoPanel node={selectedNode} lang={lang} onClose={() => setSelectedNode(null)} />
+      <InfoPanel 
+        node={selectedNode} 
+        lang={lang} 
+        onClose={() => setSelectedNode(null)}
+        activePath={activePath}
+        completedNodes={completedNodes}
+        onMarkComplete={handleMarkComplete}
+        onNavigateNext={handleNavigateNext}
+      />
 
-      {/* Support Button */}
       <SupportButton lang={lang} />
     </div>
   );

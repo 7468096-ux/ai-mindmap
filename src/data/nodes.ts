@@ -21,6 +21,7 @@ export interface AINodeData {
   level: AbstractionLevel;
   ru: NodeContent;
   en: NodeContent;
+  analogy?: { ru: string; en: string };
   [key: string]: unknown;
 }
 
@@ -90,6 +91,10 @@ export const initialNodes: AINode[] = [
         ],
         howItWorks: 'AI systems work on principle: input data → processing (algorithms/models) → output result. Modern AI is based on machine learning: instead of explicit rule programming, system learns from examples. Process: 1) Collect data 2) Train model on data 3) Validate quality 4) Apply to new data. AI can be narrow (single task) or general (AGI — multiple tasks, not yet achieved).',
       },
+      analogy: {
+        ru: 'ИИ — это как универсальный инструмент: молоток может забить гвоздь, но AI учится сам выбирать нужный инструмент для каждой задачи',
+        en: 'AI is like a universal tool: a hammer can hit a nail, but AI learns to pick the right tool for each task on its own',
+      },
     },
   },
 
@@ -123,6 +128,10 @@ export const initialNodes: AINode[] = [
         ],
         howItWorks: 'ML model is a mathematical function with adjustable parameters (weights). Training: 1) Model makes prediction 2) Compare with correct answer via loss function 3) Compute gradient (improvement direction) 4) Update weights (gradient descent) 5) Repeat thousands of times. After training, model is applied to new data (inference). Key: model finds patterns itself, programmer doesn\'t specify them.',
       },
+      analogy: {
+        ru: 'ML — это как ребёнок, который учится различать кошек и собак. Никто не объясняет правила — он просто видит много примеров и сам находит закономерности',
+        en: 'ML is like a child learning to tell cats from dogs. Nobody explains the rules — they just see many examples and find patterns on their own',
+      },
     },
   },
   {
@@ -154,6 +163,10 @@ export const initialNodes: AINode[] = [
         ],
         howItWorks: 'Deep Learning uses neural networks with many layers. Each layer extracts increasingly abstract features: first layers — simple patterns (lines, edges), middle — shapes, deep — whole objects. Training via backpropagation: error propagates backward through network, each neuron adjusts its weights. "Depth" allows modeling complex nonlinear dependencies. Requires GPU due to parallel matrix operations.',
       },
+      analogy: {
+        ru: 'Deep Learning — это как матрёшка: каждый слой извлекает всё более сложные признаки, от простых линий до целых лиц',
+        en: 'Deep Learning is like a Russian nesting doll: each layer extracts increasingly complex features, from simple lines to entire faces',
+      },
     },
   },
   {
@@ -184,6 +197,10 @@ export const initialNodes: AINode[] = [
           '🗣️ Tasks: translation, summarization, QA',
         ],
         howItWorks: 'NLP converts text to numbers for model processing. Pipeline: 1) Tokenization — split into units (words/subwords) 2) Embedding — convert tokens to number vectors 3) Model processing (transformer) — understand context 4) Decoding — generate output. Key idea: words with similar meaning have close vectors. Modern LLMs predict next token, generating text autoregressively.',
+      },
+      analogy: {
+        ru: 'NLP — это как переводчик между человеческим языком и компьютером: превращает слова в числа, с которыми машина умеет работать',
+        en: 'NLP is like a translator between human language and computers: it turns words into numbers that machines can work with',
       },
     },
   },
@@ -218,6 +235,10 @@ export const initialNodes: AINode[] = [
         ],
         howItWorks: 'Process: 1) Prepare dataset with (input, correct_answer) pairs 2) Model makes prediction for input 3) Loss function computes error between prediction and correct answer 4) Optimizer updates weights to reduce error 5) Repeat on all examples for many epochs. For classification: output — class probabilities, loss — cross-entropy. For regression: output — number, loss — MSE.',
       },
+      analogy: {
+        ru: 'Обучение с учителем — как подготовка к экзамену с ответами: ты видишь вопросы и правильные ответы, и учишься решать похожие',
+        en: 'Supervised learning is like studying for a test with an answer key: you see questions and correct answers, and learn to solve similar ones',
+      },
     },
   },
   {
@@ -249,6 +270,10 @@ export const initialNodes: AINode[] = [
         ],
         howItWorks: 'Model analyzes data without "correct answers". Clustering: groups similar objects together (K-Means finds group centers). Dimensionality reduction: finds main variation directions (PCA projects to smaller space). Anomaly detection: learns from "normal" data, identifies unusual ones. Key difference: no explicit target variable, model determines structure itself.',
       },
+      analogy: {
+        ru: 'Как разобрать коробку с деталями LEGO без инструкции — ты сам группируешь похожие детали по цвету и форме',
+        en: 'Like sorting a box of LEGO without instructions — you group similar pieces by color and shape yourself',
+      },
     },
   },
   {
@@ -279,6 +304,10 @@ export const initialNodes: AINode[] = [
           '🎲 Uses: games, robotics, trading',
         ],
         howItWorks: 'Agent is in state, chooses action, transitions to new state and receives reward. Goal: learn policy — action selection strategy maximizing cumulative reward. Exploration/exploitation dilemma: explore new actions or use known good ones? Methods: Q-learning (action value table), Policy Gradient (directly optimize strategy), Actor-Critic (combination).',
+      },
+      analogy: {
+        ru: 'Как дрессировка собаки: хорошее поведение → лакомство, плохое → ничего. Со временем собака учится что делать',
+        en: 'Like training a dog: good behavior → treat, bad → nothing. Over time the dog learns what to do',
       },
     },
   },
@@ -325,6 +354,10 @@ predictions = model.predict(X_test)
 print(f"Coef: {model.coef_}, Intercept: {model.intercept_}")`
         },
       },
+      analogy: {
+        ru: 'Как провести прямую линию через точки на графике, чтобы предсказать следующую точку',
+        en: 'Like drawing a straight line through dots on a chart to predict the next dot',
+      },
     },
   },
   {
@@ -355,6 +388,10 @@ print(f"Coef: {model.coef_}, Intercept: {model.intercept_}")`
           '⚠️ Prone to overfitting',
         ],
         howItWorks: 'Building: 1) Choose feature and threshold for split 2) Criterion: maximize group "purity" (Gini, Entropy) 3) Recursively split until stopping condition. Example: "Age > 30? Yes → Income > 50k? Yes → Approve loan". Prediction: go from root through conditions to leaf. Easy to interpret, but deep tree memorizes training data (overfitting). Solution: limit depth or use ensembles.',
+      },
+      analogy: {
+        ru: 'Как игра "20 вопросов" — каждый вопрос сужает варианты пока не найдёшь ответ',
+        en: 'Like the game "20 Questions" — each question narrows options until you find the answer',
       },
     },
   },
@@ -399,6 +436,10 @@ predictions = rf.predict(X_test)
 importance = rf.feature_importances_`
         },
       },
+      analogy: {
+        ru: 'Как спросить 100 экспертов и выбрать самый популярный ответ — мнение толпы точнее одного человека',
+        en: 'Like asking 100 experts and picking the most popular answer — the crowd is wiser than one person',
+      },
     },
   },
   {
@@ -441,6 +482,10 @@ svm.fit(X_train, y_train)
 predictions = svm.predict(X_test)
 support_vectors = svm.support_vectors_`
         },
+      },
+      analogy: {
+        ru: 'Представь две кучки монет на столе — SVM проводит линию-границу максимально далеко от обеих кучек',
+        en: 'Imagine two piles of coins on a table — SVM draws a border line as far from both piles as possible',
       },
     },
   },
@@ -485,6 +530,10 @@ labels = kmeans.labels_
 centers = kmeans.cluster_centers_`
         },
       },
+      analogy: {
+        ru: 'Как рассадить гостей за K столов по интересам — сначала случайно, потом пересаживаешь к ближайшему "своему" столу',
+        en: 'Like seating guests at K tables by interests — first random, then reshuffling to the nearest matching table',
+      },
     },
   },
   {
@@ -516,6 +565,10 @@ centers = kmeans.cluster_centers_`
         ],
         howItWorks: 'Idea: find new axes (principal components) along which data is maximally "stretched". Algorithm: 1) Center data (subtract mean) 2) Compute covariance matrix 3) Find eigenvectors and eigenvalues 4) Sort by decreasing eigenvalues 5) Select top-K components 6) Project data. First component explains maximum variance, second — maximum of remaining, etc.',
       },
+      analogy: {
+        ru: 'Как сфотографировать 3D-объект: выбираешь ракурс, где видно максимум деталей, и сжимаешь в 2D',
+        en: 'Like photographing a 3D object: you pick the angle with most detail visible and compress to 2D',
+      },
     },
   },
   {
@@ -546,6 +599,10 @@ centers = kmeans.cluster_centers_`
           '🚫 Model-free: no environment rules',
         ],
         howItWorks: 'Q-table stores value of each action in each state. Update: Q(s,a) ← Q(s,a) + α[r + γ·max(Q(s\',a\')) - Q(s,a)], where α — learning rate, γ — discount factor, r — reward, s\' — new state. ε-greedy: with probability ε choose random action (exploration), otherwise best by Q (exploitation). Deep Q-Network (DQN): replaces table with neural network for large state spaces.',
+      },
+      analogy: {
+        ru: 'Как изучать город без карты — пробуешь разные маршруты, запоминаешь какие привели к хорошим местам',
+        en: 'Like exploring a city without a map — try routes, remember which led to good places',
       },
     },
   },
@@ -579,6 +636,10 @@ centers = kmeans.cluster_centers_`
           '🏗️ Layers: input → hidden → output',
         ],
         howItWorks: 'Think of network as a chain of filters: input → filter 1 → filter 2 → ... → output.\n\nEach neuron does something simple:\n1️⃣ Takes inputs, multiplies by weights (w), sums them up\n2️⃣ Adds bias (b)\n3️⃣ Passes through activation (e.g. ReLU: negative → 0)\n\nTraining (backpropagation):\n• Run data forward, get answer\n• Compare with correct one — get error\n• Go backward through network: "who caused the error?"\n• Each weight adjusted slightly to reduce error\n• Repeat thousands of times\n\n💡 More layers = more complex patterns network can learn',
+      },
+      analogy: {
+        ru: 'Как упрощённая модель мозга: нейроны получают сигналы, обрабатывают, передают дальше. Слои за слоями',
+        en: 'Like a simplified brain: neurons receive signals, process, pass forward. Layer by layer',
       },
     },
   },
@@ -629,6 +690,10 @@ class SimpleCNN(nn.Module):
         return self.fc(x)`
         },
       },
+      analogy: {
+        ru: 'Как рассматривать фото через маленькую лупу — сначала видишь линии, потом формы, потом целые объекты',
+        en: 'Like examining a photo through a small magnifying glass — first edges, then shapes, then whole objects',
+      },
     },
   },
   {
@@ -660,6 +725,10 @@ class SimpleCNN(nn.Module):
         ],
         howItWorks: 'At each step t: hₜ = tanh(Wₕₕ·hₜ₋₁ + Wₓₕ·xₜ), where h — hidden state, x — input. Weights W shared across all steps (weight sharing). Vanishing gradient problem: during backprop through many steps gradients decrease exponentially → network doesn\'t learn long dependencies. Solutions: LSTM and GRU add "gates" to control information flow. Bidirectional RNN: processes sequence in both directions.',
       },
+      analogy: {
+        ru: 'Как чтение книги: ты помнишь что было на прошлых страницах и это влияет на понимание текущей',
+        en: 'Like reading a book: you remember previous pages and that affects how you understand the current one',
+      },
     },
   },
   {
@@ -690,6 +759,10 @@ class SimpleCNN(nn.Module):
           '📈 Standard for seq2seq before transformers',
         ],
         howItWorks: 'Three gates (0-1 via sigmoid): Forget gate: fₜ = σ(Wf·[hₜ₋₁,xₜ]) — what to forget from cell state. Input gate: iₜ = σ(Wi·[hₜ₋₁,xₜ]) — what new to add. Output gate: oₜ = σ(Wo·[hₜ₋₁,xₜ]) — what to output. Cell state updates: Cₜ = fₜ⊙Cₜ₋₁ + iₜ⊙tanh(Wc·[hₜ₋₁,xₜ]). Gradients flow through cell state without vanishing. GRU — simplified version with 2 gates.',
+      },
+      analogy: {
+        ru: 'Как записная книжка с тремя правилами: что забыть, что записать, что показать другим',
+        en: 'Like a notebook with three rules: what to forget, what to write down, what to show others',
       },
     },
   },
@@ -735,6 +808,10 @@ outputs = model(**inputs)
 embeddings = outputs.last_hidden_state`
         },
       },
+      analogy: {
+        ru: 'Как конференц-зал где каждый участник может мгновенно "услышать" всех остальных одновременно',
+        en: 'Like a conference room where every participant can instantly "hear" everyone else at once',
+      },
     },
   },
   {
@@ -765,6 +842,10 @@ embeddings = outputs.last_hidden_state`
           '💡 Originally for seq2seq translation',
         ],
         howItWorks: 'Imagine: you\'re translating "The black cat sat" to French. When writing "chat", which English word do you look at? Of course "cat"! You barely look at "The".\n\nAttention does the same automatically:\n1️⃣ For each output word, compute "importance" of each input word\n2️⃣ Importance = how related words are (via Query-Key comparison)\n3️⃣ Softmax turns importances into percentages (sum = 100%)\n4️⃣ Final vector = mix of input words by these percentages\n\nTerms:\n• Query — "what we\'re looking for" (current output word)\n• Key — "what we offer" (all input words)\n• Value — "what we take" (information from input words)',
+      },
+      analogy: {
+        ru: 'Как читать длинный текст и подсвечивать маркером самые важные слова — модель учится что подсвечивать',
+        en: 'Like reading a long text and highlighting key words with a marker — the model learns what to highlight',
       },
     },
   },
@@ -797,6 +878,10 @@ embeddings = outputs.last_hidden_state`
         ],
         howItWorks: 'Generator G(z) transforms random noise z into image. Discriminator D(x) outputs probability x is real. Training: D learns to distinguish real from G(z), G learns to fool D. Minimax game: minG maxD [E[log D(x)] + E[log(1-D(G(z)))]]. Problems: mode collapse (G generates same thing), training instability. Improvements: DCGAN, WGAN (Wasserstein distance), StyleGAN (style control).',
       },
+      analogy: {
+        ru: 'Как фальшивомонетчик и детектив: один рисует фальшивки, другой ловит. Оба становятся лучше',
+        en: 'Like a counterfeiter and detective: one makes fakes, the other catches them. Both get better',
+      },
     },
   },
   {
@@ -828,6 +913,10 @@ embeddings = outputs.last_hidden_state`
         ],
         howItWorks: 'Encoder outputs not point but distribution: μ (mean) and σ (variance). Reparametrization trick: z = μ + σ·ε, where ε ~ N(0,1) — enables backprop. Decoder reconstructs x from z. Loss = reconstruction_loss + KL_divergence(q(z|x) || p(z)). KL forces latent to be close to N(0,1) → can sample from N(0,1) for generation. Latent space is continuous → can interpolate between objects.',
       },
+      analogy: {
+        ru: 'Как сжать фото до описания "блондинка, улыбается, очки" и потом нарисовать новое лицо по описанию',
+        en: 'Like compressing a photo to "blonde, smiling, glasses" and drawing a new face from that description',
+      },
     },
   },
   {
@@ -858,6 +947,10 @@ embeddings = outputs.last_hidden_state`
           '🖼️ Stable Diffusion, DALL-E 2/3, Midjourney',
         ],
         howItWorks: 'Forward process: x₀ → x₁ → ... → xₜ, at each step add Gaussian noise, end with pure noise. Reverse process: model learns to predict noise added at step t, and subtracts it: xₜ → xₜ₋₁ → ... → x₀. Training: take clean image, add noise, model predicts this noise. Generation: start from pure noise, iteratively remove. Conditional generation: add text embedding (CLIP) for control.',
+      },
+      analogy: {
+        ru: 'Как реставратор: берёт зашумлённую фотографию и шаг за шагом убирает шум, пока не получится чёткое изображение',
+        en: 'Like a restorer: takes a noisy photo and step by step removes noise until a clear image appears',
       },
     },
   },
@@ -892,6 +985,10 @@ embeddings = outputs.last_hidden_state`
         ],
         howItWorks: 'Architecture: decoder-only transformer. Training: next token prediction (causal LM). Dataset: trillions of text tokens. Scaling laws: more parameters + data = better quality. Emergent abilities: at certain scale new capabilities appear (in-context learning, reasoning). Fine-tuning: RLHF (learning from human preferences) for instruction following. Inference: autoregressive generation token by token.',
       },
+      analogy: {
+        ru: 'Как человек который прочитал всю библиотеку мира и теперь может написать убедительный текст на любую тему',
+        en: 'Like someone who read every library in the world and can now write convincingly about any topic',
+      },
     },
   },
   {
@@ -923,6 +1020,10 @@ embeddings = outputs.last_hidden_state`
         ],
         howItWorks: 'Word2Vec: learns to predict word from context (CBOW) or context from word (Skip-gram). Sentence embeddings: average tokens or specialized model (SBERT). Cosine similarity: cos(a,b) = (a·b)/(|a||b|) — vector closeness measure. RAG application: text → embedding → search similar in database → context for LLM. OpenAI, Cohere, Voyage provide embedding APIs. Dimensionality: tradeoff between quality and speed.',
       },
+      analogy: {
+        ru: 'Как расположить все слова на карте города: "кошка" и "собака" будут на одной улице, а "самолёт" — далеко',
+        en: 'Like placing all words on a city map: "cat" and "dog" on the same street, but "airplane" far away',
+      },
     },
   },
   {
@@ -953,6 +1054,10 @@ embeddings = outputs.last_hidden_state`
           '💰 Affects API cost ($/1M tokens)',
         ],
         howItWorks: 'BPE (Byte Pair Encoding): starts with characters, iteratively merges most frequent pairs. "tokenization" → ["token", "ization"] or ["to", "ken", "iz", "ation"]. Rare words split into subwords, frequent stay whole. Special tokens: [CLS], [SEP], [PAD], <|endoftext|>. Issues: different languages tokenize differently, emoji and code may take many tokens. tiktoken (OpenAI) — library for counting tokens.',
+      },
+      analogy: {
+        ru: 'Как разрезать пиццу на кусочки перед едой — текст режется на удобные для обработки кусочки (токены)',
+        en: 'Like slicing a pizza before eating — text is cut into convenient processing pieces (tokens)',
       },
     },
   },
@@ -986,6 +1091,10 @@ embeddings = outputs.last_hidden_state`
           '🚗 Applications: self-driving, medicine, AR/VR',
         ],
         howItWorks: 'CV systems transform pixels into scene understanding. Pipeline: 1) Preprocessing — normalization, augmentation 2) Feature extraction — CNN layers find patterns (edges → shapes → objects) 3) Task solving — classification (what\'s in image?), detection (where are objects?), segmentation (which pixel belongs to what?). Modern models: ViT (Vision Transformer) applies attention to image patches. Transfer learning: pretrained models (ImageNet) fine-tuned on specific tasks.',
+      },
+      analogy: {
+        ru: 'Как научить компьютер "видеть" — распознавать что на фотографии: лица, объекты, текст',
+        en: 'Like teaching a computer to "see" — recognize what is in a photo: faces, objects, text',
       },
     },
   },
@@ -1111,6 +1220,10 @@ embeddings = outputs.last_hidden_state`
         ],
         howItWorks: 'YOLO divides image into SxS grid. Each cell predicts: B bounding boxes (x, y, w, h, confidence) + C class probabilities. All in single forward pass! Loss function combines: bbox coordinates + confidence + classification. Anchor boxes: predefined bbox shapes (tall, wide, square). NMS removes duplicates. YOLOv8: improved backbone (CSPDarknet), anchor-free detection, decoupled head for classification and regression separately.',
       },
+      analogy: {
+        ru: 'Как окинуть комнату одним взглядом и сразу увидеть ВСЕ предметы — не рассматривая каждый угол отдельно',
+        en: 'Like scanning a room with one glance and instantly seeing ALL objects — without examining each corner separately',
+      },
     },
   },
   {
@@ -1141,6 +1254,10 @@ embeddings = outputs.last_hidden_state`
           '🧱 Base backbone for many models',
         ],
         howItWorks: 'Problem: very deep networks train poorly (vanishing gradient, degradation). Solution: residual block learns not F(x), but F(x) + x (residual). If optimal transform is close to identity, easier to learn F(x) ≈ 0. Skip connection allows gradient to flow directly through blocks. Bottleneck block: 1x1 conv (reduce channels) → 3x3 conv → 1x1 conv (increase back). ResNet-50 = 50 layers with bottleneck blocks. Used as backbone for detection, segmentation, etc.',
+      },
+      analogy: {
+        ru: 'Как эскалатор с лестницей рядом: если эскалатор ничего не добавляет, всегда можно пройти по лестнице (skip connection)',
+        en: 'Like an escalator with stairs next to it: if the escalator adds nothing, you can always take the stairs (skip connection)',
       },
     },
   },
@@ -1173,6 +1290,10 @@ embeddings = outputs.last_hidden_state`
         ],
         howItWorks: 'Architecture: stack of decoder blocks with masked self-attention (sees only past tokens). Pre-training: on trillions of text tokens predicts next token. Fine-tuning: RLHF (learning from human preferences) for instruction following. Inference: autoregressive generation — predict token, add to context, repeat. Temperature controls "creativity". GPT-4: multimodal (text + images), hundreds of billions+ (exact not disclosed), MoE architecture.',
       },
+      analogy: {
+        ru: 'Как автозаполнение в телефоне, но в миллиард раз умнее: предсказывает следующее слово, учитывая весь контекст',
+        en: 'Like phone autocomplete but a billion times smarter: predicts the next word considering all context',
+      },
     },
   },
   {
@@ -1204,6 +1325,10 @@ embeddings = outputs.last_hidden_state`
         ],
         howItWorks: 'Unlike GPT, BERT uses encoder (bidirectional attention). Pre-training tasks: 1) MLM (Masked Language Model): mask 15% of tokens, model predicts them. 2) NSP (Next Sentence Prediction): predicts if sentence B follows A. Fine-tuning: add classification head for specific task (sentiment, NER, QA). [CLS] token aggregates information from entire text. BERT-base: 12 layers, 110M parameters. RoBERTa, ALBERT, DeBERTa — improved variants.',
       },
+      analogy: {
+        ru: 'Как человек который читает предложение целиком (слева и справа) прежде чем ответить на вопрос о нём',
+        en: 'Like someone who reads the full sentence (left and right) before answering a question about it',
+      },
     },
   },
   {
@@ -1234,6 +1359,10 @@ embeddings = outputs.last_hidden_state`
           '🎨 Foundation for Stable Diffusion, DALL-E',
         ],
         howItWorks: 'Two encoders: Image Encoder (ViT or ResNet) and Text Encoder (Transformer). Training: on (image, text description) pairs from internet. Contrastive loss: maximizes similarity of correct pairs, minimizes for incorrect. In batch of N pairs creates NxN similarity matrix. After training: can compare image with any text! Zero-shot: "photo of cat" vs "photo of dog" — choose class with max similarity. CLIP used in text-to-image models to guide generation by text prompt.',
+      },
+      analogy: {
+        ru: 'Как переводчик между картинками и словами: может сказать что на фото, даже если никогда такое не видел',
+        en: 'Like a translator between images and words: can describe a photo even if it never saw one like it before',
       },
     },
   },
@@ -1392,6 +1521,10 @@ embeddings = outputs.last_hidden_state`
         ],
         howItWorks: 'Each forward pass randomly zeros p% of neurons. Different neurons each batch. Forces network not to rely on specific neurons — learns redundant representations. At inference use all neurons but multiply by (1-p) for correct scale. Or inverted dropout: divide by (1-p) at training, nothing at inference. Interpretation: train exponentially many subnetworks, inference — averaging.',
       },
+      analogy: {
+        ru: 'Как тренировка команды, где случайно убирают игроков — остальные учатся компенсировать и становятся сильнее',
+        en: 'Like team practice where random players are removed — others learn to compensate and get stronger',
+      },
     },
   },
   {
@@ -1548,6 +1681,10 @@ embeddings = outputs.last_hidden_state`
           '📊 Kaggle killer',
         ],
         howItWorks: 'Gradient Boosting: sequentially build trees, each corrects errors of previous. XGBoost adds: 1) L1/L2 regularization for complexity control 2) Optimized split finding algorithm 3) Missing value handling 4) Parallel tree building. Loss optimized via gradient descent on functional. Hyperparameters: n_estimators, max_depth, learning_rate, subsample. Alternatives: LightGBM (faster), CatBoost (categorical features).',
+      },
+      analogy: {
+        ru: 'Как команда учеников: каждый следующий учится на ошибках предыдущего. Вместе — сильнее',
+        en: 'Like a team of students: each next one learns from the previous one\'s mistakes. Together — stronger',
       },
     },
   },

@@ -4,24 +4,39 @@ import { AINode, levelColors, levelLabels, Language } from '@/data/nodes';
 import { hasDemo, getDemo } from './demos';
 import { getComparisonsForNode } from '@/data/comparisons';
 import ComparisonTable from './ComparisonTable';
+import { getPathById } from '@/data/learningPaths';
 
 interface InfoPanelProps {
   node: AINode | null;
   lang: Language;
   onClose: () => void;
+  activePath?: string | null;
+  completedNodes?: string[];
+  onMarkComplete?: (nodeId: string) => void;
+  onNavigateNext?: (nodeId: string) => void;
 }
 
-export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
+export default function InfoPanel({ node, lang, onClose, activePath, completedNodes = [], onMarkComplete, onNavigateNext }: InfoPanelProps) {
   if (!node) return null;
 
   const { emoji, level } = node.data;
   const content = node.data[lang];
+  const analogy = node.data.analogy;
   const color = levelColors[level];
   
   const DemoComponent = getDemo(node.id);
   const showDemo = hasDemo(node.id);
 
-  // Останавливаем propagation событий мыши чтобы не двигался фон
+  // Learning path navigation
+  const path = activePath ? getPathById(activePath) : null;
+  const isInPath = path ? path.nodeIds.includes(node.id) : false;
+  const isCompleted = completedNodes.includes(node.id);
+  const currentStepIndex = path ? path.nodeIds.indexOf(node.id) : -1;
+  const nextNodeId = path && currentStepIndex >= 0 && currentStepIndex < path.nodeIds.length - 1
+    ? path.nodeIds[currentStepIndex + 1]
+    : null;
+  const pathProgress = path ? completedNodes.filter(id => path.nodeIds.includes(id)).length : 0;
+
   const stopPropagation = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
   };
@@ -34,13 +49,19 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
         onClick={onClose}
       />
       
+      {/* Desktop: side panel. Mobile: bottom sheet */}
       <div 
-        className="fixed md:absolute inset-x-2 bottom-2 md:bottom-auto md:inset-x-auto md:right-4 md:top-4 md:w-[420px] bg-gray-900 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[70vh] md:max-h-[90vh] overflow-y-auto"
+        className="fixed inset-x-0 bottom-0 md:inset-x-auto md:bottom-auto md:absolute md:right-4 md:top-4 md:w-[420px] bg-gray-900 md:rounded-2xl rounded-t-2xl shadow-2xl overflow-hidden z-50 max-h-[70vh] md:max-h-[90vh] overflow-y-auto"
         onMouseDown={stopPropagation}
         onMouseMove={stopPropagation}
         onTouchStart={stopPropagation}
         onTouchMove={stopPropagation}
       >
+      {/* Mobile swipe hint */}
+      <div className="md:hidden flex justify-center pt-2 pb-1">
+        <div className="w-10 h-1 bg-gray-600 rounded-full" />
+      </div>
+
       {/* Header */}
       <div 
         className="p-4 flex items-center gap-3 sticky top-0 z-10"
@@ -60,6 +81,21 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
           ×
         </button>
       </div>
+
+      {/* Learning Path Progress */}
+      {isInPath && path && (
+        <div className="px-4 py-2 bg-purple-900/30 border-b border-purple-700/30 flex items-center gap-2">
+          <span className="text-xs text-purple-300">
+            📚 {path.title[lang]}: {lang === 'ru' ? 'Шаг' : 'Step'} {currentStepIndex + 1}/{path.nodeIds.length}
+          </span>
+          <div className="flex-1 h-1 bg-gray-700 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-purple-500 transition-all"
+              style={{ width: `${(pathProgress / path.nodeIds.length) * 100}%` }}
+            />
+          </div>
+        </div>
+      )}
       
       {/* Interactive Demo */}
       {showDemo && DemoComponent && (
@@ -68,6 +104,18 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
             🎮 {lang === 'ru' ? 'Интерактивное демо' : 'Interactive Demo'}
           </h3>
           <DemoComponent lang={lang} />
+        </div>
+      )}
+
+      {/* 💡 Simple Analogy */}
+      {analogy && (
+        <div className="p-4 border-b border-gray-800 bg-gradient-to-r from-amber-900/10 to-transparent">
+          <h3 className="text-amber-400 text-xs uppercase tracking-wide mb-2">
+            💡 {lang === 'ru' ? 'Простая аналогия' : 'Simple Analogy'}
+          </h3>
+          <p className="text-gray-200 text-sm leading-relaxed italic">
+            &ldquo;{analogy[lang]}&rdquo;
+          </p>
         </div>
       )}
       
@@ -102,7 +150,7 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
         </p>
       </div>
       
-      {/* Use Cases - only show if available */}
+      {/* Use Cases */}
       {content.useCases && content.useCases.length > 0 && (
         <div className="p-4 border-b border-gray-800">
           <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3">
@@ -110,10 +158,7 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
           </h3>
           <div className="flex flex-wrap gap-2">
             {content.useCases.map((useCase, i) => (
-              <span 
-                key={i} 
-                className="px-2 py-1 bg-gray-800 text-gray-300 text-xs rounded-full"
-              >
+              <span key={i} className="px-2 py-1 bg-gray-800 text-gray-300 text-xs rounded-full">
                 {useCase}
               </span>
             ))}
@@ -121,7 +166,7 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
         </div>
       )}
       
-      {/* When to Use - only show if available */}
+      {/* When to Use */}
       {content.whenToUse && (
         <div className="p-4 border-b border-gray-800">
           <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3">
@@ -133,7 +178,7 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
         </div>
       )}
       
-      {/* Code Example - only show if available */}
+      {/* Code Example */}
       {content.codeExample && (
         <div className="p-4 border-b border-gray-800">
           <div className="flex items-center justify-between mb-3">
@@ -155,19 +200,43 @@ export default function InfoPanel({ node, lang, onClose }: InfoPanelProps) {
         </div>
       )}
       
-      {/* Comparison Tables - only show if available */}
+      {/* Comparison Tables */}
       {getComparisonsForNode(node.id).map(comparison => (
         <div key={comparison.id} className="p-4 border-b border-gray-800">
           <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3">
             📊 {comparison.title[lang]}
           </h3>
-          <ComparisonTable 
-            comparison={comparison} 
-            currentNodeId={node.id} 
-            lang={lang} 
-          />
+          <ComparisonTable comparison={comparison} currentNodeId={node.id} lang={lang} />
         </div>
       ))}
+
+      {/* Learning Path Navigation */}
+      {isInPath && path && (
+        <div className="p-4 bg-gray-800/50">
+          <div className="flex gap-2">
+            {!isCompleted ? (
+              <button
+                onClick={() => onMarkComplete?.(node.id)}
+                className="flex-1 px-4 py-2.5 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium text-sm transition-colors"
+              >
+                ✅ {lang === 'ru' ? 'Изучено' : 'Mark Complete'}
+              </button>
+            ) : (
+              <div className="flex-1 px-4 py-2.5 bg-green-900/30 text-green-400 rounded-lg font-medium text-sm text-center border border-green-700/30">
+                ✓ {lang === 'ru' ? 'Пройдено' : 'Completed'}
+              </div>
+            )}
+            {nextNodeId && (
+              <button
+                onClick={() => onNavigateNext?.(nextNodeId)}
+                className="flex-1 px-4 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium text-sm transition-colors"
+              >
+                → {lang === 'ru' ? 'Далее' : 'Next'}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
     </>
   );
