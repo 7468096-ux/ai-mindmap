@@ -6,6 +6,7 @@ import { getComparisonsForNode } from '@/data/comparisons';
 import ComparisonTable from './ComparisonTable';
 import { getPathById } from '@/data/learningPaths';
 import { getQuizForNode, loadQuizResults } from '@/data/topicQuizzes';
+import LinkedText from './LinkedText';
 
 interface InfoPanelProps {
   node: AINode | null;
@@ -16,9 +17,10 @@ interface InfoPanelProps {
   onMarkComplete?: (nodeId: string) => void;
   onNavigateNext?: (nodeId: string) => void;
   onStartExam?: (nodeId: string) => void;
+  onNodeNavigate?: (nodeId: string) => void;
 }
 
-export default function InfoPanel({ node, lang, onClose, activePath, completedNodes = [], onMarkComplete, onNavigateNext, onStartExam }: InfoPanelProps) {
+export default function InfoPanel({ node, lang, onClose, activePath, completedNodes = [], onMarkComplete, onNavigateNext, onStartExam, onNodeNavigate }: InfoPanelProps) {
   if (!node) return null;
 
   const { emoji, level } = node.data;
@@ -124,7 +126,7 @@ export default function InfoPanel({ node, lang, onClose, activePath, completedNo
       {/* Description */}
       <div className="p-4 border-b border-gray-800">
         <p className="text-gray-300 text-sm leading-relaxed">
-          {content.description}
+          <LinkedText text={content.description} onTermClick={(id) => onNodeNavigate?.(id)} currentNodeId={node.id} />
         </p>
       </div>
       
@@ -136,7 +138,7 @@ export default function InfoPanel({ node, lang, onClose, activePath, completedNo
         <ul className="space-y-2">
           {content.keyPoints.map((point, i) => (
             <li key={i} className="text-gray-300 text-sm leading-relaxed">
-              {point}
+              <LinkedText text={point} onTermClick={(id) => onNodeNavigate?.(id)} currentNodeId={node.id} />
             </li>
           ))}
         </ul>
@@ -148,7 +150,7 @@ export default function InfoPanel({ node, lang, onClose, activePath, completedNo
           ⚙️ {lang === 'ru' ? 'Как это работает' : 'How It Works'}
         </h3>
         <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line">
-          {content.howItWorks}
+          <LinkedText text={content.howItWorks} onTermClick={(id) => onNodeNavigate?.(id)} currentNodeId={node.id} />
         </p>
       </div>
       
@@ -175,7 +177,7 @@ export default function InfoPanel({ node, lang, onClose, activePath, completedNo
             🎯 {lang === 'ru' ? 'Когда использовать' : 'When to Use'}
           </h3>
           <p className="text-gray-300 text-sm leading-relaxed">
-            {content.whenToUse}
+            <LinkedText text={content.whenToUse} onTermClick={(id) => onNodeNavigate?.(id)} currentNodeId={node.id} />
           </p>
         </div>
       )}

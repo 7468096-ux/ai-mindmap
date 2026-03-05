@@ -877,6 +877,15 @@ export default function SpaceMindMap() {
         onMarkComplete={handleMarkComplete}
         onNavigateNext={handleNavigateNext}
         onStartExam={handleStartExam}
+        onNodeNavigate={(nodeId) => {
+          const node = dataNodes.find(n => n.id === nodeId);
+          if (node) {
+            setSelectedNode(node);
+            // Ensure visible
+            const parentEdge = initialEdges.find(e => e.target === nodeId && !e.style?.strokeDasharray);
+            if (parentEdge) setExpandedNodes(prev => { const next = new Set(prev); next.add(parentEdge.source); return next; });
+          }
+        }}
       />
 
       {/* Topic Exam Modal */}

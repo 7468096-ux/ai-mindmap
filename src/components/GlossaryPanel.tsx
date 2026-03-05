@@ -100,7 +100,7 @@ export default function GlossaryPanel({ lang, isOpen, onClose, onNodeClick }: Pr
                 <div className="flex-1 min-w-0">
                   <div className="text-white text-sm font-medium">{entry.label}</div>
                   <div className="text-gray-500 text-[10px]">{entry.labelAlt}</div>
-                  <div className="text-gray-400 text-xs mt-0.5 line-clamp-2">{entry.description}</div>
+                  <div className="text-gray-400 text-xs mt-0.5 line-clamp-2 leading-relaxed">{entry.description}</div>
                 </div>
               </button>
             ))
