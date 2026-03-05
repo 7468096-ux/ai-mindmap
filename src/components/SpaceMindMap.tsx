@@ -650,17 +650,24 @@ export default function SpaceMindMap() {
       ))}
 
       {/* Header: Title + Language + XP */}
-      <div className="absolute top-4 left-4 z-50 flex flex-col gap-2" data-no-pan>
-        <div className="flex items-start gap-4">
-          <div className="text-white">
-            <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2">🧠 AI Mindmap</h1>
-            <p className="text-gray-400 text-xs md:text-sm">
-              {lang === 'ru' ? 'Кликни для описания • ⌘K поиск' : 'Click for details • ⌘K search'}
-            </p>
+      <div className="absolute top-4 left-4 z-50 flex flex-col gap-3" data-no-pan>
+        <div className="bg-gray-950/40 backdrop-blur-xl rounded-2xl border border-white/[0.06] px-5 py-3.5 shadow-2xl">
+          <div className="flex items-start gap-4">
+            <div className="text-white">
+              <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2 tracking-tight">
+                <span className="text-2xl md:text-3xl">🧠</span>
+                <span className="bg-gradient-to-r from-white via-purple-100 to-purple-300 bg-clip-text text-transparent">AI Mindmap</span>
+              </h1>
+              <p className="text-gray-500 text-[11px] md:text-xs mt-0.5 tracking-wide">
+                {lang === 'ru' ? 'Кликни для описания • ⌘K поиск' : 'Click for details • ⌘K search'}
+              </p>
+            </div>
+            <LanguageToggle lang={lang} onChange={setLang} />
           </div>
-          <LanguageToggle lang={lang} onChange={setLang} />
+          <div className="mt-2.5 pt-2.5 border-t border-white/[0.06]">
+            <XPBar lang={lang} state={gamification} />
+          </div>
         </div>
-        <XPBar lang={lang} state={gamification} />
       </div>
 
       {/* Unified Toolbar Menu */}
@@ -741,13 +748,24 @@ export default function SpaceMindMap() {
         }}>
           <defs>
             <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.5" />
-              <stop offset="50%" stopColor="#a855f7" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#6366f1" stopOpacity="0.5" />
+              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.3" />
+              <stop offset="30%" stopColor="#8b5cf6" stopOpacity="0.5" />
+              <stop offset="50%" stopColor="#a855f7" stopOpacity="0.6" />
+              <stop offset="70%" stopColor="#8b5cf6" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#6366f1" stopOpacity="0.3" />
+            </linearGradient>
+            <linearGradient id="activeLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#a855f7" stopOpacity="0.7" />
+              <stop offset="50%" stopColor="#c084fc" stopOpacity="1" />
+              <stop offset="100%" stopColor="#a855f7" stopOpacity="0.7" />
             </linearGradient>
             <filter id="glow">
-              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
               <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="softGlow">
+              <feGaussianBlur stdDeviation="4" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
           </defs>
           
@@ -770,11 +788,18 @@ export default function SpaceMindMap() {
             
             return (
               <g key={i}>
+                {/* Background glow for active lines */}
+                {isActive && (
+                  <path d={pathD}
+                    stroke="#a855f7" strokeWidth={8}
+                    fill="none" opacity={0.1} filter="url(#softGlow)"
+                  />
+                )}
                 <path id={pathId} d={pathD}
-                  stroke={isActive ? '#a855f7' : 'url(#lineGradient)'}
-                  strokeWidth={isActive ? 2.5 : 2}
-                  strokeDasharray={conn.dashed ? '5,5' : undefined}
-                  fill="none" filter="url(#glow)"
+                  stroke={isActive ? 'url(#activeLineGradient)' : 'url(#lineGradient)'}
+                  strokeWidth={isActive ? 2 : 1.5}
+                  strokeDasharray={conn.dashed ? '6,6' : undefined}
+                  fill="none" filter={isActive ? 'url(#glow)' : undefined}
                   className={`connection-line ${isActive ? 'active' : ''}`}
                 />
                 {isActive && (() => {
@@ -837,21 +862,21 @@ export default function SpaceMindMap() {
       </div>
 
       {/* Legend + Expand toggle */}
-      <div className="absolute bottom-4 left-4 bg-gray-900/90 rounded-lg p-3 text-xs backdrop-blur z-50 max-w-[280px]" data-no-pan>
-        <div className="text-gray-400 mb-2 uppercase tracking-wide flex items-center justify-between">
+      <div className="absolute bottom-4 left-4 bg-gray-950/40 backdrop-blur-xl rounded-2xl p-3.5 text-xs z-50 max-w-[300px] border border-white/[0.06] shadow-2xl" data-no-pan>
+        <div className="text-gray-500 mb-2.5 uppercase tracking-wider text-[10px] font-medium flex items-center justify-between">
           <span>{lang === 'ru' ? 'Уровень абстракции' : 'Abstraction Level'}</span>
           <button
             onClick={() => setExpandAll(!expandAll)}
-            className="text-purple-400 hover:text-purple-300 transition-colors normal-case"
+            className="text-purple-400 hover:text-purple-300 transition-colors normal-case text-xs"
           >
             {expandAll ? (lang === 'ru' ? '📁 Свернуть' : '📁 Collapse') : (lang === 'ru' ? '📂 Показать все' : '📂 Show All')}
           </button>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-x-3 gap-y-1.5">
           {(Object.keys(levelColors) as Array<AbstractionLevel>).map((level) => (
-            <span key={level} className="flex items-center gap-1.5 text-gray-300">
-              <span className="w-3 h-3 rounded" style={{ backgroundColor: levelColors[level] }} />
-              {levelLabels[lang][level]}
+            <span key={level} className="flex items-center gap-1.5 text-gray-400">
+              <span className="w-2.5 h-2.5 rounded-full shadow-lg" style={{ backgroundColor: levelColors[level], boxShadow: `0 0 8px ${levelColors[level]}40` }} />
+              <span className="text-[11px]">{levelLabels[lang][level]}</span>
             </span>
           ))}
         </div>
